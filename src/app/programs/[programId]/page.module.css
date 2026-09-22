@@ -1,0 +1,135 @@
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.goal {
+  opacity: 0.65;
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.startButton {
+  height: 46px;
+  padding: 0 1.4rem;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #111827;
+  color: #fff;
+  width: 100%;
+}
+
+.startButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.startButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.days {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dayCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+}
+
+.dayName {
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+
+.daySubtitle {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin: 0 0 0.2rem;
+}
+
+.dayMeta {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.dayButton {
+  height: 44px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.dayButton:hover:not(:disabled) {
+  border-color: var(--foreground);
+}
+
+.dayButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.completedSummary {
+  opacity: 0.6;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .main {
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .startButton {
+    width: auto;
+  }
+
+  .dayCard {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.3rem;
+  }
+
+  .dayButton {
+    width: auto;
+  }
+}

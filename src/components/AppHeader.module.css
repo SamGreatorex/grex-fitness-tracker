@@ -1,0 +1,81 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--background);
+  z-index: 10;
+}
+
+.left {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+
+.back:hover {
+  opacity: 1;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  min-width: 0;
+}
+
+.email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 32vw;
+}
+
+.signOut {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  min-height: 40px;
+  cursor: pointer;
+  color: inherit;
+  font-size: 0.85rem;
+}
+
+.signOut:hover {
+  border-color: var(--foreground);
+}
+
+@media (max-width: 420px) {
+  .header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .email {
+    display: none;
+  }
+}

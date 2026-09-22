@@ -1,69 +1,83 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "../components/AuthProvider";
+import { api } from "../lib/apiClient";
+import AppHeader from "../components/AppHeader";
+import ProgramCard from "../components/ProgramCard";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const router = useRouter();
+  const { user, loading: sessionLoading } = useAuth();
+  const [programs, setPrograms] = useState(null);
+  const [activeRunsByProgram, setActiveRunsByProgram] = useState({});
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!sessionLoading && !user) {
+      router.replace("/login");
+    }
+  }, [sessionLoading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const [{ programs }, { runs }] = await Promise.all([
+          api.get("/api/programs"),
+          api.get("/api/runs"),
+        ]);
+        setPrograms(programs);
+
+        const byProgram = {};
+        for (const run of runs) {
+          if (run.status !== "active") continue;
+          if (!byProgram[run.programId]) byProgram[run.programId] = run;
+        }
+        setActiveRunsByProgram(byProgram);
+      } catch (err) {
+        setError(err.message || "Could not load programs.");
+      }
+    })();
+  }, [user]);
+
+  if (sessionLoading || !user) return null;
+
   return (
-    <div className={styles.page}>
+    <>
+      <AppHeader />
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <div className={styles.headerRow}>
+          <div>
+            <h1 className={styles.title}>Your programs</h1>
+            <p className={styles.subtitle}>Pick a program to start or continue.</p>
+          </div>
+          <Link href="/admin/exercises" className={styles.adminLink}>
+            Manage exercise library
+          </Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {error && <p>{error}</p>}
+
+        {!programs ? (
+          <p className={styles.empty}>Loading programs…</p>
+        ) : programs.length === 0 ? (
+          <p className={styles.empty}>No programs found. Run the seed script to load your plan.</p>
+        ) : (
+          <div className={styles.grid}>
+            {programs.map((program) => (
+              <ProgramCard
+                key={program.programId}
+                program={program}
+                activeRun={activeRunsByProgram[program.programId]}
+              />
+            ))}
+          </div>
+        )}
       </main>
-    </div>
+    </>
   );
 }

@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# personal workout export (contains real name/email/history) — never commit
+/data/fitness-plan.json
+
 # vercel
 .vercel
 

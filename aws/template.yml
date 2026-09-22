@@ -1,0 +1,186 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Grex Fitness Tracker — Cognito User Pool, DynamoDB tables for programs,
+  program runs, workout sessions and the exercise library, and an S3 bucket
+  for exercise images/videos. Standalone stack, deployed by deploy.sh.
+  No compute here — the Next.js app talks to these resources directly
+  (Amplify Auth client-side, AWS SDK from API routes server-side).
+
+Parameters:
+  AppName:
+    Type: String
+    Default: grex-fitness-tracker
+  CallbackURL:
+    Type: String
+    Default: 'http://localhost:3000'
+    Description: Used only as a tag/reference; this app uses Amplify's username/password auth, not Cognito Hosted UI redirects.
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AppName}-users'
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireUppercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: true
+        - Name: name
+          Required: false
+          Mutable: true
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub '${AppName}-web'
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      AccessTokenValidity: 60
+      IdTokenValidity: 60
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: days
+
+  ProgramsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-programs'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: programId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: programId
+          KeyType: HASH
+
+  ProgramRunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-program-runs'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: runId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: runId
+          KeyType: RANGE
+
+  WorkoutSessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-workout-sessions'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: sessionId
+          AttributeType: S
+        - AttributeName: programDayKey
+          AttributeType: S
+        - AttributeName: completedAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: sessionId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: LastSessionByDayIndex
+          KeySchema:
+            - AttributeName: programDayKey
+              KeyType: HASH
+            - AttributeName: completedAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  ExercisesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-exercises'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: exerciseId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: exerciseId
+          KeyType: HASH
+
+  ExerciseMediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AppName}-exercise-media-${AWS::AccountId}'
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: [GET, PUT]
+            AllowedOrigins: ['*']
+            AllowedHeaders: ['*']
+            MaxAge: 3000
+
+  ExerciseMediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ExerciseMediaBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadExerciseMedia
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${ExerciseMediaBucket.Arn}/*'
+
+Outputs:
+  UserPoolId:
+    Description: Set as NEXT_PUBLIC_COGNITO_USER_POOL_ID
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Description: Set as NEXT_PUBLIC_COGNITO_CLIENT_ID
+    Value: !Ref UserPoolClient
+  ProgramsTableName:
+    Description: Set as DYNAMODB_TABLE_PROGRAMS
+    Value: !Ref ProgramsTable
+  ProgramRunsTableName:
+    Description: Set as DYNAMODB_TABLE_RUNS
+    Value: !Ref ProgramRunsTable
+  WorkoutSessionsTableName:
+    Description: Set as DYNAMODB_TABLE_SESSIONS
+    Value: !Ref WorkoutSessionsTable
+  ExercisesTableName:
+    Description: Set as DYNAMODB_TABLE_EXERCISES
+    Value: !Ref ExercisesTable
+  ExerciseMediaBucketName:
+    Description: Set as S3_EXERCISE_MEDIA_BUCKET
+    Value: !Ref ExerciseMediaBucket

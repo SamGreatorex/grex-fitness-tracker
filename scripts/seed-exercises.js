@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Reads data/fitness-plan.json and creates a bare Exercises table entry
-// (name only, no tags or media yet) for every unique exercise referenced
-// across the 5 programs, so they all show up in /admin/exercises ready to
-// be tagged and given an image/video. Safe to re-run — existing entries
-// (including any tags/media already set via the admin UI) are left alone.
+// (name only, no body-area tags or media yet) for every unique exercise
+// referenced across the 5 programs, so they all show up in /admin/exercises
+// ready to be tagged and given an image/video. Safe to re-run — existing
+// entries (including any tags/media already set via the admin UI) are left
+// alone.
 //   node --env-file=.env.local scripts/seed-exercises.js
 
 const fs = require("fs");
@@ -54,7 +55,18 @@ async function main() {
     await client.send(
       new PutCommand({
         TableName: TABLE,
-        Item: { exerciseId, name, tags: [], mediaType: null, mediaKey: null, mediaUrl: null, createdAt: now, updatedAt: now },
+        Item: {
+          exerciseId,
+          name,
+          primaryTags: [],
+          secondaryTags: [],
+          stabilizerTags: [],
+          mediaType: null,
+          mediaKey: null,
+          mediaUrl: null,
+          createdAt: now,
+          updatedAt: now,
+        },
       })
     );
     created++;

@@ -1,0 +1,85 @@
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.subtitle {
+  opacity: 0.65;
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+}
+
+.granularityRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.granularityButton {
+  height: 38px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.granularityButton:hover {
+  border-color: var(--foreground);
+}
+
+.granularityButtonSelected {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 2rem 0 0.9rem;
+}
+
+.bodyAreaGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .bodyAreaGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 640px) {
+  .main {
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .bodyAreaGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.empty {
+  opacity: 0.6;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+}

@@ -1,5 +1,11 @@
+"use client";
+
+import { useRef, useState } from "react";
 import styles from "./ExerciseCard.module.css";
 import { slugify } from "../lib/slugify";
+import { effortColor } from "../lib/effort";
+import RestPicker from "./RestPicker";
+import SwitchExerciseDialog from "./SwitchExerciseDialog";
 
 // Vimeo links can be turned into a real thumbnail image via vumbnail.com
 // (no API key needed). Other sources (e.g. jamessmithacademy course pages)
@@ -12,7 +18,7 @@ function getVimeoThumbnail(videoLink) {
 
 // Fallback chain for the thumbnail image: the admin-uploaded library photo
 // (if any), then a locally-provided exercise photo, then a Vimeo thumbnail
-// (if the exercise has one), then a generic placeholder icon.
+// (if the exercise has one).
 function buildImageCandidates(exercise, libraryEntry) {
   const candidates = [];
   if (libraryEntry?.mediaUrl && libraryEntry.mediaType !== "video") {
@@ -24,17 +30,15 @@ function buildImageCandidates(exercise, libraryEntry) {
   return candidates;
 }
 
-function makeImgErrorHandler(candidates) {
-  let index = 0;
-  return (e) => {
-    index += 1;
-    if (index < candidates.length) {
-      e.currentTarget.src = candidates[index];
-    } else {
-      e.currentTarget.style.display = "none";
-      e.currentTarget.nextElementSibling.style.display = "flex";
-    }
-  };
+// Calling .select() synchronously on focus makes iOS/Android pop the native
+// text-selection callout (copy/paste bubble) right on top of it, which reads
+// as a stray context menu. Deferring it with setTimeout avoided that, but
+// opened a race: on a fast tap-then-type, the deferred select() could land
+// *between* keystrokes and eat part of what was just typed. onMouseUp fires
+// at tap-release — after focus, but before any typing can happen — so it
+// sidesteps the callout without that race.
+function selectAllOnMouseUp(e) {
+  e.currentTarget.select();
 }
 
 function ThumbIcon() {
@@ -52,10 +56,35 @@ function ThumbIcon() {
 // last time this exercise was done, used only to show a "last time" hint.
 // `libraryEntry` (optional) is the matching admin-managed Exercises record
 // (tags + uploaded media), matched by slugify(exercise.name).
-export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, onSetField, onLogSet }) {
+export default function ExerciseCard({
+  exercise,
+  sets,
+  lastSets,
+  libraryEntry,
+  libraryEntries,
+  onSetField,
+  onLogSet,
+  onApplyRestToAll,
+  onSwitchExercise,
+}) {
+  const lightboxRef = useRef(null);
+  const [candidateIndex, setCandidateIndex] = useState(0);
+
   const allDone = sets.every((s) => s.completed);
-  const tags = libraryEntry?.tags || [];
+  const primaryTags = libraryEntry?.primaryTags || [];
+  const secondaryTags = libraryEntry?.secondaryTags || [];
+  const stabilizerTags = libraryEntry?.stabilizerTags || [];
+  const hasTags = primaryTags.length > 0 || secondaryTags.length > 0 || stabilizerTags.length > 0;
   const isVideo = libraryEntry?.mediaType === "video" && libraryEntry.mediaUrl;
+  const candidates = isVideo ? [] : buildImageCandidates(exercise, libraryEntry);
+  const hasImage = candidateIndex < candidates.length;
+  const currentSrc = hasImage ? candidates[candidateIndex] : null;
+
+  const openLightbox = () => lightboxRef.current?.showModal();
+  const closeLightbox = () => lightboxRef.current?.close();
+  const handleLightboxBackdropClick = (e) => {
+    if (e.target === lightboxRef.current) closeLightbox();
+  };
 
   let thumb;
   if (isVideo) {
@@ -69,33 +98,38 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
         preload="metadata"
       />
     );
-  } else {
-    const candidates = buildImageCandidates(exercise, libraryEntry);
-    const image = (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        className={styles.thumb}
-        src={candidates[0]}
-        alt=""
-        loading="lazy"
-        onError={makeImgErrorHandler(candidates)}
-      />
+  } else if (hasImage) {
+    thumb = (
+      <button
+        type="button"
+        className={styles.thumbLink}
+        onClick={openLightbox}
+        aria-label={`View ${exercise.name} example image`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={styles.thumb}
+          src={currentSrc}
+          alt=""
+          loading="lazy"
+          onError={() => setCandidateIndex((i) => i + 1)}
+        />
+      </button>
     );
-    const fallback = (
-      <span className={styles.thumbFallback} style={{ display: "none" }}>
-        <ThumbIcon />
-      </span>
-    );
-    const href = exercise.videoLink || libraryEntry?.mediaUrl || null;
-    thumb = href ? (
-      <a className={styles.thumbLink} href={href} target="_blank" rel="noreferrer" aria-label={`${exercise.name} example`}>
-        {image}
-        {fallback}
+  } else if (exercise.videoLink) {
+    thumb = (
+      <a className={styles.thumbLink} href={exercise.videoLink} target="_blank" rel="noreferrer" aria-label={`${exercise.name} example`}>
+        <span className={styles.thumbFallback}>
+          <ThumbIcon />
+        </span>
       </a>
-    ) : (
+    );
+  } else {
+    thumb = (
       <div className={styles.thumbLink} aria-hidden="true">
-        {image}
-        {fallback}
+        <span className={styles.thumbFallback}>
+          <ThumbIcon />
+        </span>
       </div>
     );
   }
@@ -109,14 +143,26 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
           <p className={styles.meta}>
             {exercise.targetSets} sets × {exercise.targetReps} reps · {exercise.restSeconds}s rest
           </p>
-          {tags.length > 0 && (
+          {hasTags && (
             <div className={styles.tags}>
-              {tags.map((tag) => (
-                <span key={tag} className={styles.tag}>
-                  {tag}
-                </span>
+              {primaryTags.map((tag) => (
+                <span key={`p-${tag}`} className={`${styles.tag} ${styles.tagPrimary}`}>{tag}</span>
+              ))}
+              {secondaryTags.map((tag) => (
+                <span key={`s-${tag}`} className={`${styles.tag} ${styles.tagSecondary}`}>{tag}</span>
+              ))}
+              {stabilizerTags.map((tag) => (
+                <span key={`st-${tag}`} className={`${styles.tag} ${styles.tagStabilizer}`}>{tag}</span>
               ))}
             </div>
+          )}
+          {onSwitchExercise && (
+            <SwitchExerciseDialog
+              currentName={exercise.name}
+              currentLibraryEntry={libraryEntry}
+              library={libraryEntries}
+              onSelect={onSwitchExercise}
+            />
           )}
         </div>
       </div>
@@ -125,14 +171,23 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
         <span>Set</span>
         <span>Weight (kg)</span>
         <span>Reps</span>
+        <span>Rest</span>
         <span />
       </div>
 
       {sets.map((set, i) => {
         const last = lastSets?.[i];
+        const effort = set.effort ?? last?.effort ?? null;
+        const effortIsCurrent = set.effort != null;
         return (
           <div key={i} className={styles.setRow}>
-            <span className={styles.setNumber}>{i + 1}</span>
+            <span
+              className={`${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""}`}
+              style={effort != null ? { "--effort-color": effortColor(effort) } : undefined}
+              title={effort != null ? (effortIsCurrent ? `Effort: ${effort}/10` : `Last time: ${effort}/10`) : `Set ${i + 1}`}
+            >
+              {effort != null ? effort : i + 1}
+            </span>
             <input
               className={styles.input}
               type="number"
@@ -142,6 +197,7 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
               placeholder={last ? `${last.weight}` : "0"}
               value={set.weight}
               onChange={(e) => onSetField(i, "weight", e.target.value)}
+              onMouseUp={selectAllOnMouseUp}
             />
             <input
               className={styles.input}
@@ -151,6 +207,12 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
               placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
               value={set.reps}
               onChange={(e) => onSetField(i, "reps", e.target.value)}
+              onMouseUp={selectAllOnMouseUp}
+            />
+            <RestPicker
+              seconds={set.restSeconds ?? exercise.restSeconds}
+              onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
+              onApplyToAll={(secs) => onApplyRestToAll(secs)}
             />
             <button
               type="button"
@@ -162,6 +224,23 @@ export default function ExerciseCard({ exercise, sets, lastSets, libraryEntry, o
           </div>
         );
       })}
+
+      {hasImage && (
+        <dialog ref={lightboxRef} className={styles.lightbox} onClick={handleLightboxBackdropClick}>
+          <div className={styles.lightboxInner}>
+            <button type="button" className={styles.lightboxClose} aria-label="Close" onClick={closeLightbox}>
+              ×
+            </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className={styles.lightboxImage} src={currentSrc} alt={exercise.name} />
+            {exercise.videoLink && (
+              <a className={styles.lightboxLink} href={exercise.videoLink} target="_blank" rel="noreferrer">
+                Open original source ↗
+              </a>
+            )}
+          </div>
+        </dialog>
+      )}
     </div>
   );
 }

@@ -63,5 +63,6 @@ function safeJson(s) {
 export const api = {
   get: (path, query) => request("GET", path, { query }),
   post: (path, body) => request("POST", path, { body }),
+  patch: (path, body) => request("PATCH", path, { body }),
   delete: (path) => request("DELETE", path, {}),
 };

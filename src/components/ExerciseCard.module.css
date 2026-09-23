@@ -19,6 +19,12 @@
 .thumbLink {
   flex-shrink: 0;
   display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .thumb,
@@ -44,6 +50,66 @@
   border-radius: 10px;
   object-fit: cover;
   background: #000;
+}
+
+.lightbox {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  margin: auto;
+  width: min(90vw, 640px);
+  max-height: 90vh;
+  background: var(--card-bg);
+  color: var(--foreground);
+}
+
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.lightboxInner {
+  position: relative;
+  padding: 2.75rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.lightboxClose:hover {
+  border-color: var(--foreground);
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 75vh;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.lightboxLink {
+  font-size: 0.85rem;
+  text-decoration: underline;
+  opacity: 0.75;
+}
+
+.lightboxLink:hover {
+  opacity: 1;
 }
 
 .headerText {
@@ -76,14 +142,30 @@
   letter-spacing: 0.03em;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  background: var(--border);
-  opacity: 0.75;
+  border: 1px solid transparent;
+}
+
+.tagPrimary {
+  background: #111827;
+  color: #fff;
+}
+
+.tagSecondary {
+  background: transparent;
+  border-color: var(--foreground);
+  opacity: 0.8;
+}
+
+.tagStabilizer {
+  background: transparent;
+  border-color: var(--border);
+  opacity: 0.55;
 }
 
 .setsHeader {
   display: grid;
-  grid-template-columns: 1.5rem 1fr 1fr 3.75rem;
-  gap: 0.4rem;
+  grid-template-columns: 1.75rem 1fr 1fr 3.25rem 3.75rem;
+  gap: 0.35rem;
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -93,16 +175,33 @@
 
 .setRow {
   display: grid;
-  grid-template-columns: 1.5rem 1fr 1fr 3.75rem;
-  gap: 0.4rem;
+  grid-template-columns: 1.75rem 1fr 1fr 3.25rem 3.75rem;
+  gap: 0.35rem;
   align-items: center;
   padding: 0.3rem 0;
 }
 
 .setNumber {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
   opacity: 0.6;
-  text-align: center;
+  border-radius: 6px;
+  border: 2px solid transparent;
+}
+
+.setNumberTinted {
+  opacity: 1;
+  color: var(--effort-color);
+  border-color: var(--effort-color);
+}
+
+.setNumberCurrent {
+  background: var(--effort-color);
+  color: #fff;
 }
 
 .input {

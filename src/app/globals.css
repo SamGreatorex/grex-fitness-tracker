@@ -67,3 +67,32 @@ textarea {
     color-scheme: dark;
   }
 }
+
+/* Chart color tokens (dataviz reference palette) — shared, unscoped, so
+   every chart component (which may live in separate CSS Modules) inherits
+   the same values from one place. */
+.vizRoot {
+  --surface-1: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --gridline: #e1e0d9;
+  --baseline: #c3c2b7;
+  --series-1: #2a78d6;
+  --status-good: #0ca30c;
+  --status-critical: #d03b3b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vizRoot {
+    --surface-1: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --gridline: #2c2c2a;
+    --baseline: #383835;
+    --series-1: #3987e5;
+    --status-good: #0ca30c;
+    --status-critical: #e66767;
+  }
+}

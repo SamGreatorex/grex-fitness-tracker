@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../components/AuthProvider";
@@ -13,7 +13,8 @@ export default function Home() {
   const router = useRouter();
   const { user, loading: sessionLoading } = useAuth();
   const [programs, setPrograms] = useState(null);
-  const [activeRunsByProgram, setActiveRunsByProgram] = useState({});
+  const [runsByProgram, setRunsByProgram] = useState({});
+  const [startingProgramId, setStartingProgramId] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -22,27 +23,53 @@ export default function Home() {
     }
   }, [sessionLoading, user, router]);
 
+  const load = useCallback(async () => {
+    try {
+      const [{ programs }, { runs }] = await Promise.all([
+        api.get("/api/programs"),
+        api.get("/api/runs"),
+      ]);
+      setPrograms(programs);
+
+      // `runs` is already sorted most-recent-first, so the first run seen
+      // per program is its latest, and the first *active* one (there's
+      // only ever one at a time) is the one currently in progress.
+      const byProgram = {};
+      for (const run of runs) {
+        if (!byProgram[run.programId]) {
+          byProgram[run.programId] = { latest: run, active: run.status === "active" ? run : null };
+        } else if (run.status === "active" && !byProgram[run.programId].active) {
+          byProgram[run.programId].active = run;
+        }
+      }
+      setRunsByProgram(byProgram);
+    } catch (err) {
+      setError(err.message || "Could not load programs.");
+    }
+  }, []);
+
   useEffect(() => {
     if (!user) return;
     (async () => {
-      try {
-        const [{ programs }, { runs }] = await Promise.all([
-          api.get("/api/programs"),
-          api.get("/api/runs"),
-        ]);
-        setPrograms(programs);
-
-        const byProgram = {};
-        for (const run of runs) {
-          if (run.status !== "active") continue;
-          if (!byProgram[run.programId]) byProgram[run.programId] = run;
-        }
-        setActiveRunsByProgram(byProgram);
-      } catch (err) {
-        setError(err.message || "Could not load programs.");
-      }
+      await load();
     })();
-  }, [user]);
+  }, [user, load]);
+
+  const startProgram = async (program) => {
+    setStartingProgramId(program.programId);
+    setError("");
+    try {
+      await api.post("/api/runs", {
+        programId: program.programId,
+        programName: program.name,
+        durationWeeks: program.durationWeeks,
+      });
+      router.push(`/programs/${program.programId}`);
+    } catch (err) {
+      setError(err.message || "Could not start program.");
+      setStartingProgramId(null);
+    }
+  };
 
   if (sessionLoading || !user) return null;
 
@@ -55,9 +82,14 @@ export default function Home() {
             <h1 className={styles.title}>Your programs</h1>
             <p className={styles.subtitle}>Pick a program to start or continue.</p>
           </div>
-          <Link href="/admin/exercises" className={styles.adminLink}>
-            Manage exercise library
-          </Link>
+          <div className={styles.headerLinks}>
+            <Link href="/reports" className={styles.adminLink}>
+              Progress reports
+            </Link>
+            <Link href="/admin/exercises" className={styles.adminLink}>
+              Manage exercise library
+            </Link>
+          </div>
         </div>
 
         {error && <p>{error}</p>}
@@ -68,13 +100,19 @@ export default function Home() {
           <p className={styles.empty}>No programs found. Run the seed script to load your plan.</p>
         ) : (
           <div className={styles.grid}>
-            {programs.map((program) => (
-              <ProgramCard
-                key={program.programId}
-                program={program}
-                activeRun={activeRunsByProgram[program.programId]}
-              />
-            ))}
+            {programs.map((program) => {
+              const runs = runsByProgram[program.programId];
+              return (
+                <ProgramCard
+                  key={program.programId}
+                  program={program}
+                  activeRun={runs?.active}
+                  completedRun={runs?.latest?.status === "completed" ? runs.latest : null}
+                  starting={startingProgramId === program.programId}
+                  onStart={() => startProgram(program)}
+                />
+              );
+            })}
           </div>
         )}
       </main>

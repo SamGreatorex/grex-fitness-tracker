@@ -46,6 +46,10 @@
   flex-wrap: wrap;
 }
 
+.effortSection + .controls {
+  margin-top: 1.25rem;
+}
+
 .button {
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
@@ -67,4 +71,52 @@
 
 .primary:hover {
   background: #1f2937;
+}
+
+.effortSection {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.effortLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  margin: 0 0 0.6rem;
+}
+
+.effortGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+}
+
+.effortButton {
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid var(--effort-color);
+  background: transparent;
+  color: var(--effort-color);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.effortButton:hover {
+  background: color-mix(in srgb, var(--effort-color) 15%, transparent);
+}
+
+.effortButtonSelected {
+  background: var(--effort-color);
+  color: #fff;
+}
+
+.effortHint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  opacity: 0.55;
+  margin-top: 0.4rem;
 }

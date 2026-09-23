@@ -1,0 +1,179 @@
+.trigger {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin-top: 0.35rem;
+  color: inherit;
+  opacity: 0.6;
+  text-decoration: underline;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trigger:hover {
+  opacity: 1;
+}
+
+.dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  margin: auto;
+  width: min(480px, calc(100vw - 2rem));
+  max-height: min(85vh, 720px);
+  background: var(--card-bg);
+  color: var(--foreground);
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.inner {
+  padding: 1.25rem;
+  max-height: min(85vh, 720px);
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.close:hover {
+  border-color: var(--foreground);
+}
+
+.hint {
+  font-size: 0.78rem;
+  opacity: 0.55;
+  margin: 0 0 1rem;
+}
+
+.empty {
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.row:hover {
+  border-color: var(--foreground);
+}
+
+.thumb {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--border);
+}
+
+.thumbPlaceholder {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--border);
+  opacity: 0.5;
+}
+
+.rowInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.rowName {
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.rowTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.tagPrimary {
+  background: #111827;
+  color: #fff;
+}
+
+.tagSecondary {
+  background: transparent;
+  border-color: var(--foreground);
+  opacity: 0.8;
+}
+
+.tagStabilizer {
+  background: transparent;
+  border-color: var(--border);
+  opacity: 0.55;
+}
+
+.matchBadge {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+}

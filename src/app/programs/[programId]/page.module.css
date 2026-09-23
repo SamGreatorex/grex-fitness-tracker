@@ -6,10 +6,78 @@
   width: 100%;
 }
 
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0 0 0.25rem;
+}
+
 .title {
   font-size: 1.4rem;
   font-weight: 700;
+  margin: 0;
+}
+
+.editNameButton {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  opacity: 0.55;
+  text-decoration: underline;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editNameButton:hover {
+  opacity: 1;
+}
+
+.nameEditRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin: 0 0 0.25rem;
+}
+
+.nameInput {
+  flex: 1;
+  min-width: 160px;
+  height: 44px;
+  padding: 0 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.nameSaveButton,
+.nameCancelButton {
+  height: 44px;
+  padding: 0 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nameSaveButton {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.nameSaveButton:disabled,
+.nameCancelButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .goal {
@@ -48,6 +116,32 @@
   opacity: 0.6;
 }
 
+.restartRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: -0.75rem 0 1.5rem;
+}
+
+.restartLink {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  opacity: 0.55;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.restartLink:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.restartLink:disabled {
+  cursor: not-allowed;
+}
+
 .days {
   display: flex;
   flex-direction: column;
@@ -64,9 +158,25 @@
   padding: 1rem 1.15rem;
 }
 
+.dayCardDone {
+  border-color: #16a34a;
+}
+
 .dayName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 700;
   margin: 0 0 0.2rem;
+}
+
+.doneBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: #16a34a;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
 }
 
 .daySubtitle {
@@ -101,6 +211,15 @@
 .dayButton:disabled {
   cursor: not-allowed;
   opacity: 0.4;
+}
+
+.dayButtonGroup {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.dayButtonGroup .dayButton {
+  flex: 1;
 }
 
 .completedSummary {

@@ -1,0 +1,139 @@
+.chip {
+  height: 44px;
+  min-width: 3.25rem;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--foreground);
+}
+
+.dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  margin: auto;
+  width: min(320px, calc(100vw - 2rem));
+  background: var(--card-bg);
+  color: var(--foreground);
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.inner {
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  margin: 0 0 0.5rem;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 1rem;
+}
+
+.adjustRow {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.1rem;
+}
+
+.adjustButton {
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.adjustButton:hover {
+  border-color: var(--foreground);
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.presetButton {
+  height: 34px;
+  padding: 0 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.presetButton:hover {
+  border-color: var(--foreground);
+}
+
+.presetButtonSelected {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.applyOne,
+.applyAll {
+  height: 46px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.applyOne {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+}
+
+.applyOne:hover {
+  border-color: var(--foreground);
+}
+
+.applyAll {
+  border: 0;
+  background: #111827;
+  color: #fff;
+}
+
+.applyAll:hover {
+  background: #1f2937;
+}

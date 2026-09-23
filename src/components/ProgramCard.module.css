@@ -1,36 +1,48 @@
 .card {
-  display: block;
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.1rem 1.2rem;
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.15s, transform 0.15s;
+  transition: border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
 .card:hover {
   border-color: var(--foreground);
-  transform: translateY(-1px);
+}
+
+.cardCompleted {
+  border-color: #16a34a;
+}
+
+.cardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .name {
   margin: 0 0 0.25rem;
+  padding-right: 6.5rem;
   font-size: 1.15rem;
   font-weight: 700;
 }
 
 .goal {
-  margin: 0 0 0.9rem;
+  margin: 0;
   font-size: 0.85rem;
   opacity: 0.6;
 }
 
-.footer {
+.progressRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.6rem 1rem;
+  margin-top: 0.9rem;
 }
 
 .badge {
@@ -45,4 +57,45 @@
 
 .badgeActive {
   background: #16a34a;
+}
+
+.completedBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.startButton {
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.startButton:hover:not(:disabled) {
+  border-color: var(--foreground);
+}
+
+.startButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (min-width: 480px) {
+  .startButton {
+    width: auto;
+    align-self: flex-start;
+    padding: 0 1.2rem;
+  }
 }

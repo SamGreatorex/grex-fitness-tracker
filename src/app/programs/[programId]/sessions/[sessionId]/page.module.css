@@ -1,0 +1,88 @@
+.breakdownWrap {
+  max-width: 480px;
+  margin: -1.5rem auto 0;
+  padding: 0 1.25rem 3rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.breakdownTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.9rem;
+}
+
+.exerciseRow {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.exerciseName {
+  font-weight: 700;
+  margin: 0 0 0.6rem;
+}
+
+.setsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.setChip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.setIndex {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.effortDot {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--effort-color);
+  margin-left: auto;
+}
+
+.empty {
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+
+.restartButton {
+  height: 48px;
+  width: 100%;
+  margin-top: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.restartButton:hover {
+  border-color: var(--foreground);
+}

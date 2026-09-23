@@ -1,6 +1,8 @@
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
-const REGION = process.env.AWS_REGION || "eu-west-2";
+// Hardcoded rather than read from AWS_REGION — see src/lib/dynamo.js for why
+// that env var can't be relied on inside Amplify Hosting's SSR compute.
+const REGION = "eu-west-2";
 export const BUCKET = process.env.S3_EXERCISE_MEDIA_BUCKET;
 
 export const s3 = new S3Client({ region: REGION });

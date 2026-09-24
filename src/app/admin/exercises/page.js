@@ -26,9 +26,9 @@ const BODY_AREAS = [
 ];
 
 const TAG_TIERS = [
-  { key: "primaryTags", label: "Primary", hint: "The main muscle(s) this exercise targets." },
-  { key: "secondaryTags", label: "Secondary", hint: "Muscles that assist the primary movers." },
-  { key: "stabilizerTags", label: "Stabilizer", hint: "Muscles that stabilize the movement without driving it." },
+  { key: "primaryTags", label: "Primary", abbr: "Pr", hint: "The main muscle(s) this exercise targets." },
+  { key: "secondaryTags", label: "Secondary", abbr: "Se", hint: "Muscles that assist the primary movers." },
+  { key: "stabilizerTags", label: "Stabilizer", abbr: "St", hint: "Muscles that stabilize the movement without driving it." },
 ];
 
 export default function AdminExercisesPage() {
@@ -393,28 +393,37 @@ export default function AdminExercisesPage() {
               {editingId && <span className={styles.hint}>Name can&apos;t be changed once created — delete and recreate instead.</span>}
             </div>
 
-            {TAG_TIERS.map(({ key, label, hint }) => {
-              const selected = { primaryTags, secondaryTags, stabilizerTags }[key];
-              return (
-                <div key={key} className={styles.field}>
-                  <span className={styles.label}>{label} body areas</span>
-                  <span className={styles.hint}>{hint}</span>
-                  <div className={styles.tagPicker}>
-                    {BODY_AREAS.map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`${styles.tagOption} ${selected.includes(tag) ? styles.tagOptionSelected : ""}`}
-                        onClick={() => toggleTag(key, tag)}
-                        aria-pressed={selected.includes(tag)}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+            <div className={styles.field}>
+              <span className={styles.label}>Body areas</span>
+              <span className={styles.hint}>
+                For each area, pick whether this exercise targets it as a primary mover,
+                secondary assist, or stabilizer — or leave all three off to skip it.
+              </span>
+              <ul className={styles.tagList}>
+                {BODY_AREAS.map((area) => (
+                  <li key={area} className={styles.tagListRow}>
+                    <span className={styles.tagListName}>{area}</span>
+                    <div className={styles.tierButtons}>
+                      {TAG_TIERS.map(({ key, label, abbr }) => {
+                        const selected = { primaryTags, secondaryTags, stabilizerTags }[key].includes(area);
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`${styles.tierButton} ${styles[`tierButton_${key}`]} ${selected ? styles.tierButtonSelected : ""}`}
+                            onClick={() => toggleTag(key, area)}
+                            aria-pressed={selected}
+                            title={`${label} — ${area}`}
+                          >
+                            {abbr}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <div className={styles.fieldRow}>
               <div className={styles.field}>

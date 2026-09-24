@@ -4,6 +4,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3, BUCKET, publicMediaUrl } from "../../../../lib/s3";
 import { slugify } from "../../../../lib/slugify";
 import { getUserId } from "../../../../lib/verifyToken";
+import { withLogging } from "../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -20,7 +21,7 @@ const ALLOWED_TYPES = new Set([
   "video/quicktime",
 ]);
 
-export async function POST(request) {
+export const POST = withLogging("POST /api/exercises/upload-url", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -43,4 +44,4 @@ export async function POST(request) {
   );
 
   return NextResponse.json({ uploadUrl, key, mediaType, publicUrl: publicMediaUrl(key) });
-}
+});

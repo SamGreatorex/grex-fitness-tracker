@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
 import { getUserId } from "../../../lib/verifyToken";
+import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
 
-export async function GET(request) {
+export const GET = withLogging("GET /api/sessions", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -28,9 +29,9 @@ export async function GET(request) {
   sessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
 
   return NextResponse.json({ sessions });
-}
+});
 
-export async function POST(request) {
+export const POST = withLogging("POST /api/sessions", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -98,4 +99,4 @@ export async function POST(request) {
   }
 
   return NextResponse.json({ session }, { status: 201 });
-}
+});

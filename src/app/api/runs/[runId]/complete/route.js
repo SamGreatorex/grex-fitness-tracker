@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getUserId } from "../../../../../lib/verifyToken";
+import { withLogging } from "../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 // if that was the last week), mirroring the automatic advance that happens
 // when the last day of a week is finished. scope "program" marks the run
 // completed outright, regardless of which week it's on.
-export async function POST(request, { params }) {
+export const POST = withLogging("POST /api/runs/[runId]/complete", async (request, { params }) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -60,4 +61,4 @@ export async function POST(request, { params }) {
   );
 
   return NextResponse.json({ ok: true, currentWeek: nextWeek, finished });
-}
+});

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { GetCommand, QueryCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getUserId } from "../../../../../lib/verifyToken";
+import { withLogging } from "../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -19,7 +20,7 @@ export const dynamic = "force-dynamic";
 // it's no longer picked up as the active run) without touching its logged
 // sessions — the program page falls back to the pre-start screen ("Start
 // program"/"Start again"), and a future run starts clean from week 1.
-export async function POST(request, { params }) {
+export const POST = withLogging("POST /api/runs/[runId]/restart", async (request, { params }) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -67,4 +68,4 @@ export async function POST(request, { params }) {
   );
 
   return NextResponse.json({ ok: true, deletedSessions: toDelete.length });
-}
+});

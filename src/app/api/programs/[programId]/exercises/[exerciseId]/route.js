@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../../lib/dynamo";
 import { getUserId } from "../../../../../../lib/verifyToken";
+import { withLogging } from "../../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 // is used every future time this day comes up — not just for one session.
 // `exerciseId` is only unique within a day (it's just that day's array
 // index), so `dayId` must be given too to find the right slot.
-export async function PATCH(request, { params }) {
+export const PATCH = withLogging("PATCH /api/programs/[programId]/exercises/[exerciseId]", async (request, { params }) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -43,4 +44,4 @@ export async function PATCH(request, { params }) {
   await ddb.send(new PutCommand({ TableName: TABLES.programs, Item: program }));
 
   return NextResponse.json({ program, exercise });
-}
+});

@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { getUserId } from "../../../../lib/verifyToken";
+import { withLogging } from "../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
 
-export async function GET(request, { params }) {
+export const GET = withLogging("GET /api/programs/[programId]", async (request, { params }) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -20,9 +21,9 @@ export async function GET(request, { params }) {
   if (!result.Item) return NextResponse.json({ error: "Program not found" }, { status: 404 });
 
   return NextResponse.json({ program: result.Item });
-}
+});
 
-export async function PATCH(request, { params }) {
+export const PATCH = withLogging("PATCH /api/programs/[programId]", async (request, { params }) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -51,4 +52,4 @@ export async function PATCH(request, { params }) {
     }
     throw err;
   }
-}
+});

@@ -4,13 +4,14 @@ import { ddb, TABLES } from "../../../lib/dynamo";
 import { slugify } from "../../../lib/slugify";
 import { getUserId } from "../../../lib/verifyToken";
 import { deleteMediaObject, publicMediaUrl } from "../../../lib/s3";
+import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
 
-export async function GET(request) {
+export const GET = withLogging("GET /api/exercises", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -18,9 +19,9 @@ export async function GET(request) {
   const exercises = (result.Items || []).sort((a, b) => a.name.localeCompare(b.name));
 
   return NextResponse.json({ exercises });
-}
+});
 
-export async function POST(request) {
+export const POST = withLogging("POST /api/exercises", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -73,4 +74,4 @@ export async function POST(request) {
   await ddb.send(new PutCommand({ TableName: TABLES.exercises, Item: exercise }));
 
   return NextResponse.json({ exercise }, { status: 201 });
-}
+});

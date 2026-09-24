@@ -5,6 +5,11 @@ import { slugify } from "../../../lib/slugify";
 import { getUserId } from "../../../lib/verifyToken";
 import { deleteMediaObject, publicMediaUrl } from "../../../lib/s3";
 
+// Every response here is per-user data pulled fresh from DynamoDB/S3 — it
+// must never be cached by CloudFront (Amplify Hosting sits behind it), or
+// one user's stale response can get served to everyone after that.
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -3,6 +3,11 @@ import { GetCommand, QueryCommand, DeleteCommand, UpdateCommand } from "@aws-sdk
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getUserId } from "../../../../../lib/verifyToken";
 
+// Every response here is per-user data pulled fresh from DynamoDB/S3 — it
+// must never be cached by CloudFront (Amplify Hosting sits behind it), or
+// one user's stale response can get served to everyone after that.
+export const dynamic = "force-dynamic";
+
 // scope "day" isn't handled here — restarting a single day just means
 // navigating back into it, which needs no server change (a new session is
 // simply added alongside the old one).

@@ -3,6 +3,11 @@ import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../../lib/dynamo";
 import { getUserId } from "../../../../../../lib/verifyToken";
 
+// Every response here is per-user data pulled fresh from DynamoDB/S3 — it
+// must never be cached by CloudFront (Amplify Hosting sits behind it), or
+// one user's stale response can get served to everyone after that.
+export const dynamic = "force-dynamic";
+
 // Persists a switched exercise back into the programme itself, so the swap
 // is used every future time this day comes up — not just for one session.
 // `exerciseId` is only unique within a day (it's just that day's array

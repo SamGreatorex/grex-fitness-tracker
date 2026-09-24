@@ -3,6 +3,11 @@ import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getUserId } from "../../../../../lib/verifyToken";
 
+// Every response here is per-user data pulled fresh from DynamoDB/S3 — it
+// must never be cached by CloudFront (Amplify Hosting sits behind it), or
+// one user's stale response can get served to everyone after that.
+export const dynamic = "force-dynamic";
+
 // Manual "Complete week" / "Complete program" actions — an explicit way to
 // move on even if not every day this week (or every week) was logged.
 // scope "week" advances currentWeek by one (marking the run completed too

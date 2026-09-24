@@ -1,21 +1,14 @@
+/* One fixed theme, matching the flame app icon, rather than following the
+   system light/dark preference — the icon's navy-and-orange look is the
+   app's identity, not just its dark-mode variant. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --card-bg: #ffffff;
-  --border: rgba(0, 0, 0, 0.12);
-  /* Brand accent — the flame logo's warm orange, replacing the old plain
-     black used for primary buttons/badges throughout the app. */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --border: rgba(255, 255, 255, 0.14);
   --accent: #f97316;
   --accent-hover: #ea580c;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-    --card-bg: #1e293b;
-    --border: rgba(255, 255, 255, 0.14);
-  }
+  color-scheme: dark;
 }
 
 html {
@@ -66,37 +59,19 @@ textarea {
   font-size: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-
 /* Chart color tokens (dataviz reference palette) — shared, unscoped, so
    every chart component (which may live in separate CSS Modules) inherits
-   the same values from one place. */
+   the same values from one place. Fixed to the app's one dark theme, and
+   --series-1 uses the brand orange instead of the reference palette's blue
+   so charts match the rest of the app. */
 .vizRoot {
-  --surface-1: #fcfcfb;
-  --text-primary: #0b0b0b;
-  --text-secondary: #52514e;
+  --surface-1: #1a1a19;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
   --text-muted: #898781;
-  --gridline: #e1e0d9;
-  --baseline: #c3c2b7;
-  --series-1: #2a78d6;
+  --gridline: #2c2c2a;
+  --baseline: #383835;
+  --series-1: #f97316;
   --status-good: #0ca30c;
-  --status-critical: #d03b3b;
-}
-
-@media (prefers-color-scheme: dark) {
-  .vizRoot {
-    --surface-1: #1a1a19;
-    --text-primary: #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted: #898781;
-    --gridline: #2c2c2a;
-    --baseline: #383835;
-    --series-1: #3987e5;
-    --status-good: #0ca30c;
-    --status-critical: #e66767;
-  }
+  --status-critical: #e66767;
 }

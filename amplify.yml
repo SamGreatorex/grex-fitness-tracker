@@ -1,0 +1,23 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --cache .npm --prefer-offline
+    build:
+      commands:
+        # Amplify only exposes console/branch-configured environment
+        # variables to this build shell — Next.js's server code can't see
+        # them at runtime unless they're written into .env.production here,
+        # which Next.js bundles and Amplify's SSR compute reads from when
+        # actually serving requests. See docs/ENV_SETUP.md for the full list.
+        - env | grep -e DYNAMODB_TABLE_ -e S3_EXERCISE_MEDIA_BUCKET -e NEXT_PUBLIC_ >> .env.production
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .next/cache/**/*
+      - .npm/**/*

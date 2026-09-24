@@ -146,7 +146,7 @@
 }
 
 .tagPrimary {
-  background: #111827;
+  background: var(--accent);
   color: #fff;
 }
 

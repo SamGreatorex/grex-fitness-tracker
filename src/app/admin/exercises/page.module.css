@@ -35,7 +35,7 @@
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
-  background: #111827;
+  background: var(--accent);
   color: #fff;
   white-space: nowrap;
 }
@@ -166,8 +166,8 @@
 }
 
 .tagOptionSelected {
-  background: #111827;
-  border-color: #111827;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 
@@ -201,7 +201,7 @@
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
-  background: #111827;
+  background: var(--accent);
   color: #fff;
 }
 
@@ -306,7 +306,7 @@
 }
 
 .rowTagPrimary {
-  background: #111827;
+  background: var(--accent);
   color: #fff;
 }
 

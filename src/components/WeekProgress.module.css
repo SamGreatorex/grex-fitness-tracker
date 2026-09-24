@@ -24,6 +24,6 @@
 }
 
 .dotCurrent {
-  border-color: #111827;
-  color: #111827;
+  border-color: var(--accent);
+  color: var(--accent);
 }

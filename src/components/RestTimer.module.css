@@ -64,13 +64,13 @@
 }
 
 .primary {
-  background: #111827;
+  background: var(--accent);
   color: #fff;
-  border-color: #111827;
+  border-color: var(--accent);
 }
 
 .primary:hover {
-  background: #1f2937;
+  background: var(--accent-hover);
 }
 
 .effortSection {

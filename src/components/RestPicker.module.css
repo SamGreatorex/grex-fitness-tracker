@@ -98,8 +98,8 @@
 }
 
 .presetButtonSelected {
-  background: #111827;
-  border-color: #111827;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 
@@ -130,10 +130,10 @@
 
 .applyAll {
   border: 0;
-  background: #111827;
+  background: var(--accent);
   color: #fff;
 }
 
 .applyAll:hover {
-  background: #1f2937;
+  background: var(--accent-hover);
 }

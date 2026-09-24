@@ -41,8 +41,8 @@
 }
 
 .granularityButtonSelected {
-  background: #111827;
-  border-color: #111827;
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 

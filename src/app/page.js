@@ -9,6 +9,23 @@ import AppHeader from "../components/AppHeader";
 import ProgramCard from "../components/ProgramCard";
 import styles from "./page.module.css";
 
+function ReportsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3v18h18" />
+      <path d="M18 9l-5 5-4-4-3 3" />
+    </svg>
+  );
+}
+
+function DumbbellIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 9.5v5M6.5 6.5v11M17.5 6.5v11M22 9.5v5M6.5 12h11" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const { user, loading: sessionLoading } = useAuth();
@@ -77,19 +94,18 @@ export default function Home() {
     <>
       <AppHeader />
       <main className={styles.main}>
-        <div className={styles.headerRow}>
-          <div>
-            <h1 className={styles.title}>Your programs</h1>
-            <p className={styles.subtitle}>Pick a program to start or continue.</p>
-          </div>
-          <div className={styles.headerLinks}>
-            <Link href="/reports" className={styles.adminLink}>
-              Progress reports
-            </Link>
-            <Link href="/admin/exercises" className={styles.adminLink}>
-              Manage exercise library
-            </Link>
-          </div>
+        <h1 className={styles.title}>Your programs</h1>
+        <p className={styles.subtitle}>Pick a program to start or continue.</p>
+
+        <div className={styles.quickLinks}>
+          <Link href="/reports" className={styles.quickLink}>
+            <ReportsIcon />
+            Progress reports
+          </Link>
+          <Link href="/admin/exercises" className={styles.quickLink}>
+            <DumbbellIcon />
+            Exercise library
+          </Link>
         </div>
 
         {error && <p>{error}</p>}

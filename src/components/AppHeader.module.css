@@ -18,8 +18,18 @@
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+}
+
+.brandIcon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
 }
 
 .back {

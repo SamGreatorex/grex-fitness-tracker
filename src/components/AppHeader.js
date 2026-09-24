@@ -15,7 +15,11 @@ export default function AppHeader({ backHref, backLabel }) {
             ← {backLabel || "Back"}
           </Link>
         ) : (
-          <span className={styles.brand}>Grex Fitness</span>
+          <span className={styles.brand}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.svg" alt="" width={28} height={28} className={styles.brandIcon} />
+            Grex Fitness
+          </span>
         )}
       </div>
       <div className={styles.right}>

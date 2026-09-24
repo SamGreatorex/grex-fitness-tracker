@@ -98,13 +98,13 @@ export default function Home() {
         <p className={styles.subtitle}>Pick a program to start or continue.</p>
 
         <div className={styles.quickLinks}>
-          <Link href="/reports" className={styles.quickLink}>
+          <Link href="/reports" className={styles.quickLink} aria-label="Progress reports">
             <ReportsIcon />
-            Progress reports
+            <span className={styles.quickLinkTooltip}>Progress reports</span>
           </Link>
-          <Link href="/admin/exercises" className={styles.quickLink}>
+          <Link href="/admin/exercises" className={styles.quickLink} aria-label="Exercise library">
             <DumbbellIcon />
-            Exercise library
+            <span className={styles.quickLinkTooltip}>Exercise library</span>
           </Link>
         </div>
 

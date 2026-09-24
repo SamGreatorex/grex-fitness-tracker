@@ -20,22 +20,48 @@
 }
 
 .quickLink {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  height: 42px;
-  padding: 0 1rem;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--card-bg);
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
+  color: inherit;
 }
 
-.quickLink:hover {
+.quickLink:hover,
+.quickLink:focus-visible {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.quickLinkTooltip {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 1;
+}
+
+.quickLink:hover .quickLinkTooltip,
+.quickLink:focus-visible .quickLinkTooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 @media (min-width: 640px) {

@@ -293,53 +293,57 @@ export default function AdminExercisesPage() {
               const usageExpanded = expandedUsageId === exercise.exerciseId;
               return (
                 <div key={exercise.exerciseId} className={styles.row}>
-                  {exercise.mediaType === "video" && exercise.mediaUrl ? (
-                    <video className={styles.rowThumb} src={exercise.mediaUrl} muted />
-                  ) : exercise.mediaUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img className={styles.rowThumb} src={exercise.mediaUrl} alt="" />
-                  ) : (
-                    <div className={styles.rowThumbPlaceholder} />
-                  )}
-                  <div className={styles.rowInfo}>
-                    <p className={styles.rowName}>{exercise.name}</p>
-                    {(exercise.defaultWeight != null || exercise.defaultReps != null) && (
-                      <p className={styles.rowMeta}>
-                        Default: {exercise.defaultWeight ?? "—"}kg × {exercise.defaultReps ?? "—"} reps
-                      </p>
+                  <div className={styles.rowHeader}>
+                    {exercise.mediaType === "video" && exercise.mediaUrl ? (
+                      <video className={styles.rowThumb} src={exercise.mediaUrl} muted />
+                    ) : exercise.mediaUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img className={styles.rowThumb} src={exercise.mediaUrl} alt="" />
+                    ) : (
+                      <div className={styles.rowThumbPlaceholder} />
                     )}
-                    <div className={styles.rowTags}>
-                      {exercise.primaryTags?.map((tag) => (
-                        <span key={`p-${tag}`} className={`${styles.rowTag} ${styles.rowTagPrimary}`}>{tag}</span>
-                      ))}
-                      {exercise.secondaryTags?.map((tag) => (
-                        <span key={`s-${tag}`} className={`${styles.rowTag} ${styles.rowTagSecondary}`}>{tag}</span>
-                      ))}
-                      {exercise.stabilizerTags?.map((tag) => (
-                        <span key={`st-${tag}`} className={`${styles.rowTag} ${styles.rowTagStabilizer}`}>{tag}</span>
-                      ))}
+                    <div className={styles.rowInfo}>
+                      <p className={styles.rowName}>{exercise.name}</p>
+                      {(exercise.defaultWeight != null || exercise.defaultReps != null) && (
+                        <p className={styles.rowMeta}>
+                          Default: {exercise.defaultWeight ?? "—"}kg × {exercise.defaultReps ?? "—"} reps
+                        </p>
+                      )}
                     </div>
-
-                    <button
-                      type="button"
-                      className={styles.usageToggle}
-                      onClick={() => toggleUsage(exercise.exerciseId)}
-                      aria-expanded={usageExpanded}
-                    >
-                      {usage.length > 0
-                        ? `Used in ${usage.length} programme day${usage.length === 1 ? "" : "s"}`
-                        : "Not used in any programme"}
-                      {usage.length > 0 && <span className={styles.usageChevron}>{usageExpanded ? "▲" : "▼"}</span>}
-                    </button>
-
-                    {usageExpanded && usage.length > 0 && (
-                      <ul className={styles.usageList}>
-                        {usage.map((u, i) => (
-                          <li key={i} className={styles.usageItem}>{u.programName} · {u.dayLabel}</li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
+
+                  <div className={styles.rowTags}>
+                    {exercise.primaryTags?.map((tag) => (
+                      <span key={`p-${tag}`} className={`${styles.rowTag} ${styles.rowTagPrimary}`}>{tag}</span>
+                    ))}
+                    {exercise.secondaryTags?.map((tag) => (
+                      <span key={`s-${tag}`} className={`${styles.rowTag} ${styles.rowTagSecondary}`}>{tag}</span>
+                    ))}
+                    {exercise.stabilizerTags?.map((tag) => (
+                      <span key={`st-${tag}`} className={`${styles.rowTag} ${styles.rowTagStabilizer}`}>{tag}</span>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.usageToggle}
+                    onClick={() => toggleUsage(exercise.exerciseId)}
+                    aria-expanded={usageExpanded}
+                  >
+                    {usage.length > 0
+                      ? `Used in ${usage.length} programme day${usage.length === 1 ? "" : "s"}`
+                      : "Not used in any programme"}
+                    {usage.length > 0 && <span className={styles.usageChevron}>{usageExpanded ? "▲" : "▼"}</span>}
+                  </button>
+
+                  {usageExpanded && usage.length > 0 && (
+                    <ul className={styles.usageList}>
+                      {usage.map((u, i) => (
+                        <li key={i} className={styles.usageItem}>{u.programName} · {u.dayLabel}</li>
+                      ))}
+                    </ul>
+                  )}
+
                   <div className={styles.rowActions}>
                     <button type="button" className={styles.rowButton} onClick={() => openEditDialog(exercise)}>
                       Edit

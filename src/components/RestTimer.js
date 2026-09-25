@@ -6,7 +6,9 @@ import { effortColor } from "../lib/effort";
 import { playAlarm } from "../lib/alarm";
 
 const EFFORT_LEVELS = Array.from({ length: 10 }, (_, i) => i + 1);
-const AUTO_CLOSE_DELAY_MS = 1200;
+// Long enough for the full alarm (6 quick beeps, ~0.96s) to finish before
+// the dialog closes itself.
+const AUTO_CLOSE_DELAY_MS = 1300;
 
 // Rest countdown, shown between sets. Uses an absolute end timestamp rather
 // than decrementing a counter each tick, so it stays accurate even if the

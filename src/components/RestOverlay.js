@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./RestOverlay.module.css";
 import { playAlarm } from "../lib/alarm";
+import { useWakeLock } from "../lib/useWakeLock";
 
 const AUTO_DISMISS_DELAY_MS = 1300;
 
@@ -17,6 +18,10 @@ export default function RestOverlay({ seconds, onClose }) {
   const [remaining, setRemaining] = useState(seconds);
   const firedRef = useRef(false);
   const audioCtxRef = useRef(null);
+
+  // Only held while this overlay (i.e. an active rest countdown) is
+  // mounted — released automatically as soon as it's dismissed.
+  useWakeLock();
 
   // Created on mount (a direct result of the "Log" button click that
   // triggered this overlay) so the browser treats it as tied to a user

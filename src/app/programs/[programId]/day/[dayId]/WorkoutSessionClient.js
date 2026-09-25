@@ -12,6 +12,7 @@ import EffortDialog from "../../../../../components/EffortDialog";
 import WorkoutSummary from "../../../../../components/WorkoutSummary";
 import { slugify } from "../../../../../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../../../../../lib/sessionStats";
+import { useWakeLock } from "../../../../../lib/useWakeLock";
 import styles from "./page.module.css";
 
 // Walks backward from `index` through this exercise's sets (in the current
@@ -73,6 +74,13 @@ export default function WorkoutSessionClient() {
   const week = Number(searchParams.get("week")) || 1;
   const router = useRouter();
   const { user, loading: sessionLoading } = useAuth();
+
+  // Held for as long as this workout session is open — the elapsed
+  // workout timer in the header runs the whole time too, and this is
+  // exactly the kind of screen you'd otherwise glance at only occasionally
+  // between sets, which is enough for the phone's own screen-lock timeout
+  // to kick in.
+  useWakeLock();
 
   const [program, setProgram] = useState(null);
   const [day, setDay] = useState(null);

@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import styles from "./RestPicker.module.css";
 
-const PRESETS = [15, 30, 45, 60, 90, 120, 180];
+const PRESETS = [0, 15, 30, 45, 60, 90, 120, 180];
 
 function formatMmSs(totalSeconds) {
   const safe = Math.max(0, totalSeconds || 0);

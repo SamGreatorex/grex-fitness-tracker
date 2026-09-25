@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../../components/AuthProvider";
 import { api } from "../../../../../lib/apiClient";
 import AppHeader from "../../../../../components/AppHeader";
 import ExerciseCard from "../../../../../components/ExerciseCard";
 import ElapsedTimer from "../../../../../components/ElapsedTimer";
-import RestTimer from "../../../../../components/RestTimer";
+import RestOverlay from "../../../../../components/RestOverlay";
+import EffortDialog from "../../../../../components/EffortDialog";
 import WorkoutSummary from "../../../../../components/WorkoutSummary";
 import { slugify } from "../../../../../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../../../../../lib/sessionStats";
@@ -81,7 +82,16 @@ export default function WorkoutSessionClient() {
   const [sessionsCache, setSessionsCache] = useState([]);
   const [setsByExercise, setSetsByExercise] = useState(null);
   const [startedAt] = useState(() => Date.now());
-  const [restContext, setRestContext] = useState(null);
+  // Independent of each other: the rest countdown is a non-blocking
+  // floating overlay (browsing the rest of the app stays possible while
+  // it counts down), while the effort dialog is a small blocking modal
+  // that only asks "how did that feel?" and closes itself on an answer.
+  const [restOverlay, setRestOverlay] = useState(null);
+  const [effortContext, setEffortContext] = useState(null);
+  // Forces RestOverlay to remount (fresh countdown) each time a new rest
+  // period starts, without reaching for an impure Date.now()/Math.random()
+  // key during an event handler.
+  const restOverlayKeyRef = useRef(0);
   const [finishing, setFinishing] = useState(false);
   // Which summary screen is showing right now, and the (possibly several)
   // summaries queued up behind it — finishing a day can also complete the
@@ -264,9 +274,13 @@ export default function WorkoutSessionClient() {
       [exerciseId]: prev[exerciseId].map((s, i) => (i === setIndex ? { ...s, weight, reps, completed: true } : s)),
     }));
 
-    // Still show the effort prompt for the very last set of the day — it
-    // just skips the countdown/alarm since there's nothing left to rest for.
-    setRestContext({ exerciseId, setIndex, seconds: restSeconds, showTimer: !isLastSetOverall });
+    // Always ask about effort. Only start a rest countdown if there's
+    // actually more to rest for — not after the very last set of the day.
+    setEffortContext({ exerciseId, setIndex });
+    if (!isLastSetOverall) {
+      restOverlayKeyRef.current += 1;
+      setRestOverlay({ key: restOverlayKeyRef.current, seconds: restSeconds });
+    }
   };
 
   const setEffort = (exerciseId, setIndex, effort) => {
@@ -400,13 +414,15 @@ export default function WorkoutSessionClient() {
         </div>
       </main>
 
-      {restContext && (
-        <RestTimer
-          seconds={restContext.seconds}
-          showTimer={restContext.showTimer}
-          effort={setsByExercise[restContext.exerciseId][restContext.setIndex].effort}
-          onSelectEffort={(value) => setEffort(restContext.exerciseId, restContext.setIndex, value)}
-          onClose={() => setRestContext(null)}
+      {restOverlay && (
+        <RestOverlay key={restOverlay.key} seconds={restOverlay.seconds} onClose={() => setRestOverlay(null)} />
+      )}
+
+      {effortContext && (
+        <EffortDialog
+          effort={setsByExercise[effortContext.exerciseId][effortContext.setIndex].effort}
+          onSelectEffort={(value) => setEffort(effortContext.exerciseId, effortContext.setIndex, value)}
+          onClose={() => setEffortContext(null)}
         />
       )}
     </>

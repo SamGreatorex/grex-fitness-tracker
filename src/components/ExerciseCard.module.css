@@ -204,6 +204,14 @@
   color: #fff;
 }
 
+.setNumberButton {
+  cursor: pointer;
+}
+
+.setNumberButton:hover {
+  opacity: 0.85;
+}
+
 .input {
   width: 100%;
   min-width: 0;

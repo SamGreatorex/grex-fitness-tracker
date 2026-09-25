@@ -64,6 +64,7 @@ export default function ExerciseCard({
   libraryEntries,
   onSetField,
   onLogSet,
+  onEditEffort,
   onApplyRestToAll,
   onSwitchExercise,
 }) {
@@ -179,15 +180,29 @@ export default function ExerciseCard({
         const last = lastSets?.[i];
         const effort = set.effort ?? last?.effort ?? null;
         const effortIsCurrent = set.effort != null;
+        const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""} ${set.completed ? styles.setNumberButton : ""}`;
+        const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
         return (
           <div key={i} className={styles.setRow}>
-            <span
-              className={`${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""}`}
-              style={effort != null ? { "--effort-color": effortColor(effort) } : undefined}
-              title={effort != null ? (effortIsCurrent ? `Effort: ${effort}/10` : `Last time: ${effort}/10`) : `Set ${i + 1}`}
-            >
-              {effort != null ? effort : i + 1}
-            </span>
+            {set.completed ? (
+              <button
+                type="button"
+                className={badgeClassName}
+                style={badgeStyle}
+                title={`${effort != null ? `Effort: ${effort}/10` : `Set ${i + 1}`} — tap to change`}
+                onClick={() => onEditEffort(i)}
+              >
+                {effort != null ? effort : i + 1}
+              </button>
+            ) : (
+              <span
+                className={badgeClassName}
+                style={badgeStyle}
+                title={effort != null ? `Last time: ${effort}/10` : `Set ${i + 1}`}
+              >
+                {effort != null ? effort : i + 1}
+              </span>
+            )}
             <input
               className={styles.input}
               type="number"

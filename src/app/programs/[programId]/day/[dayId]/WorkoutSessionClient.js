@@ -290,6 +290,13 @@ export default function WorkoutSessionClient() {
     }));
   };
 
+  // Re-opens the effort dialog for an already-logged set — unlike
+  // onLogSet, this never starts a new rest countdown, since the set was
+  // logged (and any rest already served) a while ago.
+  const onEditEffort = (exerciseId, setIndex) => {
+    setEffortContext({ exerciseId, setIndex });
+  };
+
   const onApplyRestToAll = (exerciseId, restSeconds) => {
     setSetsByExercise((prev) => ({
       ...prev,
@@ -402,6 +409,7 @@ export default function WorkoutSessionClient() {
             libraryEntries={exerciseLibraryList}
             onSetField={(setIndex, field, value) => onSetField(exercise.exerciseId, setIndex, field, value)}
             onLogSet={(setIndex) => onLogSet(exercise.exerciseId, setIndex)}
+            onEditEffort={(setIndex) => onEditEffort(exercise.exerciseId, setIndex)}
             onApplyRestToAll={(secs) => onApplyRestToAll(exercise.exerciseId, secs)}
             onSwitchExercise={(newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise)}
           />

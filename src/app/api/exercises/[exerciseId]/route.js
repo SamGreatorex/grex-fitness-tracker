@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
-import { getUserId } from "../../../../lib/verifyToken";
 import { deleteMediaObject } from "../../../../lib/s3";
 import { withLogging } from "../../../../lib/apiHandler";
+import { requireRole } from "../../../../lib/users";
+import { ROLES } from "../../../../lib/profile";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -11,8 +12,9 @@ import { withLogging } from "../../../../lib/apiHandler";
 export const dynamic = "force-dynamic";
 
 export const DELETE = withLogging("DELETE /api/exercises/[exerciseId]", async (request, { params }) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Managing the exercise library is admin-only (reading it is not — see GET).
+  const { denied } = await requireRole(request, [ROLES.ADMIN]);
+  if (denied) return denied;
 
   const { exerciseId } = await params;
 

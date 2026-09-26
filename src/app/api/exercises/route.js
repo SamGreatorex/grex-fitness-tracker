@@ -5,6 +5,8 @@ import { slugify } from "../../../lib/slugify";
 import { getUserId } from "../../../lib/verifyToken";
 import { deleteMediaObject, publicMediaUrl } from "../../../lib/s3";
 import { withLogging } from "../../../lib/apiHandler";
+import { requireRole } from "../../../lib/users";
+import { ROLES } from "../../../lib/profile";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -22,8 +24,9 @@ export const GET = withLogging("GET /api/exercises", async (request) => {
 });
 
 export const POST = withLogging("POST /api/exercises", async (request) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Managing the exercise library is admin-only (reading it is not — see GET).
+  const { denied } = await requireRole(request, [ROLES.ADMIN]);
+  if (denied) return denied;
 
   const body = await request.json();
   const { name, primaryTags = [], secondaryTags = [], stabilizerTags = [], mediaType, mediaKey, defaultWeight, defaultReps } = body;

@@ -18,10 +18,13 @@ function ReportsIcon() {
   );
 }
 
-function DumbbellIcon() {
+function TapeMeasureIcon() {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 9.5v5M6.5 6.5v11M17.5 6.5v11M22 9.5v5M6.5 12h11" />
+      <circle cx="9" cy="12" r="6" />
+      <circle cx="9" cy="12" r="1.5" />
+      <path d="M15 12h7v5H9" />
+      <path d="M18 17v-2M21 17v-2" />
     </svg>
   );
 }
@@ -102,9 +105,9 @@ export default function Home() {
             <ReportsIcon />
             <span className={styles.quickLinkTooltip}>Progress reports</span>
           </Link>
-          <Link href="/admin/exercises" className={styles.quickLink} aria-label="Exercise library">
-            <DumbbellIcon />
-            <span className={styles.quickLinkTooltip}>Exercise library</span>
+          <Link href="/measurements" className={styles.quickLink} aria-label="Body measurements">
+            <TapeMeasureIcon />
+            <span className={styles.quickLinkTooltip}>Body measurements</span>
           </Link>
         </div>
 
@@ -113,7 +116,7 @@ export default function Home() {
         {!programs ? (
           <p className={styles.empty}>Loading programs…</p>
         ) : programs.length === 0 ? (
-          <p className={styles.empty}>No programs found. Run the seed script to load your plan.</p>
+          <p className={styles.empty}>No programmes yet — your PT will set one up for you.</p>
         ) : (
           <div className={styles.grid}>
             {programs.map((program) => {

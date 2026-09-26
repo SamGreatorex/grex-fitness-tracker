@@ -129,3 +129,18 @@ export function trendDelta(series) {
   if (!prev) return null;
   return ((current - prev) / prev) * 100;
 }
+
+// Body weight / a tape measurement over time from measurement entries
+// ({ date: "YYYY-MM-DD", weightKg, measurements }). `getValue(entry)`
+// picks the number (or null if that entry didn't record it). Each period
+// shows the latest reading in it — a weigh-in is a point-in-time value,
+// so averaging or summing across a week would misrepresent it.
+export function bodyMetricSeries(entries, getValue, granularity) {
+  const buckets = new Map();
+  for (const entry of [...entries].sort((a, b) => a.date.localeCompare(b.date))) {
+    const value = getValue(entry);
+    if (value == null) continue;
+    buckets.set(periodKey(entry.date, granularity), [value]);
+  }
+  return toSortedSeries(buckets, granularity, (values) => values[values.length - 1]);
+}

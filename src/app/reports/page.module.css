@@ -46,6 +46,40 @@
   color: #fff;
 }
 
+.link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.measureChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.measureChip {
+  height: 32px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.measureChip:hover {
+  border-color: var(--foreground);
+}
+
+.measureChipSelected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .sectionTitle {
   font-size: 1.05rem;
   font-weight: 700;

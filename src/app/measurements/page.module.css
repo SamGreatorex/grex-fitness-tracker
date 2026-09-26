@@ -1,0 +1,275 @@
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  opacity: 0.65;
+  margin-bottom: 1.5rem;
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+}
+
+.guide svg {
+  max-width: 200px;
+}
+
+.hint {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0.85;
+  text-align: center;
+  min-height: 2.8em;
+}
+
+@media (min-width: 720px) {
+  .layout {
+    grid-template-columns: 260px 1fr;
+  }
+
+  .guide {
+    position: sticky;
+    top: 90px;
+  }
+
+  .guide svg {
+    max-width: 230px;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.sectionLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.65;
+  margin-top: 0.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fieldActive .label {
+  color: var(--accent);
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.unitInputWrap {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.unitInput {
+  padding-right: 36px;
+}
+
+.unitSuffix {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.success {
+  font-size: 0.85rem;
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.button {
+  height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.unitNote {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 2rem 0 0.9rem;
+}
+
+.empty {
+  opacity: 0.65;
+}
+
+.history {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.historyRow {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+.historyRowActive {
+  border-color: var(--accent);
+}
+
+.historyMain {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 0.8rem 1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.historyDate {
+  font-weight: 700;
+}
+
+.historyWeight {
+  font-weight: 600;
+  text-align: right;
+}
+
+.historyMeasures {
+  grid-column: 1 / -1;
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.deleteButton {
+  flex-shrink: 0;
+  width: 44px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+  color: #f87171;
+}

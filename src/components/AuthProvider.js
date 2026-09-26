@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { fetchAuthSession, getCurrentUser, signOut as amplifySignOut } from "aws-amplify/auth";
 import { Hub } from "aws-amplify/utils";
+import { api } from "../lib/apiClient";
 import "../lib/aws-config";
 
 const AuthContext = createContext(null);
@@ -11,6 +12,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
+  // The signed-in user's row from the users table (role + profile fields).
+  // null while signed out or still loading.
+  const [profile, setProfile] = useState(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -22,9 +26,16 @@ export function AuthProvider({ children }) {
     } catch {
       setUser(null);
       setUserId(null);
+      setProfile(null);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    const { user: p } = await api.get("/api/me");
+    setProfile(p);
+    return p;
   }, []);
 
   useEffect(() => {
@@ -39,14 +50,28 @@ export function AuthProvider({ children }) {
     return () => unsub();
   }, [refresh]);
 
+  // Keyed on userId rather than run inside refresh(), so a token refresh
+  // for the same user doesn't refetch the profile.
+  useEffect(() => {
+    if (!userId) return;
+    (async () => {
+      try {
+        await refreshProfile();
+      } catch (err) {
+        console.error("Could not load profile", err);
+      }
+    })();
+  }, [userId, refreshProfile]);
+
   const signOut = async () => {
     await amplifySignOut();
     setUser(null);
     setUserId(null);
+    setProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, userId, loading, signOut, refresh }}>
+    <AuthContext.Provider value={{ user, userId, loading, signOut, refresh, profile, setProfile, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

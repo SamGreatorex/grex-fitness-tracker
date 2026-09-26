@@ -20,4 +20,6 @@ export const TABLES = {
   runs: process.env.DYNAMODB_TABLE_RUNS,
   sessions: process.env.DYNAMODB_TABLE_SESSIONS,
   exercises: process.env.DYNAMODB_TABLE_EXERCISES,
+  users: process.env.DYNAMODB_TABLE_USERS,
+  measurements: process.env.DYNAMODB_TABLE_MEASUREMENTS,
 };

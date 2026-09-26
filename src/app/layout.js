@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "../components/AuthProvider";
+import ProfileSetupDialog from "../components/ProfileSetupDialog";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,7 +34,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <ProfileSetupDialog />
+        </AuthProvider>
       </body>
     </html>
   );

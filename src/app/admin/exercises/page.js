@@ -59,7 +59,7 @@ export default function AdminExercisesPage() {
     try {
       const [{ exercises }, { programs }] = await Promise.all([
         api.get("/api/exercises"),
-        api.get("/api/programs"),
+        api.get("/api/programs", { scope: "all" }),
       ]);
       setExercises(exercises);
 
@@ -248,7 +248,7 @@ export default function AdminExercisesPage() {
 
   return (
     <>
-      <AppHeader backHref="/" backLabel="Programs" />
+      <AppHeader backHref="/admin" backLabel="Admin" />
       <main className={styles.main}>
         <div className={styles.headerRow}>
           <div>

@@ -28,6 +28,8 @@ DYNAMODB_TABLE_PROGRAMS=grex-fitness-tracker-dev-programs
 DYNAMODB_TABLE_RUNS=grex-fitness-tracker-dev-program-runs
 DYNAMODB_TABLE_SESSIONS=grex-fitness-tracker-dev-workout-sessions
 DYNAMODB_TABLE_EXERCISES=grex-fitness-tracker-dev-exercises
+DYNAMODB_TABLE_USERS=grex-fitness-tracker-dev-users
+DYNAMODB_TABLE_MEASUREMENTS=grex-fitness-tracker-dev-body-measurements
 S3_EXERCISE_MEDIA_BUCKET=
 
 AWS_PROFILE=sam-personal
@@ -45,10 +47,10 @@ hardcoded.
 are plain Node, so point them at whichever environment you mean to seed:
 
 ```
-node --env-file=.env.development.local scripts/seed-programs.js
+node --env-file=.env.development.local scripts/seed-programs.js you@example.com
 node --env-file=.env.development.local scripts/seed-exercises.js
 
-node --env-file=.env.production.local scripts/seed-programs.js
+node --env-file=.env.production.local scripts/seed-programs.js you@example.com
 node --env-file=.env.production.local scripts/seed-exercises.js
 ```
 
@@ -67,11 +69,11 @@ deploys under, so the two stacks never collide:
 updating the existing live stack — it will never rename or recreate it.
 Running with no argument at all is the same as `prod`.
 
-1. `./aws/deploy.sh dev` — creates the dev Cognito User Pool, the four dev
+1. `./aws/deploy.sh dev` — creates the dev Cognito User Pool, the six dev
    tables, and the dev exercise-media S3 bucket.
 2. Copy the printed outputs into `.env.development.local` (`ExerciseMediaBucketName`
-   → `S3_EXERCISE_MEDIA_BUCKET`, `ExercisesTableName` → `DYNAMODB_TABLE_EXERCISES`, etc.).
-3. `node --env-file=.env.development.local scripts/seed-programs.js`
+   → `S3_EXERCISE_MEDIA_BUCKET`, `ExercisesTableName` → `DYNAMODB_TABLE_EXERCISES`, `UsersTableName` → `DYNAMODB_TABLE_USERS`, `BodyMeasurementsTableName` → `DYNAMODB_TABLE_MEASUREMENTS`, etc.).
+3. `npm run dev`, sign up, then `node --env-file=.env.development.local scripts/seed-programs.js you@example.com`
 4. `node --env-file=.env.development.local scripts/seed-exercises.js`
 5. `npm run dev` — sign up a *dev* user (this pool is separate from prod,
    so prod accounts don't exist here), start a program.
@@ -95,3 +97,54 @@ set that branch's own environment variables to the dev stack's outputs
 from step 2 above. Each Amplify branch gets its own URL, so dev and prod
 end up served from entirely separate domains, backed by entirely separate
 data.
+
+## User roles
+
+Every user gets a row in the `*-users` table (keyed by their Cognito
+`sub`) the first time they sign in, with `role` = `basic`. To make someone
+a PT or admin, an admin can change it from Admin mode → Users, or you can
+edit that row's `role` attribute directly in DynamoDB to `pt` or `admin`.
+The very first admin has to be set in DynamoDB, since nobody can reach the
+Users page until then (and admins can't change their own role).
+
+Roles decide which modes appear in the header's mode switcher: basic users
+only get User mode (and no switcher), PTs get User + Trainer, admins get
+User + Trainer + Admin. The exercise library lives under Admin mode, and
+its write API routes are admin-only. Server routes gate on roles with
+`requireRole(request, [ROLES.ADMIN])` from `src/lib/users.js`.
+
+Profile pictures are uploaded to the exercise-media bucket under
+`avatars/<userId>/`.
+
+## Programmes belong to users
+
+Every programme has an `ownerUserId` (the owning user's Cognito sub) and
+users only ever see their own. In Trainer mode a PT sees their own
+clients plus users with no PT, can take an unassigned user on as a
+client (sets `ptUserId` on that user's row), release them again, and
+create/edit/delete programmes only for their own clients — they can't
+see anyone assigned to another PT. Admins can manage any user's
+programmes, and reassign clients from Admin mode → Users. Demoting a PT
+to Basic releases all of their clients.
+
+Programmes created before this change have no owner and won't show up
+for anyone until assigned. Once `./aws/deploy.sh` has added the
+`OwnerIndex` index, sign in once, then:
+
+```
+node --env-file=.env.production.local scripts/assign-programs-to-user.js you@example.com --dry-run
+node --env-file=.env.production.local scripts/assign-programs-to-user.js you@example.com
+```
+
+That only sets `ownerUserId` — same programme IDs, so existing runs and
+logged workouts stay attached. It warns if any other user has runs on
+those programmes (they'd need their own programmes built by a PT).
+
+## Body measurements
+
+Weight and tape measurements (neck, shoulders, chest, waist, hips, arms,
+legs, calves) are logged at `/measurements`, one entry per user per day,
+in the `*-body-measurements` table (`DYNAMODB_TABLE_MEASUREMENTS`).
+Values are stored metric and shown in the user's profile units. Logging
+a weight also updates the profile's current weight. Trends appear in the
+Body section of Progress reports.

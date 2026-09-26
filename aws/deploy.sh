@@ -65,4 +65,4 @@ aws cloudformation describe-stacks \
   --output table
 
 echo ""
-echo "==> Next: node --env-file=${ENV_FILE} scripts/seed-programs.js (to populate the Programs table)"
+echo "==> Next: sign in to the app once, then: node --env-file=${ENV_FILE} scripts/seed-programs.js <your-email> (to populate your programmes)"

@@ -1,0 +1,170 @@
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  opacity: 0.65;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--foreground);
+  outline: none;
+}
+
+.search:focus {
+  border-color: var(--foreground);
+}
+
+.select {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.toolbar .select {
+  height: 44px;
+}
+
+.select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 1rem;
+}
+
+.empty {
+  opacity: 0.65;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.you {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.email {
+  font-size: 0.85rem;
+  opacity: 0.65;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.details {
+  margin-top: 4px;
+  font-size: 0.8rem;
+}
+
+.details summary {
+  cursor: pointer;
+  opacity: 0.7;
+  width: fit-content;
+}
+
+.details dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin-top: 6px;
+}
+
+.details dt {
+  opacity: 0.6;
+}
+
+.details dd {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.controlLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.7rem;
+}
+
+.controlLabel span {
+  opacity: 0.6;
+}
+
+.controlLabel .select {
+  width: 140px;
+}

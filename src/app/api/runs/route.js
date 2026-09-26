@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { QueryCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
 import { getUserId } from "../../../lib/verifyToken";
+import { getProgram } from "../../../lib/programs";
 import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -39,6 +40,12 @@ export const POST = withLogging("POST /api/runs", async (request) => {
   const { programId, programName, durationWeeks = 4 } = body;
   if (!programId || !programName) {
     return NextResponse.json({ error: "programId and programName are required" }, { status: 400 });
+  }
+
+  // You can only run your own programmes.
+  const program = await getProgram(programId);
+  if (program?.ownerUserId !== userId) {
+    return NextResponse.json({ error: "Program not found" }, { status: 404 });
   }
 
   const startedAt = new Date().toISOString();

@@ -1,0 +1,63 @@
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.body {
+  fill: #334155;
+  stroke: #334155;
+  stroke-linecap: round;
+}
+
+.measure {
+  cursor: pointer;
+}
+
+.hit {
+  stroke: transparent;
+  stroke-width: 14;
+}
+
+.line {
+  stroke: rgba(241, 245, 249, 0.35);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  transition: stroke 0.15s;
+}
+
+.lineFilled {
+  stroke: rgba(241, 245, 249, 0.7);
+  stroke-dasharray: none;
+}
+
+.measure:hover .line {
+  stroke: var(--foreground);
+}
+
+.lineActive,
+.measure:hover .lineActive {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.cap {
+  fill: var(--accent);
+}
+
+.label {
+  fill: var(--foreground);
+  font-size: 11px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--card-bg);
+  stroke-width: 3px;
+}
+
+.caption {
+  fill: var(--foreground);
+  opacity: 0.5;
+  font-size: 9px;
+}

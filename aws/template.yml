@@ -61,6 +61,8 @@ Resources:
         IdToken: minutes
         RefreshToken: days
 
+  # Every programme belongs to one user (ownerUserId = their Cognito sub);
+  # OwnerIndex lists a user's programmes without scanning everyone's.
   ProgramsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -69,9 +71,18 @@ Resources:
       AttributeDefinitions:
         - AttributeName: programId
           AttributeType: S
+        - AttributeName: ownerUserId
+          AttributeType: S
       KeySchema:
         - AttributeName: programId
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: OwnerIndex
+          KeySchema:
+            - AttributeName: ownerUserId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   ProgramRunsTable:
     Type: AWS::DynamoDB::Table
@@ -130,6 +141,40 @@ Resources:
         - AttributeName: exerciseId
           KeyType: HASH
 
+  # One row per Cognito user, keyed by their sub. Created on first sign-in
+  # with role "basic"; change the role (basic | pt | admin) directly in
+  # this table. Profile fields (name, address, heightCm, weightKg,
+  # avatarKey/avatarUrl) are schemaless, so new ones need no change here.
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-users'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+
+  # Body weight + tape measurements, one entry per user per day
+  # (date = YYYY-MM-DD). Values are stored metric (kg / cm).
+  BodyMeasurementsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-body-measurements'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
+
   ExerciseMediaBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -181,6 +226,12 @@ Outputs:
   ExercisesTableName:
     Description: Set as DYNAMODB_TABLE_EXERCISES
     Value: !Ref ExercisesTable
+  UsersTableName:
+    Description: Set as DYNAMODB_TABLE_USERS
+    Value: !Ref UsersTable
+  BodyMeasurementsTableName:
+    Description: Set as DYNAMODB_TABLE_MEASUREMENTS
+    Value: !Ref BodyMeasurementsTable
   ExerciseMediaBucketName:
     Description: Set as S3_EXERCISE_MEDIA_BUCKET
     Value: !Ref ExerciseMediaBucket

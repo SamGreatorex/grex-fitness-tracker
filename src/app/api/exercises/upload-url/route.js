@@ -3,8 +3,9 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3, BUCKET, publicMediaUrl } from "../../../../lib/s3";
 import { slugify } from "../../../../lib/slugify";
-import { getUserId } from "../../../../lib/verifyToken";
 import { withLogging } from "../../../../lib/apiHandler";
+import { requireRole } from "../../../../lib/users";
+import { ROLES } from "../../../../lib/profile";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -22,8 +23,9 @@ const ALLOWED_TYPES = new Set([
 ]);
 
 export const POST = withLogging("POST /api/exercises/upload-url", async (request) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Managing the exercise library is admin-only (reading it is not — see GET).
+  const { denied } = await requireRole(request, [ROLES.ADMIN]);
+  if (denied) return denied;
 
   const { name, contentType } = await request.json();
   if (!name || !contentType) {

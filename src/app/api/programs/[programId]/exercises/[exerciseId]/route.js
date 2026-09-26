@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../../lib/dynamo";
-import { getUserId } from "../../../../../../lib/verifyToken";
+import { getRequestUser } from "../../../../../../lib/users";
+import { canAccessProgram, getProgram } from "../../../../../../lib/programs";
 import { withLogging } from "../../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -14,8 +15,8 @@ export const dynamic = "force-dynamic";
 // `exerciseId` is only unique within a day (it's just that day's array
 // index), so `dayId` must be given too to find the right slot.
 export const PATCH = withLogging("PATCH /api/programs/[programId]/exercises/[exerciseId]", async (request, { params }) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getRequestUser(request);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { programId, exerciseId } = await params;
   const body = await request.json();
@@ -25,10 +26,8 @@ export const PATCH = withLogging("PATCH /api/programs/[programId]/exercises/[exe
     return NextResponse.json({ error: "dayId and name are required" }, { status: 400 });
   }
 
-  const { Item: program } = await ddb.send(
-    new GetCommand({ TableName: TABLES.programs, Key: { programId } })
-  );
-  if (!program) return NextResponse.json({ error: "Program not found" }, { status: 404 });
+  const program = await getProgram(programId);
+  if (!(await canAccessProgram(user, program))) return NextResponse.json({ error: "Program not found" }, { status: 404 });
 
   const day = program.days.find((d) => d.dayId === dayId);
   if (!day) return NextResponse.json({ error: "Day not found" }, { status: 404 });

@@ -1,15 +1,21 @@
 #!/usr/bin/env node
-// Reads data/fitness-plan.json and writes the 5 program templates into the
-// Programs DynamoDB table. Run once after `./aws/deploy.sh`:
-//   node scripts/seed-programs.js
+// Reads data/fitness-plan.json and writes its 5 programmes into the
+// Programs DynamoDB table, owned by the user with the given email (every
+// programme belongs to one user). That user must have signed in once.
+//   node --env-file=.env.development.local scripts/seed-programs.js you@example.com
+//
+// Re-running overwrites those programmes (including any renames/exercise
+// swaps made since) — to just give existing unowned programmes an owner,
+// use scripts/assign-programs-to-user.js instead.
 
 const fs = require("fs");
 const path = require("path");
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, PutCommand, ScanCommand } = require("@aws-sdk/lib-dynamodb");
 
 const REGION = process.env.AWS_REGION || "eu-west-2";
 const TABLE = process.env.DYNAMODB_TABLE_PROGRAMS || "grex-fitness-tracker-programs";
+const USERS_TABLE = process.env.DYNAMODB_TABLE_USERS || "grex-fitness-tracker-users";
 
 // "Day 2 - BEGINNER PIN LOADED (1 year or less)" -> { label: "Day 2", subtitle: "BEGINNER PIN LOADED (1 year or less)" }
 function splitDayName(rawName) {
@@ -59,7 +65,30 @@ function transformProgram(program) {
   };
 }
 
+async function findUserIdByEmail(client, email) {
+  let ExclusiveStartKey;
+  do {
+    const page = await client.send(
+      new ScanCommand({
+        TableName: USERS_TABLE,
+        FilterExpression: "email = :email",
+        ExpressionAttributeValues: { ":email": email },
+        ExclusiveStartKey,
+      })
+    );
+    if (page.Items?.length) return page.Items[0].userId;
+    ExclusiveStartKey = page.LastEvaluatedKey;
+  } while (ExclusiveStartKey);
+  return null;
+}
+
 async function main() {
+  const ownerEmail = process.argv[2];
+  if (!ownerEmail) {
+    console.error("Usage: node scripts/seed-programs.js <owner-email>");
+    process.exit(1);
+  }
+
   const jsonPath = path.join(__dirname, "..", "data", "fitness-plan.json");
   if (!fs.existsSync(jsonPath)) {
     console.error(`Missing ${jsonPath}. Copy fitness-plan.json into data/ first.`);
@@ -75,12 +104,19 @@ async function main() {
 
   const client = DynamoDBDocumentClient.from(new DynamoDBClient({ region: REGION }));
 
+  const ownerUserId = await findUserIdByEmail(client, ownerEmail);
+  if (!ownerUserId) {
+    console.error(`No user with email ${ownerEmail} in ${USERS_TABLE}. Sign in to the app once first.`);
+    process.exit(1);
+  }
+  for (const item of programs) item.ownerUserId = ownerUserId;
+
   for (const item of programs) {
     await client.send(new PutCommand({ TableName: TABLE, Item: item }));
     console.log(`Seeded program ${item.programId} — ${item.name} (${item.days.length} days)`);
   }
 
-  console.log(`\nDone. Wrote ${programs.length} programs to ${TABLE}.`);
+  console.log(`\nDone. Wrote ${programs.length} programs to ${TABLE}, owned by ${ownerEmail}.`);
 }
 
 main().catch((err) => {

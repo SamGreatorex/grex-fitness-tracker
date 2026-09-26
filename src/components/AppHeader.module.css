@@ -49,43 +49,129 @@
 }
 
 .right {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.modeSelect {
+  height: 36px;
+  padding: 0 28px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background-color: var(--card-bg);
+  /* Custom chevron so the pill looks the same across browsers. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23f1f5f9' stroke-width='1.5'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  appearance: none;
+  color: var(--foreground);
   font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modeSelect:hover,
+.modeSelect:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.avatarButton {
+  display: inline-flex;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.avatarButton:hover,
+.avatarButton[aria-expanded="true"] {
+  border-color: var(--accent);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  max-width: calc(100vw - 2rem);
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.menuHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
   min-width: 0;
 }
 
-.email {
+.menuName {
+  font-weight: 700;
+  font-size: 0.9rem;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 32vw;
 }
 
-.signOut {
-  flex-shrink: 0;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.5rem 0.8rem;
+.menuEmail {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roleBadge {
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
   min-height: 40px;
-  cursor: pointer;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
   color: inherit;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
 }
 
-.signOut:hover {
-  border-color: var(--foreground);
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--border);
 }
 
 @media (max-width: 420px) {
   .header {
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-
-  .email {
-    display: none;
   }
 }

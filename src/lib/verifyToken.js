@@ -13,17 +13,22 @@ function getVerifier() {
   return verifier;
 }
 
-// Verifies the Cognito ID token on the Authorization header and returns the
-// user's sub (userId). Returns null if missing/invalid.
-export async function getUserId(request) {
+// Verifies the Cognito ID token on the Authorization header and returns its
+// payload (sub, email, name, ...). Returns null if missing/invalid.
+export async function getUserClaims(request) {
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
   if (!token) return null;
 
   try {
-    const payload = await getVerifier().verify(token);
-    return payload.sub;
+    return await getVerifier().verify(token);
   } catch {
     return null;
   }
+}
+
+// Same as getUserClaims, but just the user's sub (userId).
+export async function getUserId(request) {
+  const claims = await getUserClaims(request);
+  return claims?.sub ?? null;
 }

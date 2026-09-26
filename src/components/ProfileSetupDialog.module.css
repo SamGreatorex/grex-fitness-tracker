@@ -1,0 +1,49 @@
+.dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  margin: auto;
+  width: min(440px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  background: var(--card-bg);
+  color: var(--foreground);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.inner {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.subtext {
+  font-size: 0.9rem;
+  opacity: 0.65;
+  margin: 0 0 20px;
+}
+
+.signOut {
+  align-self: center;
+  margin-top: 12px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.signOut:hover {
+  opacity: 1;
+}

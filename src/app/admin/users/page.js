@@ -18,6 +18,8 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState("");
   const [savingUserId, setSavingUserId] = useState(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [deletingUserId, setDeletingUserId] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -66,6 +68,31 @@ export default function AdminUsersPage() {
       return;
     }
     await updateUser(target, { role }, `Could not change ${who}'s role.`);
+  };
+
+  const deleteUser = async (target) => {
+    const who = target.name || target.email;
+    const clientCount = users.filter((u) => u.ptUserId === target.userId).length;
+    const message =
+      `Permanently delete ${who}?\n\n` +
+      "This removes their sign-in, profile, programmes, workout history and body measurements. " +
+      (clientCount ? `Their ${clientCount} client${clientCount === 1 ? "" : "s"} will be left without a trainer. ` : "") +
+      "This can't be undone.";
+    if (!window.confirm(message)) return;
+
+    setDeletingUserId(target.userId);
+    setError("");
+    setNotice("");
+    try {
+      await api.delete(`/api/admin/users/${target.userId}`);
+      setNotice(`${who} has been deleted.`);
+      // Reload: any clients they had are now unassigned.
+      await load();
+    } catch (err) {
+      setError(`Couldn't finish deleting ${who}: ${err.message || "unknown error"}. You can try again.`);
+    } finally {
+      setDeletingUserId(null);
+    }
   };
 
   const changePt = (target, ptUserId) =>
@@ -127,6 +154,7 @@ export default function AdminUsersPage() {
         </div>
 
         {error && <p className={styles.error}>{error}</p>}
+        {notice && !error && <p className={styles.notice}>{notice}</p>}
 
         {!filtered ? (
           <p className={styles.empty}>Loading users…</p>
@@ -157,6 +185,16 @@ export default function AdminUsersPage() {
                         <dt>Joined</dt>
                         <dd>{u.createdAt ? dateFormat.format(new Date(u.createdAt)) : "—"}</dd>
                       </dl>
+                      {!isMe && (
+                        <button
+                          type="button"
+                          className={styles.deleteButton}
+                          onClick={() => deleteUser(u)}
+                          disabled={deletingUserId === u.userId}
+                        >
+                          {deletingUserId === u.userId ? "Deleting…" : "Delete user"}
+                        </button>
+                      )}
                     </details>
                   </div>
                   <div className={styles.controls}>

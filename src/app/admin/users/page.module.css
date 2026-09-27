@@ -168,3 +168,34 @@
 .controlLabel .select {
   width: 140px;
 }
+
+.notice {
+  font-size: 0.85rem;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 1rem;
+}
+
+.deleteButton {
+  margin-top: 10px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  border-radius: 8px;
+  background: transparent;
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.12);
+}
+
+.deleteButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

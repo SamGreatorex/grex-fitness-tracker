@@ -148,3 +148,17 @@ in the `*-body-measurements` table (`DYNAMODB_TABLE_MEASUREMENTS`).
 Values are stored metric and shown in the user's profile units. Logging
 a weight also updates the profile's current weight. Trends appear in the
 Body section of Progress reports.
+
+## Deleting users (Admin → Users)
+
+Admins can permanently delete another user from their row's Profile
+section. That removes their Cognito sign-in, programmes, programme runs,
+logged workouts, body measurements, profile picture and users-table row,
+and unassigns any clients they were training. It's safe to retry if it
+fails part-way (the users row is deleted last).
+
+The app's IAM role needs two permissions beyond the usual DynamoDB/S3 ones:
+
+- `dynamodb:BatchWriteItem` on the `grex-fitness-tracker-*` tables
+- `cognito-idp:AdminDeleteUser` on the user pool(s):
+  `arn:aws:cognito-idp:eu-west-2:<account-id>:userpool/<pool-id>`

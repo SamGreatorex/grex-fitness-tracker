@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/apiClient";
 import { useAuth } from "../../../../components/AuthProvider";
@@ -9,16 +8,18 @@ import { formatHeight, formatWeight } from "../../../../lib/units";
 import AppHeader from "../../../../components/AppHeader";
 import Avatar from "../../../../components/Avatar";
 import { useClient } from "../../useClient";
+import ClientProgress from "./ClientProgress";
 import styles from "../../page.module.css";
 
-// One client's programmes, with links to edit them or create a new one.
+// One client: how they're getting on (headline numbers, where they are in
+// each programme, recent workouts, trends) plus their programmes to edit.
 export default function TrainerClientPage() {
   const { userId } = useParams();
   const router = useRouter();
   const { client, error: clientError } = useClient(userId);
   // Shown in the trainer's own chosen units.
   const { profile: me } = useAuth();
-  const [programs, setPrograms] = useState(null);
+  const [progress, setProgress] = useState(null);
   const [releasing, setReleasing] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,10 +28,9 @@ export default function TrainerClientPage() {
     if (!client) return;
     (async () => {
       try {
-        const { programs } = await api.get("/api/programs", { userId });
-        setPrograms(programs);
+        setProgress(await api.get(`/api/trainer/clients/${userId}/progress`));
       } catch (err) {
-        setError(err.message || "Could not load programmes.");
+        setError(err.message || "Could not load their progress.");
       }
     })();
   }, [userId, client]);
@@ -81,44 +81,12 @@ export default function TrainerClientPage() {
               )}
             </div>
 
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Programmes</h2>
-              <Link href={`/trainer/clients/${userId}/programmes/new`} className={styles.primaryButton}>
-                + New programme
-              </Link>
-            </div>
-
             {(error || clientError) && <p className={styles.error}>{error || clientError}</p>}
 
-            {!programs ? (
-              <p className={styles.empty}>Loading programmes…</p>
-            ) : programs.length === 0 ? (
-              <p className={styles.empty}>{displayName} doesn&apos;t have any programmes yet.</p>
+            {!progress ? (
+              !(error || clientError) && <p className={styles.empty}>Loading their progress…</p>
             ) : (
-              <ul className={styles.list}>
-                {programs.map((p) => (
-                  <li key={p.programId}>
-                    <Link href={`/trainer/clients/${userId}/programmes/${p.programId}`} className={styles.row}>
-                      <span className={styles.info}>
-                        <span className={styles.name}>{p.name}</span>
-                        <span className={styles.meta}>
-                          {[
-                            p.goal,
-                            `${p.days.length} day${p.days.length === 1 ? "" : "s"}/week`,
-                            `${p.durationWeeks} weeks`,
-                            p.createdByName && `by ${p.createdByName}`,
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
-                        </span>
-                      </span>
-                      <span className={styles.chevron} aria-hidden="true">
-                        ›
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <ClientProgress userId={userId} data={progress} weightUnit={me?.weightUnit} />
             )}
           </>
         )}

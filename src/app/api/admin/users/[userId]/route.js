@@ -1,46 +1,16 @@
 import { NextResponse } from "next/server";
-import { GetCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { requireRole } from "../../../../../lib/users";
 import { ROLES } from "../../../../../lib/profile";
 import { PROGRAM_MANAGER_ROLES } from "../../../../../lib/programs";
+import { deleteUserCompletely, releaseClientsOf } from "../../../../../lib/deleteUser";
 import { withLogging } from "../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
-
-// Clients of someone who's no longer a PT go back to the unassigned pool,
-// so other PTs can pick them up.
-async function releaseClientsOf(ptUserId) {
-  let ExclusiveStartKey;
-  do {
-    const page = await ddb.send(
-      new ScanCommand({
-        TableName: TABLES.users,
-        FilterExpression: "ptUserId = :pt",
-        ExpressionAttributeValues: { ":pt": ptUserId },
-        ProjectionExpression: "userId",
-        ExclusiveStartKey,
-      })
-    );
-    for (const { userId } of page.Items ?? []) {
-      await ddb.send(
-        new UpdateCommand({
-          TableName: TABLES.users,
-          Key: { userId },
-          UpdateExpression: "REMOVE ptUserId, ptAssignedAt",
-          ConditionExpression: "ptUserId = :pt",
-          ExpressionAttributeValues: { ":pt": ptUserId },
-        })
-      ).catch((err) => {
-        if (err.name !== "ConditionalCheckFailedException") throw err;
-      });
-    }
-    ExclusiveStartKey = page.LastEvaluatedKey;
-  } while (ExclusiveStartKey);
-}
 
 // Admin edits to another user: { role } and/or { ptUserId } (a PT/admin's
 // userId, or null to unassign). Admins can't change their own role, so the
@@ -111,4 +81,25 @@ export const PATCH = withLogging("PATCH /api/admin/users/[userId]", async (reque
   if (demoted) await releaseClientsOf(userId);
 
   return NextResponse.json({ user: result.Attributes, releasedClients: demoted });
+});
+
+// Permanently deletes another user: their Cognito sign-in, programmes,
+// programme runs, logged workouts, body measurements, profile picture and
+// profile. If they were a PT, their clients become unassigned. Admins can't
+// delete themselves. Safe to retry if it fails part-way.
+export const DELETE = withLogging("DELETE /api/admin/users/[userId]", async (request, { params }) => {
+  const { user: admin, denied } = await requireRole(request, [ROLES.ADMIN]);
+  if (denied) return denied;
+
+  const { userId } = await params;
+  if (userId === admin.userId) {
+    return NextResponse.json({ error: "You can't delete your own account." }, { status: 400 });
+  }
+
+  const { Item: target } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId } }));
+  if (!target) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+  const summary = await deleteUserCompletely(target);
+  console.log(`[ADMIN] ${admin.userId} deleted user ${userId}`, summary);
+  return NextResponse.json({ ok: true, summary });
 });

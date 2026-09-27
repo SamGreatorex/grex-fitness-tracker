@@ -1,0 +1,322 @@
+.meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 2rem 0 0.9rem;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+/* Section headings that aren't inside a .sectionHeader row. */
+.spaced {
+  margin: 2rem 0 0.9rem;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.primaryButton:hover {
+  background: var(--accent-hover);
+}
+
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.ghostButton:hover {
+  border-color: var(--foreground);
+}
+
+/* ---- Summary tiles ---- */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+
+.tileLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.tileValue {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.tileSub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .tiles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tiles > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Programmes ---- */
+
+.programmes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.programme {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+
+.programmeHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.programmeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.programmeName {
+  font-weight: 700;
+}
+
+.status {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status_active {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+}
+
+.status_completed {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.status_abandoned,
+.status_notStarted {
+  background: var(--border);
+  color: var(--muted);
+}
+
+.weekRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.barTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.barLabel {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.programmeActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---- Recent workouts ---- */
+
+.workouts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workout {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+
+.workout[open] {
+  border-color: var(--foreground);
+}
+
+.workoutSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.workoutSummary::-webkit-details-marker {
+  display: none;
+}
+
+.workoutMain,
+.workoutStats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.workoutStats {
+  flex-shrink: 0;
+  align-items: flex-end;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* Keep "effort 8.0/10 · 50 min" on one line; the left side wraps instead. */
+.workoutStats .meta {
+  white-space: nowrap;
+}
+
+.workoutTitle {
+  font-weight: 700;
+}
+
+.exerciseList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0 1rem 0.9rem;
+}
+
+.exerciseRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+.exerciseName {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.set {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--background);
+  font-size: 0.78rem;
+}
+
+.moreButton {
+  margin-top: 0.6rem;
+  width: 100%;
+  height: 40px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.moreButton:hover {
+  border-color: var(--foreground);
+}
+
+/* ---- Trends ---- */
+
+.charts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

@@ -7,6 +7,7 @@ import { useAuth } from "../components/AuthProvider";
 import { api } from "../lib/apiClient";
 import AppHeader from "../components/AppHeader";
 import ProgramCard from "../components/ProgramCard";
+import TrainerCard from "../components/TrainerCard";
 import styles from "./page.module.css";
 
 function ReportsIcon() {
@@ -36,6 +37,8 @@ export default function Home() {
   const [runsByProgram, setRunsByProgram] = useState({});
   const [startingProgramId, setStartingProgramId] = useState(null);
   const [error, setError] = useState("");
+  // undefined while loading; null if they don't have a PT.
+  const [trainer, setTrainer] = useState(undefined);
 
   useEffect(() => {
     if (!sessionLoading && !user) {
@@ -68,6 +71,19 @@ export default function Home() {
     }
   }, []);
 
+  // Loaded separately so a problem here never blocks the programme list.
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const { trainer } = await api.get("/api/me/trainer");
+        setTrainer(trainer);
+      } catch {
+        setTrainer(undefined);
+      }
+    })();
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -99,6 +115,12 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>Your programs</h1>
         <p className={styles.subtitle}>Pick a program to start or continue.</p>
+
+        {trainer !== undefined && (
+          <div className={styles.trainer}>
+            <TrainerCard trainer={trainer} />
+          </div>
+        )}
 
         <div className={styles.quickLinks}>
           <Link href="/reports" className={styles.quickLink} aria-label="Progress reports">

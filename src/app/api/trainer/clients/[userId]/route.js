@@ -3,6 +3,7 @@ import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { requireRole } from "../../../../../lib/users";
 import { PROGRAM_MANAGER_ROLES } from "../../../../../lib/programs";
+import { ROLES } from "../../../../../lib/profile";
 import { withLogging } from "../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -19,8 +20,9 @@ export const POST = withLogging("POST /api/trainer/clients/[userId]", async (req
   if (denied) return denied;
 
   const { userId } = await params;
-  if (userId === trainer.userId) {
-    return NextResponse.json({ error: "You can't be your own client." }, { status: 400 });
+  // Admins may train themselves; PTs can't be their own client.
+  if (userId === trainer.userId && trainer.role !== ROLES.ADMIN) {
+    return NextResponse.json({ error: "Only admins can be their own trainer." }, { status: 400 });
   }
 
   try {

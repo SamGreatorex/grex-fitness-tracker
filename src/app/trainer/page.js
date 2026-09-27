@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { api } from "../../lib/apiClient";
+import { useAuth } from "../../components/AuthProvider";
 import AppHeader from "../../components/AppHeader";
 import Avatar from "../../components/Avatar";
 import styles from "./page.module.css";
@@ -15,6 +16,8 @@ function matches(user, q) {
 // and users with no PT yet, who you can take on as clients. Users who
 // belong to another PT never appear here.
 export default function TrainerHome() {
+  // Admins can appear in their own lists (they're allowed to train themselves).
+  const { userId: myUserId } = useAuth();
   const [data, setData] = useState(null);
   const [search, setSearch] = useState("");
   const [busyUserId, setBusyUserId] = useState(null);
@@ -87,7 +90,10 @@ export default function TrainerHome() {
                 <Link href={`/trainer/clients/${c.userId}`} className={styles.row}>
                   <Avatar src={c.avatarUrl} name={c.name} email={c.email} size={44} />
                   <span className={styles.info}>
-                    <span className={styles.name}>{c.name || "No name yet"}</span>
+                    <span className={styles.name}>
+                      {c.name || "No name yet"}
+                      {c.userId === myUserId && <span className={styles.youBadge}>You</span>}
+                    </span>
                     <span className={styles.email}>{c.email}</span>
                   </span>
                   <span className={styles.chevron} aria-hidden="true">
@@ -115,7 +121,10 @@ export default function TrainerHome() {
               <li key={u.userId} className={styles.row}>
                 <Avatar src={u.avatarUrl} name={u.name} email={u.email} size={44} />
                 <span className={styles.info}>
-                  <span className={styles.name}>{u.name || "No name yet"}</span>
+                  <span className={styles.name}>
+                    {u.name || "No name yet"}
+                    {u.userId === myUserId && <span className={styles.youBadge}>You</span>}
+                  </span>
                   <span className={styles.email}>{u.email}</span>
                 </span>
                 <button

@@ -229,10 +229,11 @@ export default function AdminUsersPage() {
                           <option value={u.ptUserId}>{nameById[u.ptUserId] ?? "Unknown"}</option>
                         )}
                         {trainers
-                          .filter((t) => t.userId !== u.userId)
+                          // Admins can be their own PT; nobody else can.
+                          .filter((t) => t.userId !== u.userId || u.role === ROLES.ADMIN)
                           .map((t) => (
                             <option key={t.userId} value={t.userId}>
-                              {t.name || t.email}
+                              {t.userId === u.userId ? "Themselves" : t.name || t.email}
                             </option>
                           ))}
                       </select>

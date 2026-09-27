@@ -3,6 +3,7 @@ import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { requireRole } from "../../../../lib/users";
 import { PROGRAM_MANAGER_ROLES } from "../../../../lib/programs";
+import { ROLES } from "../../../../lib/profile";
 import { withLogging } from "../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -16,7 +17,8 @@ const CLIENT_FIELDS = ["userId", "email", "name", "avatarUrl", "heightCm", "weig
 // For the signed-in PT (or admin acting as one):
 //   clients   — users assigned to them (ptUserId = their userId)
 //   available — users with no PT yet, who they can take on
-// Users assigned to any other PT are never returned.
+// Users assigned to any other PT are never returned. Admins also see
+// themselves, so they can be their own trainer; PTs never do.
 export const GET = withLogging("GET /api/trainer/clients", async (request) => {
   const { user: trainer, denied } = await requireRole(request, PROGRAM_MANAGER_ROLES);
   if (denied) return denied;
@@ -35,7 +37,7 @@ export const GET = withLogging("GET /api/trainer/clients", async (request) => {
       })
     );
     for (const u of page.Items ?? []) {
-      if (u.userId === trainer.userId) continue;
+      if (u.userId === trainer.userId && trainer.role !== ROLES.ADMIN) continue;
       if (u.ptUserId === trainer.userId) clients.push(u);
       else if (!u.ptUserId) available.push(u);
     }

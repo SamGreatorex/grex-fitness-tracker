@@ -182,3 +182,13 @@ a.row:focus-visible {
 .primaryButton:hover {
   background: var(--accent-hover);
 }
+
+.youBadge {
+  margin-left: 0.4rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+}

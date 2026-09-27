@@ -42,7 +42,10 @@ export const PATCH = withLogging("PATCH /api/admin/users/[userId]", async (reque
     if (body.ptUserId === null || body.ptUserId === "") {
       remove.push("ptUserId", "ptAssignedAt");
     } else {
-      if (body.ptUserId === userId) return NextResponse.json({ error: "A user can't be their own PT." }, { status: 400 });
+      // Only admins can be their own PT.
+      if (body.ptUserId === userId && target.role !== ROLES.ADMIN) {
+        return NextResponse.json({ error: "Only admins can be their own PT." }, { status: 400 });
+      }
       const { Item: pt } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: body.ptUserId } }));
       if (!pt || !PROGRAM_MANAGER_ROLES.includes(pt.role)) {
         return NextResponse.json({ error: "Assigned PT must be a PT or admin." }, { status: 400 });

@@ -95,7 +95,7 @@
 }
 
 .sideNote {
-  color: var(--accent);
+  color: var(--accent-text);
   opacity: 1;
 }
 
@@ -174,7 +174,7 @@
   padding: 0 16px;
   border: 1px solid var(--accent);
   background: transparent;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .primary {

@@ -45,11 +45,15 @@ export default function AppHeader({ backHref, backLabel }) {
             ← {backLabel || "Back"}
           </Link>
         ) : (
-          <span className={styles.brand}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icon.svg" alt="" width={28} height={28} className={styles.brandIcon} />
-            Grex Fitness
-          </span>
+          <Link href="/" className={styles.brand} aria-label="Fit4 The Future — home">
+            {/* Full wordmark, or the F4TF short form on narrow phones. */}
+            <span className={styles.brandFull} aria-hidden="true">
+              Fit<span className={styles.brandFour}>4</span> The Future
+            </span>
+            <span className={styles.brandShort} aria-hidden="true">
+              F<span className={styles.brandFour}>4</span>TF
+            </span>
+          </Link>
         )}
       </div>
       <div className={styles.right} ref={menuRef}>

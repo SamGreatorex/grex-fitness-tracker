@@ -19,7 +19,7 @@
 }
 
 .link {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -123,7 +123,7 @@
 }
 
 .fieldActive .label {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .input {
@@ -322,7 +322,7 @@
 }
 
 .historySection > summary::marker {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 @media (max-width: 768px) {

@@ -27,6 +27,6 @@
 
 .dotCurrent {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
   opacity: 1;
 }

@@ -262,6 +262,12 @@ export default function LoginClient() {
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
+        <div className={styles.wordmark}>
+          <span className={styles.wordmarkName}>
+            Fit<span className={styles.wordmarkFour}>4</span> The Future
+          </span>
+          <span className={styles.wordmarkTag}>Fitness tracker</span>
+        </div>
         <div className={styles.card}>
           <div className={styles.header}>
             <h1 className={styles.title}>{cardTitle}</h1>

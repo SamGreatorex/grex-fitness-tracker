@@ -17,19 +17,37 @@
   overflow: hidden;
 }
 
+/* Fit4 The Future wordmark: Anton caps with the logo's red "4". */
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  font-weight: 700;
-  font-size: 1.1rem;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-synthesis: none;
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.brandIcon {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+.brandFour {
+  color: var(--accent);
+}
+
+.brandShort {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .brandFull {
+    display: none;
+  }
+
+  .brandShort {
+    display: inline;
+    font-size: 1.6rem;
+  }
 }
 
 .back {
@@ -143,7 +161,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 20%, transparent);
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;

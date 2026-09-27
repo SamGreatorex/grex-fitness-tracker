@@ -35,7 +35,7 @@
 .quickLink:hover,
 .quickLink:focus-visible {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .quickLinkTooltip {

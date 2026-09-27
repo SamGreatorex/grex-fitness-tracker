@@ -6,8 +6,8 @@
 }
 
 .body {
-  fill: #334155;
-  stroke: #334155;
+  fill: #3a3a3a;
+  stroke: #3a3a3a;
   stroke-linecap: round;
 }
 
@@ -21,14 +21,14 @@
 }
 
 .line {
-  stroke: rgba(241, 245, 249, 0.35);
+  stroke: rgba(255, 255, 255, 0.35);
   stroke-width: 1.5;
   stroke-dasharray: 3 3;
   transition: stroke 0.15s;
 }
 
 .lineFilled {
-  stroke: rgba(241, 245, 249, 0.7);
+  stroke: rgba(255, 255, 255, 0.7);
   stroke-dasharray: none;
 }
 

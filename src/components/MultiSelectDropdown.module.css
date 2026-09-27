@@ -1,0 +1,147 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trigger:hover,
+.triggerOpen {
+  border-color: var(--foreground);
+}
+
+.chips {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.placeholder {
+  font-size: 0.9rem;
+  opacity: 0.5;
+}
+
+.chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--border);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Tier colours, matching the tags shown in the exercise list. */
+.chip_primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.chip_secondary {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.chip_stabilizer {
+  background: #616161;
+  color: #fff;
+}
+
+.chevron {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-right: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: 0.6;
+}
+
+.triggerOpen .chevron {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+/* Opens in the normal flow (pushing what's below down) rather than as a
+   floating popover, so it can't be clipped when used inside a <dialog> or
+   other scrolling container. */
+.menu {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.option:hover {
+  background: var(--border);
+}
+
+.option input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.optionChecked {
+  font-weight: 600;
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.optionNote {
+  font-size: 0.7rem;
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .menu {
+    grid-template-columns: 1fr;
+  }
+}

@@ -54,12 +54,18 @@ function findLastSetsForExercise(sessions, exerciseName) {
 // Builds the editable set rows for one exercise slot — used both on initial
 // load and when the user switches that slot to a different exercise, since
 // both cases need the same last-time/default-value prefill logic.
-function buildSetRows({ targetSets, restSeconds, lastSets, defaultWeight, defaultReps }) {
+// A plain rep count ("10") prefills the reps box; ranges like "8-12" or
+// "AMRAP" don't, since there's no single number to put in.
+function numericReps(targetReps) {
+  return /^\d+$/.test(String(targetReps ?? "")) ? Number(targetReps) : null;
+}
+
+function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startReps }) {
   return Array.from({ length: targetSets }, (_, i) => {
     const last = lastSets?.[i] ?? lastSets?.[lastSets.length - 1];
     return {
-      weight: last ? String(last.weight) : defaultWeight != null ? String(defaultWeight) : "",
-      reps: last ? String(last.reps) : defaultReps != null ? String(defaultReps) : "",
+      weight: last ? String(last.weight) : startWeight != null ? String(startWeight) : "",
+      reps: last ? String(last.reps) : startReps != null ? String(startReps) : "",
       completed: false,
       effort: null,
       restSeconds,
@@ -146,14 +152,14 @@ export default function WorkoutSessionClient() {
         for (const exercise of foundDay.exercises) {
           const lastSets = findLastSetsForExercise(sessions, exercise.name);
           lastSetsByExerciseId[exercise.exerciseId] = lastSets;
-          const libraryEntry = libraryBySlug[slugify(exercise.name)];
 
           initial[exercise.exerciseId] = buildSetRows({
             targetSets: exercise.targetSets,
             restSeconds: exercise.restSeconds,
             lastSets,
-            defaultWeight: libraryEntry?.defaultWeight,
-            defaultReps: libraryEntry?.defaultReps,
+            // First-time prefill comes from what the trainer set in the programme.
+            startWeight: exercise.targetWeight,
+            startReps: numericReps(exercise.targetReps),
           });
         }
 
@@ -251,8 +257,10 @@ export default function WorkoutSessionClient() {
         targetSets: dayExercise.targetSets,
         restSeconds: dayExercise.restSeconds,
         lastSets,
-        defaultWeight: newExercise.defaultWeight,
-        defaultReps: newExercise.defaultReps,
+        // The slot's rep target still applies; its start weight was for the
+        // original exercise, so it doesn't carry over to the swapped-in one.
+        startWeight: null,
+        startReps: numericReps(dayExercise.targetReps),
       }),
     }));
   };

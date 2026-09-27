@@ -60,7 +60,7 @@ export function sortPrograms(programs) {
   );
 }
 
-const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52 };
+const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500 };
 
 function intInRange(value, min, max) {
   const n = Number(value);
@@ -111,6 +111,17 @@ export function normaliseProgramInput(body, existing = null) {
       const repsText = String(rawExercise.targetReps ?? "").trim().slice(0, 20);
       const targetReps = repsText === "" ? null : /^\d+$/.test(repsText) ? Number(repsText) : repsText;
 
+      // Optional starting weight (kg) the trainer sets — prefills the first
+      // time the client logs this exercise; after that their history wins.
+      let targetWeight = null;
+      if (rawExercise.targetWeight !== undefined && rawExercise.targetWeight !== null && rawExercise.targetWeight !== "") {
+        targetWeight = Number(rawExercise.targetWeight);
+        if (!Number.isFinite(targetWeight) || targetWeight < 0 || targetWeight > LIMITS.weightKg) {
+          return { error: `${dayName} · ${exName}: start weight must be 0–${LIMITS.weightKg} kg` };
+        }
+        targetWeight = Math.round(targetWeight * 100) / 100;
+      }
+
       exercises.push({
         // Only unique within a day — same convention as seeded programmes.
         exerciseId: String(exerciseIndex),
@@ -120,6 +131,7 @@ export function normaliseProgramInput(body, existing = null) {
         order: exerciseIndex,
         targetSets,
         targetReps,
+        targetWeight,
         restSeconds,
       });
     }

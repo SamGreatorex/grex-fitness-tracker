@@ -40,6 +40,7 @@ function toFormState(program) {
             name: e.name,
             targetSets: e.targetSets ?? DEFAULT_SETS,
             targetReps: e.targetReps ?? "",
+            targetWeight: e.targetWeight ?? "",
             restSeconds: e.restSeconds ?? DEFAULT_REST,
           })),
       })),
@@ -104,7 +105,8 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
           key: newKey(),
           name: libraryExercise.name,
           targetSets: DEFAULT_SETS,
-          targetReps: libraryExercise.defaultReps != null ? String(libraryExercise.defaultReps) : DEFAULT_REPS,
+          targetReps: DEFAULT_REPS,
+          targetWeight: "",
           restSeconds: DEFAULT_REST,
         },
       ],
@@ -135,6 +137,7 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
           name: ex.name,
           targetSets: Number(ex.targetSets),
           targetReps: ex.targetReps,
+          targetWeight: ex.targetWeight,
           restSeconds: Number(ex.restSeconds),
         })),
       })),
@@ -271,6 +274,21 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
                         value={ex.targetReps}
                         onChange={(e) => updateExercise(day.key, ex.key, "targetReps", e.target.value)}
                         placeholder="8-12"
+                      />
+                    </label>
+                    <label className={styles.miniField}>
+                      <span>Start kg</span>
+                      <input
+                        className={styles.miniInput}
+                        type="number"
+                        inputMode="decimal"
+                        min={0}
+                        max={500}
+                        step="0.5"
+                        value={ex.targetWeight}
+                        onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
+                        placeholder="—"
+                        title="Optional — prefills the client's first workout; their logged weights take over after that"
                       />
                     </label>
                     <NumberField

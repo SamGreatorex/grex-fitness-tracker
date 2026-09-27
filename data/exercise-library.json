@@ -1,0 +1,3532 @@
+[
+  {
+    "exerciseId": "ab-wheel-rollout",
+    "name": "Ab Wheel Rollout",
+    "equipment": "Ab Wheel",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Back"
+    ],
+    "stabilizerTags": [],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/ab-wheel-rollout.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-back-squat",
+    "name": "Barbell Back Squat",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-back-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-bench-press",
+    "name": "Barbell Bench Press",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-bench-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-bent-over-row",
+    "name": "Barbell Bent Over Row",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-bent-over-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-biceps-curl",
+    "name": "Barbell Biceps Curl",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-biceps-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-close-grip-bench-press",
+    "name": "Barbell Close Grip Bench Press",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-close-grip-bench-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-deadlift",
+    "name": "Barbell Deadlift",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-deadlift.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-front-squat",
+    "name": "Barbell Front Squat",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-front-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-good-morning",
+    "name": "Barbell Good Morning",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-good-morning.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-hip-thrust",
+    "name": "Barbell Hip Thrust",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-hip-thrust.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-incline-bench-press",
+    "name": "Barbell Incline Bench Press",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-incline-bench-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-overhead-press",
+    "name": "Barbell Overhead Press",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-overhead-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-reverse-lunge",
+    "name": "Barbell Reverse Lunge",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-reverse-lunge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-romanian-deadlift",
+    "name": "Barbell Romanian Deadlift",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-romanian-deadlift.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "barbell-shrug",
+    "name": "Barbell Shrug",
+    "equipment": "Barbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/barbell-shrug.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "battle-rope-waves",
+    "name": "Battle Rope Waves",
+    "equipment": "Battle Ropes",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Core",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/battle-rope-waves.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "back-extension",
+    "name": "Back Extension",
+    "equipment": "Bench",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/back-extension.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bench-dip",
+    "name": "Bench Dip",
+    "equipment": "Bench",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/bench-dip.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bicycle-crunch",
+    "name": "Bicycle Crunch",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Quads"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/bicycle-crunch.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bird-dog",
+    "name": "Bird Dog",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Back",
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/bird-dog.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bodyweight-calf-raise",
+    "name": "Bodyweight Calf Raise",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Calves"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/bodyweight-calf-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bodyweight-reverse-lunge",
+    "name": "Bodyweight Reverse Lunge",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/bodyweight-reverse-lunge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "bodyweight-squat",
+    "name": "Bodyweight Squat",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/bodyweight-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "burpee",
+    "name": "Burpee",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/burpee.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cossack-squat",
+    "name": "Cossack Squat",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "crunch",
+    "name": "Crunch",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/crunch.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dead-bug",
+    "name": "Dead Bug",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "diamond-push-up",
+    "name": "Diamond Push-up",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "flutter-kicks",
+    "name": "Flutter Kicks",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "front-plank",
+    "name": "Front Plank",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/front-plank.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "front-plank-toe-tap",
+    "name": "Front Plank Toe Tap",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "glute-bridge",
+    "name": "Glute Bridge",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/glute-bridge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "glute-march",
+    "name": "Glute March",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "hollow-body-hold",
+    "name": "Hollow Body Hold",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/hollow-body-hold.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "incline-push-up",
+    "name": "Incline Push-up",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/incline-push-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "inverted-row",
+    "name": "Inverted Row",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/inverted-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "jump-squat",
+    "name": "Jump Squat",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Calves"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/jump-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "knee-push-up",
+    "name": "Knee Push-up",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/knee-push-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "lying-90-to-90-switch",
+    "name": "Lying 90 to 90 Switch",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "lying-knee-tuck",
+    "name": "Lying Knee Tuck",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "lying-leg-raise",
+    "name": "Lying Leg Raise",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/lying-leg-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mountain-climber",
+    "name": "Mountain Climber",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mountain-climber.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "pike-push-up",
+    "name": "Pike Push-up",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/pike-push-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "push-up",
+    "name": "Push Up",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "side-plank",
+    "name": "Side Plank",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/side-plank.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "single-leg-glute-bridge",
+    "name": "Single Leg Glute Bridge",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/single-leg-glute-bridge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "sit-wall",
+    "name": "Sit (wall)",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "starfish-crunch",
+    "name": "Starfish Crunch",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "superman",
+    "name": "Superman",
+    "equipment": "Bodyweight",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/superman.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-biceps-curls",
+    "name": "Cable Biceps Curls",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "cable-face-pull",
+    "name": "Cable Face Pull",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-face-pull.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-glute-kickback",
+    "name": "Cable Glute Kickback",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-glute-kickback.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-lateral-raise",
+    "name": "Cable Lateral Raise",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "cable-overhead-triceps-extension",
+    "name": "Cable Overhead Triceps Extension",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-overhead-triceps-extension.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-pallof-press",
+    "name": "Cable Pallof Press",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-pallof-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-pull-through",
+    "name": "Cable Pull Through",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "cable-rope-hammer-curl",
+    "name": "Cable Rope Hammer Curl",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-rope-hammer-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "cable-seated-single-leg-extension",
+    "name": "Cable Seated Single Leg Extension",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "cable-tricep-extension",
+    "name": "Cable Tricep Extension",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "cable-woodchop",
+    "name": "Cable Woodchop",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/cable-woodchop.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "close-grip-lat-pulldown",
+    "name": "Close Grip Lat Pulldown",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "kneeling-cable-crunch",
+    "name": "Kneeling Cable Crunch",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/kneeling-cable-crunch.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "seated-cable-row",
+    "name": "Seated Cable Row",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "standing-cable-fly",
+    "name": "Standing Cable Fly",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "straight-arm-cable-pulldown",
+    "name": "Straight Arm Cable Pulldown",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/straight-arm-cable-pulldown.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "wide-grip-lat-pulldown",
+    "name": "Wide Grip Lat Pulldown",
+    "equipment": "Cable",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/wide-grip-lat-pulldown.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "parallel-bar-dip",
+    "name": "Parallel Bar Dip",
+    "equipment": "Dip Station",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/parallel-bar-dip.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-bench-press",
+    "name": "Dumbbell Bench Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-bench-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-bent-over-row",
+    "name": "Dumbbell Bent Over Row",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-bent-over-row-alternating",
+    "name": "Dumbbell Bent Over Row (alternating)",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-bulgarian-split-squat",
+    "name": "Dumbbell Bulgarian Split Squat",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-calf-raise",
+    "name": "Dumbbell Calf Raise",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Calves"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-calf-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-chest-supported-row",
+    "name": "Dumbbell Chest Supported Row",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-chest-supported-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-cossack-squat",
+    "name": "Dumbbell Cossack Squat",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-cross-body-hammer-curl",
+    "name": "Dumbbell Cross Body Hammer Curl",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-deadlift",
+    "name": "Dumbbell Deadlift",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-farmers-carry",
+    "name": "Dumbbell Farmers Carry",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Forearms"
+    ],
+    "secondaryTags": [
+      "Back",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-farmers-carry.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-floor-fly",
+    "name": "Dumbbell Floor Fly",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-front-rack-lunge",
+    "name": "Dumbbell Front Rack Lunge",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-frontal-raises",
+    "name": "Dumbbell Frontal Raises",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-goblet-split-squat",
+    "name": "Dumbbell Goblet Split Squat",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-goblet-squat",
+    "name": "Dumbbell Goblet Squat",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-good-morning",
+    "name": "Dumbbell Good Morning",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-hammer-curl",
+    "name": "Dumbbell Hammer Curl",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-hammer-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-incline-bench-press",
+    "name": "Dumbbell Incline Bench Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-incline-bench-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-kickback",
+    "name": "Dumbbell Kickback",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-kneeling-arnold-press",
+    "name": "Dumbbell Kneeling Arnold Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-kneeling-hold-to-stand-clean-grip",
+    "name": "Dumbbell Kneeling Hold to Stand Clean Grip",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Quads",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-lying-floor-skullcrusher",
+    "name": "Dumbbell Lying Floor Skullcrusher",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-lying-hammer-press",
+    "name": "Dumbbell Lying Hammer Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-lying-on-floor-chest-press",
+    "name": "Dumbbell Lying on Floor Chest Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-one-arm-bent-over-row",
+    "name": "Dumbbell One Arm Bent over Row",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-overhead-lunge",
+    "name": "Dumbbell Overhead Lunge",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-pullover",
+    "name": "Dumbbell Pullover",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-pullover.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-rear-fly",
+    "name": "Dumbbell Rear Fly",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-renegade-row",
+    "name": "Dumbbell Renegade Row",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-romanian-deadlift",
+    "name": "Dumbbell Romanian Deadlift",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-seated-shoulder-press",
+    "name": "Dumbbell Seated Shoulder Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-seated-shoulder-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-shrug",
+    "name": "Dumbbell Shrug",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-shrug.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-side-squat",
+    "name": "Dumbbell Side Squat",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-single-leg-romanian-deadlift",
+    "name": "Dumbbell Single Leg Romanian Deadlift",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-single-leg-romanian-deadlift.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-standing-overhead-press",
+    "name": "Dumbbell Standing Overhead Press",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-standing-triceps-extension",
+    "name": "Dumbbell Standing Triceps Extension",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-step-up",
+    "name": "Dumbbell Step-up",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-step-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-strict-curl",
+    "name": "Dumbbell Strict Curl",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-sumo-deadlift",
+    "name": "Dumbbell Sumo Deadlift",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-thruster",
+    "name": "Dumbbell Thruster",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-thruster.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-upright-row",
+    "name": "Dumbbell Upright Row",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back",
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-upright-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-walking-lunge",
+    "name": "Dumbbell Walking Lunge",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-walking-lunge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-wall-sit",
+    "name": "Dumbbell Wall Sit",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "dumbbell-wrist-curl",
+    "name": "Dumbbell Wrist Curl",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Forearms"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-wrist-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "dumbbell-zottman-curl",
+    "name": "Dumbbell Zottman Curl",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/dumbbell-zottman-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "lateral-raise",
+    "name": "Lateral Raise",
+    "equipment": "Dumbbell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ]
+  },
+  {
+    "exerciseId": "ez-bar-preacher-curl",
+    "name": "EZ Bar Preacher Curl",
+    "equipment": "EZ Bar",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/ez-bar-preacher-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "ez-bar-skull-crusher",
+    "name": "EZ Bar Skull Crusher",
+    "equipment": "EZ Bar",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/ez-bar-skull-crusher.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-clean-and-press",
+    "name": "Kettlebell Clean and Press",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-clean-and-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-deadlift",
+    "name": "Kettlebell Deadlift",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-deadlift.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-goblet-squat",
+    "name": "Kettlebell Goblet Squat",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-goblet-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-halo",
+    "name": "Kettlebell Halo",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Core"
+    ],
+    "stabilizerTags": [
+      "Triceps"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-halo.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-russian-twist",
+    "name": "Kettlebell Russian Twist",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-russian-twist.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-single-arm-row",
+    "name": "Kettlebell Single Arm Row",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-single-arm-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-suitcase-carry",
+    "name": "Kettlebell Suitcase Carry",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Forearms",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-suitcase-carry.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-swing",
+    "name": "Kettlebell Swing",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-swing.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "kettlebell-turkish-get-up",
+    "name": "Kettlebell Turkish Get-up",
+    "equipment": "Kettlebell",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Quads"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/kettlebell-turkish-get-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "landmine-press",
+    "name": "Landmine Press",
+    "equipment": "Landmine",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Chest",
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/landmine-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "landmine-t-bar-row",
+    "name": "Landmine T-Bar Row",
+    "equipment": "Landmine",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/landmine-t-bar-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "assisted-pull-up",
+    "name": "Assisted Pull-up",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/assisted-pull-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "hack-squat",
+    "name": "Hack Squat",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/hack-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "hip-abduction-machine",
+    "name": "Hip Abduction Machine",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/hip-abduction-machine.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "leg-extension",
+    "name": "Leg Extension",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/leg-extension.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "leg-press",
+    "name": "Leg Press",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/leg-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "lying-leg-curl",
+    "name": "Lying Leg Curl",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Calves"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/lying-leg-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "machine-chest-press",
+    "name": "Machine Chest Press",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/machine-chest-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "machine-chest-supported-row",
+    "name": "Machine Chest Supported Row",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/machine-chest-supported-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "machine-shoulder-press",
+    "name": "Machine Shoulder Press",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/machine-shoulder-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "machine-standing-calf-raise",
+    "name": "Machine Standing Calf Raise",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Calves"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/machine-standing-calf-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "pec-deck-fly",
+    "name": "Pec Deck Fly",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/pec-deck-fly.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "reverse-pec-deck",
+    "name": "Reverse Pec Deck",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/reverse-pec-deck.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "seated-calf-raise",
+    "name": "Seated Calf Raise",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Calves"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/seated-calf-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "seated-leg-curl",
+    "name": "Seated Leg Curl",
+    "equipment": "Machine",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Calves"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/seated-leg-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "medicine-ball-slam",
+    "name": "Medicine Ball Slam",
+    "equipment": "Medicine Ball",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/medicine-ball-slam.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-clamshell",
+    "name": "Mini Band Clamshell",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-clamshell.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-fire-hydrant",
+    "name": "Mini Band Fire Hydrant",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-fire-hydrant.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-glute-bridge",
+    "name": "Mini Band Glute Bridge",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-glute-bridge.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-lateral-walk",
+    "name": "Mini Band Lateral Walk",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-lateral-walk.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-monster-walk",
+    "name": "Mini Band Monster Walk",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Quads"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-monster-walk.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "mini-band-squat",
+    "name": "Mini Band Squat",
+    "equipment": "Mini Band",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/mini-band-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "box-jump",
+    "name": "Box Jump",
+    "equipment": "Plyo Box",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Calves"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/box-jump.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "chin-up",
+    "name": "Chin-up",
+    "equipment": "Pull-up Bar",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/chin-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "hanging-knee-raise",
+    "name": "Hanging Knee Raise",
+    "equipment": "Pull-up Bar",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Shoulders"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/hanging-knee-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "pull-up",
+    "name": "Pull-up",
+    "equipment": "Pull-up Bar",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/pull-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-assisted-pull-up",
+    "name": "Resistance Band Assisted Pull-up",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps",
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-assisted-pull-up.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-bent-over-row",
+    "name": "Resistance Band Bent Over Row",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-bent-over-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-biceps-curl",
+    "name": "Resistance Band Biceps Curl",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Biceps"
+    ],
+    "secondaryTags": [
+      "Forearms"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-biceps-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-chest-fly",
+    "name": "Resistance Band Chest Fly",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-chest-fly.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-chest-press",
+    "name": "Resistance Band Chest Press",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-chest-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-deadlift",
+    "name": "Resistance Band Deadlift",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-deadlift.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-face-pull",
+    "name": "Resistance Band Face Pull",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-face-pull.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-front-raise",
+    "name": "Resistance Band Front Raise",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Chest"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-front-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-glute-kickback",
+    "name": "Resistance Band Glute Kickback",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-glute-kickback.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-good-morning",
+    "name": "Resistance Band Good Morning",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-good-morning.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-lat-pulldown",
+    "name": "Resistance Band Lat Pulldown",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-lat-pulldown.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-lateral-raise",
+    "name": "Resistance Band Lateral Raise",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-lateral-raise.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-lying-leg-press",
+    "name": "Resistance Band Lying Leg Press",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ]
+  },
+  {
+    "exerciseId": "resistance-band-overhead-press",
+    "name": "Resistance Band Overhead Press",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Triceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-overhead-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-overhead-triceps-extension",
+    "name": "Resistance Band Overhead Triceps Extension",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-overhead-triceps-extension.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-pallof-press",
+    "name": "Resistance Band Pallof Press",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-pallof-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-pull-apart",
+    "name": "Resistance Band Pull-Apart",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-pull-apart.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-pull-through",
+    "name": "Resistance Band Pull-Through",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-pull-through.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-seated-row",
+    "name": "Resistance Band Seated Row",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-seated-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-squat",
+    "name": "Resistance Band Squat",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-triceps-pushdown",
+    "name": "Resistance Band Triceps Pushdown",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Triceps"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-triceps-pushdown.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-upright-row",
+    "name": "Resistance Band Upright Row",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Shoulders"
+    ],
+    "secondaryTags": [
+      "Back",
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-upright-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "resistance-band-woodchop",
+    "name": "Resistance Band Woodchop",
+    "equipment": "Resistance Band",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Glutes"
+    ],
+    "where": [
+      "Home",
+      "Gym"
+    ],
+    "mediaKey": "exercises/resistance-band-woodchop.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "smith-machine-squat",
+    "name": "Smith Machine Squat",
+    "equipment": "Smith Machine",
+    "primaryTags": [
+      "Quads"
+    ],
+    "secondaryTags": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/smith-machine-squat.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "stability-ball-crunch",
+    "name": "Stability Ball Crunch",
+    "equipment": "Stability Ball",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [],
+    "stabilizerTags": [],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/stability-ball-crunch.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "stability-ball-hamstring-curl",
+    "name": "Stability Ball Hamstring Curl",
+    "equipment": "Stability Ball",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/stability-ball-hamstring-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "stability-ball-knee-tuck",
+    "name": "Stability Ball Knee Tuck",
+    "equipment": "Stability Ball",
+    "primaryTags": [
+      "Core"
+    ],
+    "secondaryTags": [
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Quads"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/stability-ball-knee-tuck.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "suspension-trainer-chest-press",
+    "name": "Suspension Trainer Chest Press",
+    "equipment": "Suspension Trainer",
+    "primaryTags": [
+      "Chest"
+    ],
+    "secondaryTags": [
+      "Triceps",
+      "Shoulders"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/suspension-trainer-chest-press.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "suspension-trainer-hamstring-curl",
+    "name": "Suspension Trainer Hamstring Curl",
+    "equipment": "Suspension Trainer",
+    "primaryTags": [
+      "Hamstrings"
+    ],
+    "secondaryTags": [
+      "Glutes"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/suspension-trainer-hamstring-curl.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "suspension-trainer-row",
+    "name": "Suspension Trainer Row",
+    "equipment": "Suspension Trainer",
+    "primaryTags": [
+      "Back"
+    ],
+    "secondaryTags": [
+      "Biceps"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym",
+      "Home"
+    ],
+    "mediaKey": "exercises/suspension-trainer-row.png",
+    "mediaType": "image"
+  },
+  {
+    "exerciseId": "trap-bar-deadlift",
+    "name": "Trap Bar Deadlift",
+    "equipment": "Trap Bar",
+    "primaryTags": [
+      "Glutes"
+    ],
+    "secondaryTags": [
+      "Quads",
+      "Hamstrings",
+      "Back"
+    ],
+    "stabilizerTags": [
+      "Core"
+    ],
+    "where": [
+      "Gym"
+    ],
+    "mediaKey": "exercises/trap-bar-deadlift.png",
+    "mediaType": "image"
+  }
+]

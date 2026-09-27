@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../../components/AuthProvider";
 import { api } from "../../../lib/apiClient";
 import AppHeader from "../../../components/AppHeader";
+import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import { slugify } from "../../../lib/slugify";
 import styles from "./page.module.css";
 
@@ -26,9 +27,9 @@ const BODY_AREAS = [
 ];
 
 const TAG_TIERS = [
-  { key: "primaryTags", label: "Primary", abbr: "Pr", hint: "The main muscle(s) this exercise targets." },
-  { key: "secondaryTags", label: "Secondary", abbr: "Se", hint: "Muscles that assist the primary movers." },
-  { key: "stabilizerTags", label: "Stabilizer", abbr: "St", hint: "Muscles that stabilize the movement without driving it." },
+  { key: "primaryTags", label: "Primary", tone: "primary", hint: "The main muscle(s) this exercise targets." },
+  { key: "secondaryTags", label: "Secondary", tone: "secondary", hint: "Muscles that assist the primary movers." },
+  { key: "stabilizerTags", label: "Stabilizer", tone: "stabilizer", hint: "Muscles that stabilize the movement without driving it." },
 ];
 
 export default function AdminExercisesPage() {
@@ -41,8 +42,6 @@ export default function AdminExercisesPage() {
   const [primaryTags, setPrimaryTags] = useState([]);
   const [secondaryTags, setSecondaryTags] = useState([]);
   const [stabilizerTags, setStabilizerTags] = useState([]);
-  const [defaultWeight, setDefaultWeight] = useState("");
-  const [defaultReps, setDefaultReps] = useState("");
   const [file, setFile] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -109,8 +108,6 @@ export default function AdminExercisesPage() {
     setPrimaryTags([]);
     setSecondaryTags([]);
     setStabilizerTags([]);
-    setDefaultWeight("");
-    setDefaultReps("");
     setFile(null);
     setError("");
   };
@@ -120,6 +117,8 @@ export default function AdminExercisesPage() {
     secondaryTags: setSecondaryTags,
     stabilizerTags: setStabilizerTags,
   };
+
+  const tagsByTier = { primaryTags, secondaryTags, stabilizerTags };
 
   // A body area can only belong to one tier at a time — selecting it here
   // silently removes it from the other two.
@@ -159,8 +158,6 @@ export default function AdminExercisesPage() {
     setPrimaryTags(exercise.primaryTags || []);
     setSecondaryTags(exercise.secondaryTags || []);
     setStabilizerTags(exercise.stabilizerTags || []);
-    setDefaultWeight(exercise.defaultWeight != null ? String(exercise.defaultWeight) : "");
-    setDefaultReps(exercise.defaultReps != null ? String(exercise.defaultReps) : "");
     setFile(null);
     setError("");
     dialogRef.current?.showModal();
@@ -217,8 +214,6 @@ export default function AdminExercisesPage() {
         stabilizerTags,
         mediaType,
         mediaKey,
-        defaultWeight,
-        defaultReps,
       });
       await load();
       dialogRef.current?.close();
@@ -304,11 +299,6 @@ export default function AdminExercisesPage() {
                     )}
                     <div className={styles.rowInfo}>
                       <p className={styles.rowName}>{exercise.name}</p>
-                      {(exercise.defaultWeight != null || exercise.defaultReps != null) && (
-                        <p className={styles.rowMeta}>
-                          Default: {exercise.defaultWeight ?? "—"}kg × {exercise.defaultReps ?? "—"} reps
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -396,66 +386,27 @@ export default function AdminExercisesPage() {
             <div className={styles.field}>
               <span className={styles.label}>Body areas</span>
               <span className={styles.hint}>
-                For each area, pick whether this exercise targets it as a primary mover,
-                secondary assist, or stabilizer — or leave all three off to skip it.
+                Each area can only be in one group — picking it in one moves it out of the others.
               </span>
-              <ul className={styles.tagList}>
-                {BODY_AREAS.map((area) => (
-                  <li key={area} className={styles.tagListRow}>
-                    <span className={styles.tagListName}>{area}</span>
-                    <div className={styles.tierButtons}>
-                      {TAG_TIERS.map(({ key, label, abbr }) => {
-                        const selected = { primaryTags, secondaryTags, stabilizerTags }[key].includes(area);
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            className={`${styles.tierButton} ${styles[`tierButton_${key}`]} ${selected ? styles.tierButtonSelected : ""}`}
-                            onClick={() => toggleTag(key, area)}
-                            aria-pressed={selected}
-                            title={`${label} — ${area}`}
-                          >
-                            {abbr}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </li>
+              <div className={styles.tierDropdowns}>
+                {TAG_TIERS.map(({ key, label, tone, hint }) => (
+                  <MultiSelectDropdown
+                    key={key}
+                    label={label}
+                    hint={hint}
+                    tone={tone}
+                    options={BODY_AREAS}
+                    selected={tagsByTier[key]}
+                    onToggle={(area) => toggleTag(key, area)}
+                    noteFor={(area) => {
+                      const other = TAG_TIERS.find((t) => t.key !== key && tagsByTier[t.key].includes(area));
+                      return other ? `in ${other.label}` : null;
+                    }}
+                    placeholder="None"
+                  />
                 ))}
-              </ul>
-            </div>
-
-            <div className={styles.fieldRow}>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="defaultWeight">Default weight (kg)</label>
-                <input
-                  id="defaultWeight"
-                  className={styles.input}
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={defaultWeight}
-                  onChange={(e) => setDefaultWeight(e.target.value)}
-                  placeholder="First-time only"
-                />
-              </div>
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor="defaultReps">Default reps</label>
-                <input
-                  id="defaultReps"
-                  className={styles.input}
-                  type="number"
-                  min="0"
-                  value={defaultReps}
-                  onChange={(e) => setDefaultReps(e.target.value)}
-                  placeholder="First-time only"
-                />
               </div>
             </div>
-            <span className={styles.hint}>
-              Used to prefill weight/reps the first time this exercise is logged in any
-              programme — once it&apos;s actually been logged, that value is used instead.
-            </span>
 
             <div className={styles.field}>
               <label className={styles.label} htmlFor="media">Image or video</label>

@@ -29,12 +29,11 @@ export const POST = withLogging("POST /api/exercises", async (request) => {
   if (denied) return denied;
 
   const body = await request.json();
-  const { name, primaryTags = [], secondaryTags = [], stabilizerTags = [], mediaType, mediaKey, defaultWeight, defaultReps } = body;
+  const { name, primaryTags = [], secondaryTags = [], stabilizerTags = [], mediaType, mediaKey } = body;
   if (!name) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
-  const toNumberOrNull = (value) => (value !== "" && value != null ? Number(value) : null);
 
   const exerciseId = slugify(name);
   const cleanList = (list) =>
@@ -66,10 +65,10 @@ export const POST = withLogging("POST /api/exercises", async (request) => {
     mediaType: mediaType ?? existing.Item?.mediaType ?? null,
     mediaKey: finalMediaKey,
     mediaUrl: finalMediaKey ? publicMediaUrl(finalMediaKey) : null,
-    // Only used to prefill weight/reps the very first time this exercise is
-    // logged in a programme — once there's real history, that always wins.
-    defaultWeight: toNumberOrNull(defaultWeight),
-    defaultReps: toNumberOrNull(defaultReps),
+    // Not editable in the admin UI yet — carried over so saving an exercise
+    // doesn't wipe what scripts/import-exercise-library.js set.
+    equipment: existing.Item?.equipment,
+    where: existing.Item?.where,
     createdAt: existing.Item?.createdAt || new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

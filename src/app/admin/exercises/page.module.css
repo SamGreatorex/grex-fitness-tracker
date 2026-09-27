@@ -364,3 +364,50 @@
   opacity: 0.6;
   font-size: 0.9rem;
 }
+
+/* Strength / Cardio choice in the edit dialog. */
+.typeToggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.typeOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.typeOptionActive {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.typeOptionLabel {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.typeOptionHint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.cardioBadge {
+  margin-left: 0.45rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  vertical-align: middle;
+}

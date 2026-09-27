@@ -7,6 +7,7 @@ import { api } from "../../../lib/apiClient";
 import AppHeader from "../../../components/AppHeader";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import { slugify } from "../../../lib/slugify";
+import { EXERCISE_TYPES, isCardio } from "../../../lib/exerciseTypes";
 import styles from "./page.module.css";
 
 const MAX_FILE_BYTES = 100 * 1024 * 1024;
@@ -39,6 +40,7 @@ export default function AdminExercisesPage() {
 
   const [exercises, setExercises] = useState(null);
   const [name, setName] = useState("");
+  const [type, setType] = useState(EXERCISE_TYPES.STRENGTH);
   const [primaryTags, setPrimaryTags] = useState([]);
   const [secondaryTags, setSecondaryTags] = useState([]);
   const [stabilizerTags, setStabilizerTags] = useState([]);
@@ -105,6 +107,7 @@ export default function AdminExercisesPage() {
   const resetForm = () => {
     setEditingId(null);
     setName("");
+    setType(EXERCISE_TYPES.STRENGTH);
     setPrimaryTags([]);
     setSecondaryTags([]);
     setStabilizerTags([]);
@@ -155,6 +158,7 @@ export default function AdminExercisesPage() {
   const openEditDialog = (exercise) => {
     setEditingId(exercise.exerciseId);
     setName(exercise.name);
+    setType(isCardio(exercise) ? EXERCISE_TYPES.CARDIO : EXERCISE_TYPES.STRENGTH);
     setPrimaryTags(exercise.primaryTags || []);
     setSecondaryTags(exercise.secondaryTags || []);
     setStabilizerTags(exercise.stabilizerTags || []);
@@ -209,6 +213,7 @@ export default function AdminExercisesPage() {
 
       await api.post("/api/exercises", {
         name: name.trim(),
+        type,
         primaryTags,
         secondaryTags,
         stabilizerTags,
@@ -298,7 +303,10 @@ export default function AdminExercisesPage() {
                       <div className={styles.rowThumbPlaceholder} />
                     )}
                     <div className={styles.rowInfo}>
-                      <p className={styles.rowName}>{exercise.name}</p>
+                      <p className={styles.rowName}>
+                        {exercise.name}
+                        {isCardio(exercise) && <span className={styles.cardioBadge}>Cardio</span>}
+                      </p>
                     </div>
                   </div>
 
@@ -381,6 +389,28 @@ export default function AdminExercisesPage() {
                 required
               />
               {editingId && <span className={styles.hint}>Name can&apos;t be changed once created — delete and recreate instead.</span>}
+            </div>
+
+            <div className={styles.field}>
+              <span className={styles.label} id="type-label">Type</span>
+              <div className={styles.typeToggle} role="radiogroup" aria-labelledby="type-label">
+                {[
+                  [EXERCISE_TYPES.STRENGTH, "Strength", "Sets × reps × weight"],
+                  [EXERCISE_TYPES.CARDIO, "Cardio", "One setting + total time"],
+                ].map(([value, label, hint]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={type === value}
+                    className={`${styles.typeOption} ${type === value ? styles.typeOptionActive : ""}`}
+                    onClick={() => setType(value)}
+                  >
+                    <span className={styles.typeOptionLabel}>{label}</span>
+                    <span className={styles.typeOptionHint}>{hint}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className={styles.field}>

@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "./dynamo";
 import { ROLES } from "./profile";
+import { CARDIO_LIMITS, EXERCISE_TYPES, isCardio } from "./exerciseTypes";
 
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
 // edit programmes only for their own clients (users whose ptUserId is the
@@ -100,6 +101,27 @@ export function normaliseProgramInput(body, existing = null) {
     for (const [exerciseIndex, rawExercise] of rawExercises.entries()) {
       const exName = String(rawExercise?.name ?? "").trim();
       if (!exName) return { error: `${dayName}: every exercise needs a name` };
+
+      // Cardio: one setting (free text, optional) + one total time. No sets,
+      // reps, rest or weight.
+      if (isCardio(rawExercise)) {
+        const settings = String(rawExercise.settings ?? "").trim();
+        if (settings.length > CARDIO_LIMITS.settingsLength) {
+          return { error: `${dayName} · ${exName}: settings must be at most ${CARDIO_LIMITS.settingsLength} characters` };
+        }
+        const targetSeconds = intInRange(rawExercise.targetSeconds, 1, CARDIO_LIMITS.maxSeconds);
+        if (!targetSeconds) return { error: `${dayName} · ${exName}: enter a time (up to 6 hours)` };
+        exercises.push({
+          exerciseId: String(exerciseIndex),
+          name: exName,
+          type: EXERCISE_TYPES.CARDIO,
+          videoLink: null,
+          order: exerciseIndex,
+          settings: settings || null,
+          targetSeconds,
+        });
+        continue;
+      }
 
       const targetSets = intInRange(rawExercise.targetSets, 1, LIMITS.sets);
       if (!targetSets) return { error: `${dayName} · ${exName}: sets must be 1–${LIMITS.sets}` };

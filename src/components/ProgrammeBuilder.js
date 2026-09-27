@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "../lib/apiClient";
 import ExercisePicker from "./ExercisePicker";
+import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import styles from "./ProgrammeBuilder.module.css";
 
 let keyCounter = 0;
@@ -12,6 +13,7 @@ const newKey = () => `k${++keyCounter}`;
 const DEFAULT_SETS = 3;
 const DEFAULT_REPS = "10";
 const DEFAULT_REST = 60;
+const DEFAULT_CARDIO_MINUTES = 10;
 
 function emptyDay(index) {
   return { key: newKey(), dayId: null, label: `Day ${index + 1}`, subtitle: "", exercises: [] };
@@ -35,14 +37,24 @@ function toFormState(program) {
         subtitle: d.subtitle ?? "",
         exercises: [...d.exercises]
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-          .map((e) => ({
-            key: newKey(),
-            name: e.name,
-            targetSets: e.targetSets ?? DEFAULT_SETS,
-            targetReps: e.targetReps ?? "",
-            targetWeight: e.targetWeight ?? "",
-            restSeconds: e.restSeconds ?? DEFAULT_REST,
-          })),
+          .map((e) =>
+            isCardio(e)
+              ? {
+                  key: newKey(),
+                  name: e.name,
+                  type: EXERCISE_TYPES.CARDIO,
+                  settings: e.settings ?? "",
+                  minutes: secondsToMinutes(e.targetSeconds),
+                }
+              : {
+                  key: newKey(),
+                  name: e.name,
+                  targetSets: e.targetSets ?? DEFAULT_SETS,
+                  targetReps: e.targetReps ?? "",
+                  targetWeight: e.targetWeight ?? "",
+                  restSeconds: e.restSeconds ?? DEFAULT_REST,
+                }
+          ),
       })),
   };
 }
@@ -97,20 +109,17 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
   };
 
   const addExercise = (libraryExercise) => {
-    updateDay(pickerDayKey, (d) => ({
-      ...d,
-      exercises: [
-        ...d.exercises,
-        {
+    const item = isCardio(libraryExercise)
+      ? { key: newKey(), name: libraryExercise.name, type: EXERCISE_TYPES.CARDIO, settings: "", minutes: DEFAULT_CARDIO_MINUTES }
+      : {
           key: newKey(),
           name: libraryExercise.name,
           targetSets: DEFAULT_SETS,
           targetReps: DEFAULT_REPS,
           targetWeight: "",
           restSeconds: DEFAULT_REST,
-        },
-      ],
-    }));
+        };
+    updateDay(pickerDayKey, (d) => ({ ...d, exercises: [...d.exercises, item] }));
   };
 
   const pickerDay = form.days.find((d) => d.key === pickerDayKey);
@@ -133,13 +142,17 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
         dayId: d.dayId,
         label: d.label,
         subtitle: d.subtitle,
-        exercises: d.exercises.map((ex) => ({
-          name: ex.name,
-          targetSets: Number(ex.targetSets),
-          targetReps: ex.targetReps,
-          targetWeight: ex.targetWeight,
-          restSeconds: Number(ex.restSeconds),
-        })),
+        exercises: d.exercises.map((ex) =>
+          isCardio(ex)
+            ? { name: ex.name, type: EXERCISE_TYPES.CARDIO, settings: ex.settings, targetSeconds: minutesToSeconds(ex.minutes) }
+            : {
+                name: ex.name,
+                targetSets: Number(ex.targetSets),
+                targetReps: ex.targetReps,
+                targetWeight: ex.targetWeight,
+                restSeconds: Number(ex.restSeconds),
+              }
+        ),
       })),
     };
     try {
@@ -257,48 +270,80 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
                   <span className={styles.exerciseName}>
                     <span className={styles.exerciseIndex}>{exIndex + 1}</span>
                     {ex.name}
+                    {isCardio(ex) && <span className={styles.cardioBadge}>Cardio</span>}
                   </span>
                   <div className={styles.exerciseInputs}>
-                    <NumberField
-                      label="Sets"
-                      min={1}
-                      max={20}
-                      value={ex.targetSets}
-                      onChange={(v) => updateExercise(day.key, ex.key, "targetSets", v)}
-                    />
-                    <label className={styles.miniField}>
-                      <span>Reps</span>
-                      <input
-                        className={styles.miniInput}
-                        maxLength={20}
-                        value={ex.targetReps}
-                        onChange={(e) => updateExercise(day.key, ex.key, "targetReps", e.target.value)}
-                        placeholder="8-12"
-                      />
-                    </label>
-                    <label className={styles.miniField}>
-                      <span>Start kg</span>
-                      <input
-                        className={styles.miniInput}
-                        type="number"
-                        inputMode="decimal"
-                        min={0}
-                        max={500}
-                        step="0.5"
-                        value={ex.targetWeight}
-                        onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
-                        placeholder="—"
-                        title="Optional — prefills the client's first workout; their logged weights take over after that"
-                      />
-                    </label>
-                    <NumberField
-                      label="Rest (s)"
-                      min={0}
-                      max={600}
-                      step={5}
-                      value={ex.restSeconds}
-                      onChange={(v) => updateExercise(day.key, ex.key, "restSeconds", v)}
-                    />
+                    {isCardio(ex) ? (
+                      <>
+                        <label className={`${styles.miniField} ${styles.settingsField}`}>
+                          <span>Settings</span>
+                          <input
+                            className={`${styles.miniInput} ${styles.settingsInput}`}
+                            maxLength={60}
+                            value={ex.settings}
+                            onChange={(e) => updateExercise(day.key, ex.key, "settings", e.target.value)}
+                            placeholder="e.g. 8 mph, incline 2"
+                          />
+                        </label>
+                        <label className={styles.miniField}>
+                          <span>Time (min)</span>
+                          <input
+                            className={styles.miniInput}
+                            type="number"
+                            inputMode="decimal"
+                            required
+                            min={0.5}
+                            max={360}
+                            step="0.5"
+                            value={ex.minutes}
+                            onChange={(e) => updateExercise(day.key, ex.key, "minutes", e.target.value)}
+                          />
+                        </label>
+                      </>
+                    ) : (
+                      <>
+                        <NumberField
+                          label="Sets"
+                          min={1}
+                          max={20}
+                          value={ex.targetSets}
+                          onChange={(v) => updateExercise(day.key, ex.key, "targetSets", v)}
+                        />
+                        <label className={styles.miniField}>
+                          <span>Reps</span>
+                          <input
+                            className={styles.miniInput}
+                            maxLength={20}
+                            value={ex.targetReps}
+                            onChange={(e) => updateExercise(day.key, ex.key, "targetReps", e.target.value)}
+                            placeholder="8-12"
+                          />
+                        </label>
+                        <label className={styles.miniField}>
+                          <span>Start kg</span>
+                          <input
+                            className={styles.miniInput}
+                            type="number"
+                            inputMode="decimal"
+                            min={0}
+                            max={500}
+                            step="0.5"
+                            value={ex.targetWeight}
+                            onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
+                            placeholder="—"
+                            title="Optional — prefills the client's first workout; their logged weights take over after that"
+                          />
+                        </label>
+                        <NumberField
+                          label="Rest (s)"
+                          min={0}
+                          max={600}
+                          step={5}
+                          value={ex.restSeconds}
+                          onChange={(v) => updateExercise(day.key, ex.key, "restSeconds", v)}
+                        />
+                      </>
+                    )}
                     <div className={styles.iconButtons}>
                       <IconButton
                         label="Move exercise up"

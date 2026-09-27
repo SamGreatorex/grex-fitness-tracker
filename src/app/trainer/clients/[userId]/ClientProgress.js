@@ -8,6 +8,7 @@ import { clientSummary, programProgress, relativeDay } from "../../../../lib/cli
 import { averageEffortOf } from "../../../../lib/sessionStats";
 import { averageEffortSeries, bodyMetricSeries, totalWeightSeries } from "../../../../lib/reports";
 import { WEIGHT_UNITS, chartWeightToKg, formatWeight, kgToChartWeight } from "../../../../lib/units";
+import { formatCardio } from "../../../../lib/exerciseTypes";
 import styles from "./ClientProgress.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
@@ -199,7 +200,13 @@ function RecentWorkouts({ sessions, programs, runs }) {
                     <li key={`${ex.exerciseId ?? i}`} className={styles.exerciseRow}>
                       <span className={styles.exerciseName}>{ex.name}</span>
                       <span className={styles.sets}>
-                        {ex.sets.map((set, j) => (
+                        {ex.cardio && (
+                          <span className={styles.set}>
+                            {formatCardio({ settings: ex.cardio.settings, seconds: ex.cardio.durationSeconds })}
+                            {ex.cardio.effort != null ? ` · ${ex.cardio.effort}/10` : ""}
+                          </span>
+                        )}
+                        {(ex.sets ?? []).map((set, j) => (
                           <span key={j} className={styles.set}>
                             {set.reps ?? "—"} × {set.weight ?? 0} kg{set.effort != null ? ` · ${set.effort}/10` : ""}
                           </span>

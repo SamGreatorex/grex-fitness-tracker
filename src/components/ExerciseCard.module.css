@@ -251,3 +251,19 @@
   border-color: #16a34a;
   color: #fff;
 }
+
+/* Cardio: badge · settings (wide) · time · log — no weight/reps/rest. */
+.cardioGrid {
+  grid-template-columns: 1.75rem 2fr 1fr 3.75rem;
+}
+
+.cardioSettings {
+  text-align: left;
+  padding-left: 0.6rem;
+}
+
+.cardioLast {
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}

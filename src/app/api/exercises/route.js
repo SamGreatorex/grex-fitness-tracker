@@ -5,6 +5,7 @@ import { slugify } from "../../../lib/slugify";
 import { getUserId } from "../../../lib/verifyToken";
 import { deleteMediaObject, publicMediaUrl } from "../../../lib/s3";
 import { withLogging } from "../../../lib/apiHandler";
+import { EXERCISE_TYPES, isCardio } from "../../../lib/exerciseTypes";
 import { requireRole } from "../../../lib/users";
 import { ROLES } from "../../../lib/profile";
 
@@ -29,7 +30,7 @@ export const POST = withLogging("POST /api/exercises", async (request) => {
   if (denied) return denied;
 
   const body = await request.json();
-  const { name, primaryTags = [], secondaryTags = [], stabilizerTags = [], mediaType, mediaKey } = body;
+  const { name, type, primaryTags = [], secondaryTags = [], stabilizerTags = [], mediaType, mediaKey } = body;
   if (!name) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
@@ -59,6 +60,8 @@ export const POST = withLogging("POST /api/exercises", async (request) => {
   const exercise = {
     exerciseId,
     name,
+    // Strength (sets × reps × weight) or cardio (one setting + total time).
+    type: isCardio(type) ? EXERCISE_TYPES.CARDIO : EXERCISE_TYPES.STRENGTH,
     primaryTags: cleanPrimaryTags,
     secondaryTags: cleanSecondaryTags,
     stabilizerTags: cleanStabilizerTags,

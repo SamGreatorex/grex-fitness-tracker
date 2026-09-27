@@ -238,3 +238,24 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Cardio rows: one wide settings box + time. */
+.settingsField {
+  flex: 1;
+  min-width: 150px;
+}
+
+.settingsInput {
+  width: 100%;
+}
+
+.cardioBadge {
+  margin-left: 0.4rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  vertical-align: middle;
+}

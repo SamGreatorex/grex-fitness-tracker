@@ -2,14 +2,17 @@
 // it's the in-progress payload about to be posted, or a saved session
 // fetched back from the API): [{ sets: [{ weight, reps, effort }] }].
 
+// Effort covers strength sets and cardio (one rating per cardio exercise).
 export function averageEffortOf(exercises) {
-  const efforts = exercises.flatMap((ex) => ex.sets.map((s) => s.effort)).filter((e) => e != null);
+  const efforts = exercises
+    .flatMap((ex) => [...(ex.sets ?? []).map((s) => s.effort), ex.cardio?.effort])
+    .filter((e) => e != null);
   if (efforts.length === 0) return null;
   return efforts.reduce((sum, e) => sum + e, 0) / efforts.length;
 }
 
 export function averageWeightOf(exercises) {
-  const weights = exercises.flatMap((ex) => ex.sets.map((s) => s.weight)).filter((w) => w != null);
+  const weights = exercises.flatMap((ex) => (ex.sets ?? []).map((s) => s.weight)).filter((w) => w != null);
   if (weights.length === 0) return null;
   return weights.reduce((sum, w) => sum + w, 0) / weights.length;
 }

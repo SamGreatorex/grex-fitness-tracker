@@ -76,7 +76,10 @@ export default function ExercisePicker({ library, addedCounts, onAdd, onClose })
                     <span className={styles.thumb} />
                   )}
                   <span className={styles.itemText}>
-                    <span className={styles.itemName}>{exercise.name}</span>
+                    <span className={styles.itemName}>
+                      {exercise.name}
+                      {exercise.type === "cardio" && <span className={styles.cardioBadge}>Cardio</span>}
+                    </span>
                     {exercise.primaryTags?.length > 0 && (
                       <span className={styles.itemTags}>{exercise.primaryTags.join(" · ")}</span>
                     )}

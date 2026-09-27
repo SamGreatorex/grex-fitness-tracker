@@ -8,6 +8,7 @@ import AppHeader from "../../../../../components/AppHeader";
 import WorkoutSummary from "../../../../../components/WorkoutSummary";
 import { averageEffortOf, averageWeightOf } from "../../../../../lib/sessionStats";
 import { effortColor } from "../../../../../lib/effort";
+import { formatCardio } from "../../../../../lib/exerciseTypes";
 import styles from "./page.module.css";
 
 // Read-only view of a session that's already been logged. Deliberately has
@@ -87,7 +88,20 @@ export default function SessionViewPage() {
           <div key={exercise.exerciseId} className={styles.exerciseRow}>
             <p className={styles.exerciseName}>{exercise.name}</p>
             <div className={styles.setsList}>
-              {exercise.sets.length === 0 ? (
+              {exercise.cardio ? (
+                <div className={styles.setChip}>
+                  <span>{formatCardio({ settings: exercise.cardio.settings, seconds: exercise.cardio.durationSeconds })}</span>
+                  {exercise.cardio.effort != null && (
+                    <span
+                      className={styles.effortDot}
+                      style={{ "--effort-color": effortColor(exercise.cardio.effort) }}
+                      title={`Effort: ${exercise.cardio.effort}/10`}
+                    >
+                      {exercise.cardio.effort}
+                    </span>
+                  )}
+                </div>
+              ) : exercise.sets.length === 0 ? (
                 <p className={styles.empty}>No sets logged.</p>
               ) : (
                 exercise.sets.map((set, i) => (

@@ -6,6 +6,7 @@ import { slugify } from "../lib/slugify";
 import { effortColor } from "../lib/effort";
 import RestPicker from "./RestPicker";
 import SwitchExerciseDialog from "./SwitchExerciseDialog";
+import { formatCardio, isCardio } from "../lib/exerciseTypes";
 
 // Vimeo links can be turned into a real thumbnail image via vumbnail.com
 // (no API key needed). Other sources (e.g. jamessmithacademy course pages)
@@ -54,6 +55,9 @@ function ThumbIcon() {
 // `sets` is the local editable state for this exercise:
 // [{ weight, reps, completed }]. `lastSets` (optional) are the sets logged
 // last time this exercise was done, used only to show a "last time" hint.
+// For a cardio exercise, `sets` is a single [{ settings, minutes, completed,
+// effort }] and `lastSets` is the last logged { settings, durationSeconds,
+// effort } instead.
 // `libraryEntry` (optional) is the matching admin-managed Exercises record
 // (tags + uploaded media), matched by slugify(exercise.name).
 export default function ExerciseCard({
@@ -71,6 +75,7 @@ export default function ExerciseCard({
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
 
+  const cardio = isCardio(exercise);
   const allDone = sets.every((s) => s.completed);
   const primaryTags = libraryEntry?.primaryTags || [];
   const secondaryTags = libraryEntry?.secondaryTags || [];
@@ -142,7 +147,9 @@ export default function ExerciseCard({
         <div className={styles.headerText}>
           <p className={styles.name}>{exercise.name}</p>
           <p className={styles.meta}>
-            {exercise.targetSets} sets × {exercise.targetReps} reps · {exercise.restSeconds}s rest
+            {cardio
+              ? formatCardio({ settings: exercise.settings, seconds: exercise.targetSeconds })
+              : `${exercise.targetSets} sets × ${exercise.targetReps} reps · ${exercise.restSeconds}s rest`}
           </p>
           {hasTags && (
             <div className={styles.tags}>
@@ -168,77 +175,83 @@ export default function ExerciseCard({
         </div>
       </div>
 
-      <div className={styles.setsHeader}>
-        <span>Set</span>
-        <span>Weight (kg)</span>
-        <span>Reps</span>
-        <span>Rest</span>
-        <span />
-      </div>
-
-      {sets.map((set, i) => {
-        const last = lastSets?.[i];
-        const effort = set.effort ?? last?.effort ?? null;
-        const effortIsCurrent = set.effort != null;
-        const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""} ${set.completed ? styles.setNumberButton : ""}`;
-        const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
-        return (
-          <div key={i} className={styles.setRow}>
-            {set.completed ? (
-              <button
-                type="button"
-                className={badgeClassName}
-                style={badgeStyle}
-                title={`${effort != null ? `Effort: ${effort}/10` : `Set ${i + 1}`} — tap to change`}
-                onClick={() => onEditEffort(i)}
-              >
-                {effort != null ? effort : i + 1}
-              </button>
-            ) : (
-              <span
-                className={badgeClassName}
-                style={badgeStyle}
-                title={effort != null ? `Last time: ${effort}/10` : `Set ${i + 1}`}
-              >
-                {effort != null ? effort : i + 1}
-              </span>
-            )}
-            <input
-              className={styles.input}
-              type="number"
-              inputMode="decimal"
-              step="0.5"
-              min="0"
-              placeholder={last ? `${last.weight}` : "0"}
-              value={set.weight}
-              onChange={(e) => onSetField(i, "weight", e.target.value)}
-              onMouseUp={selectAllOnMouseUp}
-            />
-            <input
-              className={styles.input}
-              type="number"
-              inputMode="numeric"
-              min="0"
-              placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
-              value={set.reps}
-              onChange={(e) => onSetField(i, "reps", e.target.value)}
-              onMouseUp={selectAllOnMouseUp}
-            />
-            <RestPicker
-              seconds={set.restSeconds ?? exercise.restSeconds}
-              onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
-              onApplyToAll={(secs) => onApplyRestToAll(secs)}
-            />
-            <button
-              type="button"
-              className={`${styles.logButton} ${set.completed ? styles.logButtonDone : ""}`}
-              onClick={() => onLogSet(i)}
-            >
-              {set.completed ? "Logged" : "Log"}
-            </button>
+      {cardio ? (
+        <CardioRow row={sets[0]} last={lastSets} onSetField={onSetField} onLog={() => onLogSet(0)} onEditEffort={() => onEditEffort(0)} />
+      ) : (
+        <>
+          <div className={styles.setsHeader}>
+            <span>Set</span>
+            <span>Weight (kg)</span>
+            <span>Reps</span>
+            <span>Rest</span>
+            <span />
           </div>
-        );
-      })}
+
+          {sets.map((set, i) => {
+            const last = lastSets?.[i];
+            const effort = set.effort ?? last?.effort ?? null;
+            const effortIsCurrent = set.effort != null;
+            const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""} ${set.completed ? styles.setNumberButton : ""}`;
+            const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
+            return (
+              <div key={i} className={styles.setRow}>
+                {set.completed ? (
+                  <button
+                    type="button"
+                    className={badgeClassName}
+                    style={badgeStyle}
+                    title={`${effort != null ? `Effort: ${effort}/10` : `Set ${i + 1}`} — tap to change`}
+                    onClick={() => onEditEffort(i)}
+                  >
+                    {effort != null ? effort : i + 1}
+                  </button>
+                ) : (
+                  <span
+                    className={badgeClassName}
+                    style={badgeStyle}
+                    title={effort != null ? `Last time: ${effort}/10` : `Set ${i + 1}`}
+                  >
+                    {effort != null ? effort : i + 1}
+                  </span>
+                )}
+                <input
+                  className={styles.input}
+                  type="number"
+                  inputMode="decimal"
+                  step="0.5"
+                  min="0"
+                  placeholder={last ? `${last.weight}` : "0"}
+                  value={set.weight}
+                  onChange={(e) => onSetField(i, "weight", e.target.value)}
+                  onMouseUp={selectAllOnMouseUp}
+                />
+                <input
+                  className={styles.input}
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                  placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
+                  value={set.reps}
+                  onChange={(e) => onSetField(i, "reps", e.target.value)}
+                  onMouseUp={selectAllOnMouseUp}
+                />
+                <RestPicker
+                  seconds={set.restSeconds ?? exercise.restSeconds}
+                  onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
+                  onApplyToAll={(secs) => onApplyRestToAll(secs)}
+                />
+                <button
+                  type="button"
+                  className={`${styles.logButton} ${set.completed ? styles.logButtonDone : ""}`}
+                  onClick={() => onLogSet(i)}
+                >
+                  {set.completed ? "Logged" : "Log"}
+                </button>
+              </div>
+            );
+          })}
+        </>
+      )}
 
       {hasImage && (
         <dialog ref={lightboxRef} className={styles.lightbox} onClick={handleLightboxBackdropClick}>
@@ -257,5 +270,61 @@ export default function ExerciseCard({
         </dialog>
       )}
     </div>
+  );
+}
+
+// Cardio: one setting + total time, logged once. The badge shows the
+// effort rating (tap to change once logged), like a strength set's.
+function CardioRow({ row, last, onSetField, onLog, onEditEffort }) {
+  const effort = row.effort ?? last?.effort ?? null;
+  const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
+  const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${row.effort != null ? styles.setNumberCurrent : ""} ${row.completed ? styles.setNumberButton : ""}`;
+
+  return (
+    <>
+      <div className={`${styles.setsHeader} ${styles.cardioGrid}`}>
+        <span />
+        <span>Settings</span>
+        <span>Time (min)</span>
+        <span />
+      </div>
+      <div className={`${styles.setRow} ${styles.cardioGrid}`}>
+        {row.completed ? (
+          <button type="button" className={badgeClassName} style={badgeStyle} title="Effort — tap to change" onClick={onEditEffort}>
+            {effort != null ? effort : "✓"}
+          </button>
+        ) : (
+          <span className={badgeClassName} style={badgeStyle} title={effort != null ? `Last time: ${effort}/10` : "Cardio"}>
+            {effort != null ? effort : "•"}
+          </span>
+        )}
+        <input
+          className={`${styles.input} ${styles.cardioSettings}`}
+          type="text"
+          maxLength={60}
+          placeholder={last?.settings || "e.g. 8 mph"}
+          value={row.settings}
+          onChange={(e) => onSetField(0, "settings", e.target.value)}
+          aria-label="Settings"
+        />
+        <input
+          className={styles.input}
+          type="number"
+          inputMode="decimal"
+          min="0"
+          step="0.5"
+          value={row.minutes}
+          onChange={(e) => onSetField(0, "minutes", e.target.value)}
+          onMouseUp={selectAllOnMouseUp}
+          aria-label="Time in minutes"
+        />
+        <button type="button" className={`${styles.logButton} ${row.completed ? styles.logButtonDone : ""}`} onClick={onLog}>
+          {row.completed ? "Logged" : "Log"}
+        </button>
+      </div>
+      {last && (
+        <p className={styles.cardioLast}>Last time: {formatCardio({ settings: last.settings, seconds: last.durationSeconds })}</p>
+      )}
+    </>
   );
 }

@@ -13,6 +13,7 @@ import WorkoutSummary from "../../../../../components/WorkoutSummary";
 import { slugify } from "../../../../../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../../../../../lib/sessionStats";
 import { useWakeLock } from "../../../../../lib/useWakeLock";
+import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../../../../../lib/exerciseTypes";
 import styles from "./page.module.css";
 
 // Walks backward from `index` through this exercise's sets (in the current
@@ -44,11 +45,36 @@ function findLastSetsForExercise(sessions, exerciseName) {
   const targetSlug = slugify(exerciseName);
   for (const session of sessions) {
     const match = session.exercises.find(
-      (e) => slugify(e.name) === targetSlug && e.sets.length > 0
+      (e) => slugify(e.name) === targetSlug && e.sets?.length > 0
     );
     if (match) return match.sets;
   }
   return null;
+}
+
+// Cardio equivalent: the last { settings, durationSeconds, effort } logged
+// for this exercise, wherever it was last done.
+function findLastCardioForExercise(sessions, exerciseName) {
+  const targetSlug = slugify(exerciseName);
+  for (const session of sessions) {
+    const match = session.exercises.find((e) => slugify(e.name) === targetSlug && e.cardio);
+    if (match) return match.cardio;
+  }
+  return null;
+}
+
+// Cardio is one editable "row": the setting and total time. Settings
+// prefill from last time (so progress carries forward), falling back to the
+// trainer's target; time prefills from the programme's target.
+function buildCardioRow({ targetSettings, targetSeconds, lastCardio }) {
+  return [
+    {
+      settings: lastCardio?.settings ?? targetSettings ?? "",
+      minutes: targetSeconds != null ? String(secondsToMinutes(targetSeconds)) : "",
+      completed: false,
+      effort: null,
+    },
+  ];
 }
 
 // Builds the editable set rows for one exercise slot — used both on initial
@@ -150,6 +176,16 @@ export default function WorkoutSessionClient() {
         const initial = {};
         const lastSetsByExerciseId = {};
         for (const exercise of foundDay.exercises) {
+          if (isCardio(exercise)) {
+            const lastCardio = findLastCardioForExercise(sessions, exercise.name);
+            lastSetsByExerciseId[exercise.exerciseId] = lastCardio;
+            initial[exercise.exerciseId] = buildCardioRow({
+              targetSettings: exercise.settings,
+              targetSeconds: exercise.targetSeconds,
+              lastCardio,
+            });
+            continue;
+          }
           const lastSets = findLastSetsForExercise(sessions, exercise.name);
           lastSetsByExerciseId[exercise.exerciseId] = lastSets;
 
@@ -242,6 +278,24 @@ export default function WorkoutSessionClient() {
       return;
     }
 
+    if (isCardio(dayExercise)) {
+      const lastCardio = findLastCardioForExercise(sessionsCache, newExercise.name);
+      setDay((prev) => ({
+        ...prev,
+        exercises: prev.exercises.map((e) =>
+          e.exerciseId === exerciseId ? { ...e, name: newExercise.name, videoLink: null } : e
+        ),
+      }));
+      setLastSetsByExerciseId((prev) => ({ ...prev, [exerciseId]: lastCardio }));
+      setSetsByExercise((prev) => ({
+        ...prev,
+        // The slot's time target still applies; its settings were for the
+        // original exercise, so only this exercise's own history carries over.
+        [exerciseId]: buildCardioRow({ targetSettings: null, targetSeconds: dayExercise.targetSeconds, lastCardio }),
+      }));
+      return;
+    }
+
     const lastSets = findLastSetsForExercise(sessionsCache, newExercise.name);
 
     setDay((prev) => ({
@@ -275,6 +329,17 @@ export default function WorkoutSessionClient() {
   const onLogSet = (exerciseId, setIndex) => {
     const exerciseIndex = day.exercises.findIndex((e) => e.exerciseId === exerciseId);
     const exercise = day.exercises[exerciseIndex];
+
+    // Cardio: just mark it done and ask how it felt — no rest countdown.
+    if (isCardio(exercise)) {
+      setSetsByExercise((prev) => ({
+        ...prev,
+        [exerciseId]: prev[exerciseId].map((s) => ({ ...s, completed: true })),
+      }));
+      setEffortContext({ exerciseId, setIndex: 0 });
+      return;
+    }
+
     const isLastSetOverall =
       exerciseIndex === day.exercises.length - 1 && setIndex === exercise.targetSets - 1;
     const currentSets = setsByExercise[exerciseId];
@@ -331,6 +396,24 @@ export default function WorkoutSessionClient() {
           // exercise nobody touched shouldn't inflate today's progress.
           const completedSets = setsByExercise[exercise.exerciseId].filter((s) => s.completed);
           if (completedSets.length === 0) return null;
+
+          if (isCardio(exercise)) {
+            const row = completedSets[0];
+            const lastCardio = lastSetsByExerciseId[exercise.exerciseId];
+            return {
+              exerciseId: exercise.exerciseId,
+              name: exercise.name,
+              type: EXERCISE_TYPES.CARDIO,
+              // No sets for cardio, so weight totals/averages simply skip it.
+              sets: [],
+              cardio: {
+                settings: row.settings.trim() || null,
+                durationSeconds: minutesToSeconds(row.minutes) ?? exercise.targetSeconds ?? 0,
+                effort: row.effort ?? lastCardio?.effort ?? null,
+                completedAt: new Date().toISOString(),
+              },
+            };
+          }
 
           // If effort was never rated at all today for this exercise, fall
           // back to the last time it was rated for this exact exercise
@@ -422,7 +505,8 @@ export default function WorkoutSessionClient() {
             sets={setsByExercise[exercise.exerciseId]}
             lastSets={lastSetsFor(exercise.exerciseId)}
             libraryEntry={exerciseLibrary[slugify(exercise.name)]}
-            libraryEntries={exerciseLibraryList}
+            // Only offer swaps of the same kind (cardio ↔ cardio, strength ↔ strength).
+            libraryEntries={exerciseLibraryList.filter((e) => isCardio(e) === isCardio(exercise))}
             onSetField={(setIndex, field, value) => onSetField(exercise.exerciseId, setIndex, field, value)}
             onLogSet={(setIndex) => onLogSet(exercise.exerciseId, setIndex)}
             onEditEffort={(setIndex) => onEditEffort(exercise.exerciseId, setIndex)}

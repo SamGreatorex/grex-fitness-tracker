@@ -15,7 +15,12 @@ import styles from "./page.module.css";
 // no editable inputs — "Restart this day" is the explicit, opt-in way back
 // into the live workout page for this day/week.
 export default function SessionViewPage() {
-  const { programId, sessionId } = useParams();
+  const { programId, sessionId: rawSessionId } = useParams();
+  // useParams() hands back the segment still URL-encoded (session IDs
+  // contain "#" and ":", sent as %23 / %3A). Decode it once here — re-encoding
+  // the raw value for the API call double-encodes it, so the lookup misses
+  // and every "View" ends in "Session not found".
+  const sessionId = decodeURIComponent(rawSessionId);
   const router = useRouter();
   const { user, loading: sessionLoading } = useAuth();
 

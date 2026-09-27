@@ -263,9 +263,8 @@ export default function LoginClient() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <div className={styles.wordmark}>
-          <span className={styles.wordmarkName}>
-            Fit<span className={styles.wordmarkFour}>4</span> The Future
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/f4tf-logo.png" alt="Fit4 The Future" width={814} height={456} className={styles.logo} />
           <span className={styles.wordmarkTag}>Fitness tracker</span>
         </div>
         <div className={styles.card}>

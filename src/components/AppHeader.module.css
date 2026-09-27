@@ -17,36 +17,22 @@
   overflow: hidden;
 }
 
-/* Fit4 The Future wordmark: Anton caps with the logo's red "4". */
+/* F4TF logo (public/f4tf-mark.png), black background like the header. */
 .brand {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  font-family: var(--font-display);
-  font-synthesis: none;
-  font-size: 1.45rem;
-  line-height: 1;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.brandFour {
-  color: var(--accent);
+.brandLogo {
+  display: block;
+  height: 42px;
+  width: auto;
 }
 
-.brandShort {
-  display: none;
-}
-
-@media (max-width: 480px) {
-  .brandFull {
-    display: none;
-  }
-
-  .brandShort {
-    display: inline;
-    font-size: 1.6rem;
+@media (max-width: 380px) {
+  .brandLogo {
+    height: 36px;
   }
 }
 

@@ -213,46 +213,50 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
         />
       </label>
 
-      <fieldset className={styles.units}>
-        <legend className={styles.unitsTitle}>Units</legend>
-        <p className={styles.hint}>
-          How you&apos;d like each to be shown and entered across the app. Changing one also converts all your past
-          entries and charts.
-        </p>
-        <UnitRow label="Height">
-          <UnitToggle
-            value={heightUnit}
-            onChange={switchHeightUnit}
-            options={[
-              { value: HEIGHT_UNITS.CM, label: "cm" },
-              { value: HEIGHT_UNITS.FT_IN, label: "ft / in" },
-            ]}
-            ariaLabel="Height unit"
-          />
-        </UnitRow>
-        <UnitRow label="Weight">
-          <UnitToggle
-            value={weightUnit}
-            onChange={switchWeightUnit}
-            options={[
-              { value: WEIGHT_UNITS.KG, label: "kg" },
-              { value: WEIGHT_UNITS.ST_LB, label: "st / lb" },
-            ]}
-            ariaLabel="Weight unit"
-          />
-        </UnitRow>
-        <UnitRow label="Body measurements">
-          <UnitToggle
-            value={measurementUnit}
-            onChange={setMeasurementUnit}
-            options={[
-              { value: LENGTH_UNITS.CM, label: "cm" },
-              { value: LENGTH_UNITS.IN, label: "inches" },
-            ]}
-            ariaLabel="Body measurement unit"
-          />
-        </UnitRow>
-      </fieldset>
+      <div className={styles.field} role="group" aria-labelledby="units-label">
+        <span className={styles.label} id="units-label">
+          Units
+        </span>
+        <div className={styles.units}>
+          <p className={styles.hint}>
+            How you&apos;d like each to be shown and entered across the app. Changing one also converts all your past
+            entries and charts.
+          </p>
+          <UnitRow label="Height">
+            <UnitToggle
+              value={heightUnit}
+              onChange={switchHeightUnit}
+              options={[
+                { value: HEIGHT_UNITS.CM, label: "cm" },
+                { value: HEIGHT_UNITS.FT_IN, label: "ft / in" },
+              ]}
+              ariaLabel="Height unit"
+            />
+          </UnitRow>
+          <UnitRow label="Weight">
+            <UnitToggle
+              value={weightUnit}
+              onChange={switchWeightUnit}
+              options={[
+                { value: WEIGHT_UNITS.KG, label: "kg" },
+                { value: WEIGHT_UNITS.ST_LB, label: "st / lb" },
+              ]}
+              ariaLabel="Weight unit"
+            />
+          </UnitRow>
+          <UnitRow label="Body measurements">
+            <UnitToggle
+              value={measurementUnit}
+              onChange={setMeasurementUnit}
+              options={[
+                { value: LENGTH_UNITS.CM, label: "cm" },
+                { value: LENGTH_UNITS.IN, label: "inches" },
+              ]}
+              ariaLabel="Body measurement unit"
+            />
+          </UnitRow>
+        </div>
+      </div>
 
       <div className={styles.field}>
         <span className={styles.label} id="height-label">

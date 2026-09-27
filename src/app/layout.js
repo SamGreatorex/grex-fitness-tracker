@@ -18,11 +18,11 @@ const spinnaker = Spinnaker({
 });
 
 export const metadata = {
-  title: "Grex Fitness Tracker",
+  title: "F4TF Fitness Tracker",
   description: "Gym programs, workouts and progress tracking",
   appleWebApp: {
     capable: true,
-    title: "Grex",
+    title: "F4TF",
     statusBarStyle: "black-translucent",
   },
 };

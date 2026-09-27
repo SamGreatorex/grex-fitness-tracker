@@ -16,10 +16,12 @@
   opacity: 0.65;
 }
 
+/* minmax(0, …) lets a long email shrink/wrap instead of forcing the grid
+   (and so the page) wider than a phone screen. */
 .account {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 24px;
   margin-bottom: 1.25rem;
 }
 
@@ -31,8 +33,7 @@
 
 .account dd {
   font-size: 0.95rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .card {
@@ -46,4 +47,20 @@
   font-size: 1.05rem;
   font-weight: 700;
   margin: 1.75rem 0 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Email and account type one above the other. */
+  .account {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 1.25rem 1rem;
+  }
 }

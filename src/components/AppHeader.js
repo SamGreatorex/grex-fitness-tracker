@@ -46,13 +46,9 @@ export default function AppHeader({ backHref, backLabel }) {
           </Link>
         ) : (
           <Link href="/" className={styles.brand} aria-label="Fit4 The Future — home">
-            {/* Full wordmark, or the F4TF short form on narrow phones. */}
-            <span className={styles.brandFull} aria-hidden="true">
-              Fit<span className={styles.brandFour}>4</span> The Future
-            </span>
-            <span className={styles.brandShort} aria-hidden="true">
-              F<span className={styles.brandFour}>4</span>TF
-            </span>
+            {/* The F4TF logo without its tagline (unreadable at this size). */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/f4tf-mark.png" alt="Fit4 The Future" width={680} height={352} className={styles.brandLogo} />
           </Link>
         )}
       </div>

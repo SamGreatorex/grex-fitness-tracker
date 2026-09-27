@@ -159,7 +159,7 @@
   margin-top: -8px;
 }
 
-/* Fit4 The Future wordmark above the card. */
+/* F4TF logo above the card (public/f4tf-logo.png, black background like the page). */
 .wordmark {
   display: flex;
   flex-direction: column;
@@ -169,17 +169,10 @@
   text-align: center;
 }
 
-.wordmarkName {
-  font-family: var(--font-display);
-  font-synthesis: none;
-  font-size: 2.6rem;
-  line-height: 1;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.wordmarkFour {
-  color: var(--accent);
+.logo {
+  display: block;
+  width: min(100%, 340px);
+  height: auto;
 }
 
 .wordmarkTag {

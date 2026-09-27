@@ -1,7 +1,7 @@
 export default function manifest() {
   return {
-    name: "Grex Fitness Tracker",
-    short_name: "Grex",
+    name: "F4TF Fitness Tracker",
+    short_name: "F4TF",
     description: "Gym programs, workouts and progress tracking",
     start_url: "/",
     display: "standalone",

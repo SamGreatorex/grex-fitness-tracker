@@ -179,23 +179,41 @@
   background: var(--background);
 }
 
-.unitsTitle {
-  padding: 0 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.units .hint {
-  margin-top: -4px;
-}
-
+/* Wraps so the switch drops under its label rather than squashing it. */
 .unitRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px 12px;
 }
 
 .unitRowLabel {
   font-size: 0.9rem;
+}
+
+/* Keep the switch right-aligned even when it wraps under the label. */
+.unitRow > :last-child {
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  /* Avatar centred on top, picture buttons side by side underneath. */
+  .avatarRow {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .avatarActions {
+    align-items: center;
+    text-align: center;
+  }
+
+  .avatarButtons {
+    justify-content: center;
+  }
+
+  .units {
+    padding: 12px;
+  }
 }

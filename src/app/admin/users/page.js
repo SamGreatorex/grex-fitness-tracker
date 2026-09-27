@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../../components/AuthProvider";
 import { api } from "../../../lib/apiClient";
 import { ROLES, ROLE_LABELS } from "../../../lib/profile";
+import { formatHeight, formatWeight } from "../../../lib/units";
 import AppHeader from "../../../components/AppHeader";
 import Avatar from "../../../components/Avatar";
 import styles from "./page.module.css";
@@ -11,7 +12,7 @@ import styles from "./page.module.css";
 const dateFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" });
 
 export default function AdminUsersPage() {
-  const { userId: myUserId } = useAuth();
+  const { userId: myUserId, profile: me } = useAuth();
   const [users, setUsers] = useState(null);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
@@ -150,9 +151,9 @@ export default function AdminUsersPage() {
                         <dt>Address</dt>
                         <dd>{u.address || "—"}</dd>
                         <dt>Height</dt>
-                        <dd>{u.heightCm != null ? `${u.heightCm} cm` : "—"}</dd>
+                        <dd>{formatHeight(u.heightCm, me?.heightUnit)}</dd>
                         <dt>Weight</dt>
-                        <dd>{u.weightKg != null ? `${u.weightKg} kg` : "—"}</dd>
+                        <dd>{formatWeight(u.weightKg, me?.weightUnit)}</dd>
                         <dt>Joined</dt>
                         <dd>{u.createdAt ? dateFormat.format(new Date(u.createdAt)) : "—"}</dd>
                       </dl>

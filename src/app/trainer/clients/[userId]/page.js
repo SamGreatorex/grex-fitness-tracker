@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/apiClient";
+import { useAuth } from "../../../../components/AuthProvider";
+import { formatHeight, formatWeight } from "../../../../lib/units";
 import AppHeader from "../../../../components/AppHeader";
 import Avatar from "../../../../components/Avatar";
 import { useClient } from "../../useClient";
@@ -14,6 +16,8 @@ export default function TrainerClientPage() {
   const { userId } = useParams();
   const router = useRouter();
   const { client, error: clientError } = useClient(userId);
+  // Shown in the trainer's own chosen units.
+  const { profile: me } = useAuth();
   const [programs, setPrograms] = useState(null);
   const [releasing, setReleasing] = useState(false);
   const [error, setError] = useState("");
@@ -62,8 +66,8 @@ export default function TrainerClientPage() {
                   <span className={styles.meta}>
                     {[
                       client.email,
-                      client.heightCm != null && `${client.heightCm} cm`,
-                      client.weightKg != null && `${client.weightKg} kg`,
+                      client.heightCm != null && formatHeight(client.heightCm, me?.heightUnit),
+                      client.weightKg != null && formatWeight(client.weightKg, me?.weightUnit),
                     ]
                       .filter(Boolean)
                       .join(" · ")}

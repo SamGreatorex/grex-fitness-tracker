@@ -56,26 +56,41 @@ export function stLbToKg(st, lb) {
   return round1(((s ?? 0) * 14 + (l ?? 0)) * KG_PER_LB);
 }
 
-// Tape measurements follow the user's height unit: cm, or inches for ft/in.
-export function lengthUnitLabel(heightUnit) {
-  return heightUnit === HEIGHT_UNITS.FT_IN ? "in" : "cm";
+export const LENGTH_UNITS = { CM: "cm", IN: "in" };
+
+// Unit for tape measurements: the user's explicit choice, or — if they've
+// never picked — whatever their height unit implies (ft/in → inches).
+export function lengthUnitFor(profile) {
+  if (profile?.measurementUnit === LENGTH_UNITS.IN || profile?.measurementUnit === LENGTH_UNITS.CM) {
+    return profile.measurementUnit;
+  }
+  return profile?.heightUnit === HEIGHT_UNITS.FT_IN ? LENGTH_UNITS.IN : LENGTH_UNITS.CM;
 }
 
-export function cmToDisplayLength(cm, heightUnit) {
+export function cmToDisplayLength(cm, lengthUnit) {
   const n = parse(cm);
   if (n === null || !Number.isFinite(n)) return "";
-  return heightUnit === HEIGHT_UNITS.FT_IN ? round1(n / CM_PER_INCH) : round1(n);
+  return lengthUnit === LENGTH_UNITS.IN ? round1(n / CM_PER_INCH) : round1(n);
 }
 
-export function displayLengthToCm(value, heightUnit) {
+export function displayLengthToCm(value, lengthUnit) {
   const n = parse(value);
   if (n === null) return null;
-  return heightUnit === HEIGHT_UNITS.FT_IN ? round1(n * CM_PER_INCH) : round1(n);
+  return lengthUnit === LENGTH_UNITS.IN ? round1(n * CM_PER_INCH) : round1(n);
 }
 
-export function formatLength(cm, heightUnit) {
+export function formatLength(cm, lengthUnit) {
   if (cm == null) return "—";
-  return `${cmToDisplayLength(cm, heightUnit)} ${lengthUnitLabel(heightUnit)}`;
+  return `${cmToDisplayLength(cm, lengthUnit)} ${lengthUnit}`;
+}
+
+export function formatHeight(cm, heightUnit) {
+  if (cm == null) return "—";
+  if (heightUnit === HEIGHT_UNITS.FT_IN) {
+    const { ft, inches } = cmToFtIn(cm);
+    return `${ft} ft ${inches} in`;
+  }
+  return `${round1(cm)} cm`;
 }
 
 export function formatWeight(kg, weightUnit) {

@@ -126,3 +126,35 @@
   border-radius: 8px;
   padding: 8px 10px;
 }
+
+.info {
+  font-size: 0.85rem;
+  color: var(--foreground);
+  background: rgba(249, 115, 22, 0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.linkRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.linkButton {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.forgotLink {
+  align-self: flex-end;
+  margin-top: -8px;
+}

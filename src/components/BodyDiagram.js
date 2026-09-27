@@ -20,9 +20,11 @@ const MEASURE_LINES = {
 // Front-view figure with a measurement line per MEASUREMENTS key. The
 // `active` line is highlighted and labelled; lines with a value in
 // `filled` are drawn solid. Clicking a line calls onSelect(key).
-export default function BodyDiagram({ active, filled = {}, onSelect }) {
+// `compact` drops the in-figure label and caption, for small renderings
+// where that text would be unreadable (the caller shows it instead).
+export default function BodyDiagram({ active, filled = {}, onSelect, compact = false }) {
   return (
-    <svg className={styles.svg} viewBox="0 0 200 400" role="img" aria-label="Body measurement guide">
+    <svg className={`${styles.svg} ${compact ? styles.compact : ""}`} viewBox="0 0 200 400" role="img" aria-label="Body measurement guide">
       <g className={styles.body}>
         <ellipse cx="100" cy="36" rx="19" ry="23" />
         <rect x="91" y="54" width="18" height="20" rx="6" />
@@ -68,7 +70,7 @@ export default function BodyDiagram({ active, filled = {}, onSelect }) {
         );
       })}
 
-      {active && MEASURE_LINES[active] && (
+      {!compact && active && MEASURE_LINES[active] && (
         <text
           className={styles.label}
           x={(MEASURE_LINES[active][0] + MEASURE_LINES[active][1]) / 2}
@@ -79,9 +81,11 @@ export default function BodyDiagram({ active, filled = {}, onSelect }) {
         </text>
       )}
 
-      <text className={styles.caption} x="100" y="398" textAnchor="middle">
-        Facing you — your right is on the left
-      </text>
+      {!compact && (
+        <text className={styles.caption} x="100" y="398" textAnchor="middle">
+          Facing you — your right is on the left
+        </text>
+      )}
     </svg>
   );
 }

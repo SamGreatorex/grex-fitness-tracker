@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
 import AppHeader from "../../components/AppHeader";
 import ProfileForm from "../../components/ProfileForm";
+import ChangePasswordForm from "../../components/ChangePasswordForm";
 import { ROLE_LABELS } from "../../lib/profile";
 import styles from "./page.module.css";
 
@@ -39,8 +40,14 @@ export default function SettingsPage() {
               </div>
             </dl>
 
+            <h2 className={styles.sectionTitle}>Profile</h2>
             <div className={styles.card}>
               <ProfileForm profile={profile} onSaved={setProfile} />
+            </div>
+
+            <h2 className={styles.sectionTitle}>Password</h2>
+            <div className={styles.card}>
+              <ChangePasswordForm />
             </div>
           </>
         )}

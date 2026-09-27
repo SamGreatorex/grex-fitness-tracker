@@ -2,8 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn, signUp, confirmSignUp, confirmSignIn, resendSignUpCode } from "aws-amplify/auth";
+import {
+  signIn,
+  signUp,
+  confirmSignUp,
+  confirmSignIn,
+  resendSignUpCode,
+  resetPassword,
+  confirmResetPassword,
+} from "aws-amplify/auth";
 import { useAuth } from "../../components/AuthProvider";
+import PasswordRequirements from "../../components/PasswordRequirements";
+import { meetsPasswordRules, passwordErrorMessage } from "../../lib/password";
 import styles from "./login.module.css";
 
 export default function LoginClient() {
@@ -24,6 +34,13 @@ export default function LoginClient() {
 
   const [needsNewPassword, setNeedsNewPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+
+  // Forgot password: null → "request" (enter email) → "confirm" (code + new password).
+  const [forgotStep, setForgotStep] = useState(null);
+  const [resetCode, setResetCode] = useState("");
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [resetConfirmPassword, setResetConfirmPassword] = useState("");
+  const [info, setInfo] = useState("");
 
   useEffect(() => {
     if (!sessionLoading && user) {
@@ -130,6 +147,87 @@ export default function LoginClient() {
     }
   };
 
+  const startForgot = () => {
+    setForgotStep("request");
+    setError("");
+    setInfo("");
+  };
+
+  const backToSignIn = () => {
+    setForgotStep(null);
+    setTab("signin");
+    setError("");
+    setInfo("");
+    setResetCode("");
+    setResetNewPassword("");
+    setResetConfirmPassword("");
+  };
+
+  const sendResetCode = async () => {
+    try {
+      const result = await resetPassword({ username: email });
+      const destination = result.nextStep?.codeDeliveryDetails?.destination;
+      setInfo(destination ? `We've emailed a code to ${destination}.` : "We've emailed you a code.");
+    } catch (err) {
+      // Don't reveal whether an account exists for this email.
+      if (err?.name !== "UserNotFoundException") throw err;
+      setInfo("If an account exists for that email, we've sent it a code.");
+    }
+    setForgotStep("confirm");
+  };
+
+  const handleForgotRequest = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      await sendResetCode();
+    } catch (err) {
+      setError(
+        err?.name === "InvalidParameterException"
+          ? "This account's email hasn't been verified, so we can't send a reset code. Sign up again or contact support."
+          : passwordErrorMessage(err, "Could not send a reset code.")
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleResendResetCode = async () => {
+    setError("");
+    try {
+      await sendResetCode();
+    } catch (err) {
+      setError(passwordErrorMessage(err, "Could not resend the code."));
+    }
+  };
+
+  const handleForgotConfirm = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!meetsPasswordRules(resetNewPassword)) return setError("Your new password doesn't meet the requirements.");
+    if (resetNewPassword !== resetConfirmPassword) return setError("Passwords don't match.");
+
+    setBusy(true);
+    try {
+      await confirmResetPassword({ username: email, confirmationCode: resetCode.trim(), newPassword: resetNewPassword });
+      // Sign straight in with the new password rather than making them retype it.
+      const result = await signIn({ username: email, password: resetNewPassword });
+      if (result.isSignedIn) {
+        await refresh();
+        router.replace(redirectTo);
+      } else {
+        backToSignIn();
+        setPassword("");
+        setInfo("Password reset. Sign in with your new password.");
+      }
+    } catch (err) {
+      setError(passwordErrorMessage(err, "Could not reset your password."));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleResend = async () => {
     try {
       await resendSignUpCode({ username: email });
@@ -138,7 +236,9 @@ export default function LoginClient() {
     }
   };
 
-  const cardTitle = needsNewPassword
+  const cardTitle = forgotStep
+    ? "Reset your password"
+    : needsNewPassword
     ? "Set a new password"
     : needsConfirm
     ? "Confirm your email"
@@ -146,7 +246,12 @@ export default function LoginClient() {
     ? "Create your account"
     : "Welcome back";
 
-  const cardSubtext = needsNewPassword
+  const cardSubtext =
+    forgotStep === "request"
+    ? "Enter your email and we'll send you a code to reset your password."
+    : forgotStep === "confirm"
+    ? "Enter the code from your email and choose a new password."
+    : needsNewPassword
     ? "Your account requires a new permanent password."
     : needsConfirm
     ? "Enter the 6-digit code we emailed you."
@@ -163,7 +268,80 @@ export default function LoginClient() {
             <p className={styles.subtext}>{cardSubtext}</p>
           </div>
 
-          {needsNewPassword ? (
+          {forgotStep === "request" ? (
+            <form onSubmit={handleForgotRequest} className={styles.form}>
+              <label className={styles.field}>
+                <span className={styles.label}>Email</span>
+                <input
+                  className={styles.input}
+                  type="email"
+                  autoComplete="email"
+                  required
+                  autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </label>
+              {error && <div className={styles.error}>{error}</div>}
+              <button type="submit" disabled={busy} className={styles.button}>
+                {busy ? "Sending…" : "Send reset code"}
+              </button>
+              <button type="button" className={styles.buttonGhost} onClick={backToSignIn}>
+                Back to sign in
+              </button>
+            </form>
+          ) : forgotStep === "confirm" ? (
+            <form onSubmit={handleForgotConfirm} className={styles.form}>
+              {info && <div className={styles.info}>{info}</div>}
+              <label className={styles.field}>
+                <span className={styles.label}>Reset code</span>
+                <input
+                  className={styles.input}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  required
+                  autoFocus
+                  value={resetCode}
+                  onChange={(e) => setResetCode(e.target.value)}
+                />
+              </label>
+              <label className={styles.field}>
+                <span className={styles.label}>New password</span>
+                <input
+                  className={styles.input}
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={resetNewPassword}
+                  onChange={(e) => setResetNewPassword(e.target.value)}
+                />
+              </label>
+              <PasswordRequirements password={resetNewPassword} />
+              <label className={styles.field}>
+                <span className={styles.label}>Confirm new password</span>
+                <input
+                  className={styles.input}
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={resetConfirmPassword}
+                  onChange={(e) => setResetConfirmPassword(e.target.value)}
+                />
+              </label>
+              {error && <div className={styles.error}>{error}</div>}
+              <button type="submit" disabled={busy} className={styles.button}>
+                {busy ? "Resetting…" : "Reset password & sign in"}
+              </button>
+              <div className={styles.linkRow}>
+                <button type="button" className={styles.linkButton} onClick={handleResendResetCode}>
+                  Resend code
+                </button>
+                <button type="button" className={styles.linkButton} onClick={backToSignIn}>
+                  Back to sign in
+                </button>
+              </div>
+            </form>
+          ) : needsNewPassword ? (
             <form onSubmit={handleNewPassword} className={styles.form}>
               <label className={styles.field}>
                 <span className={styles.label}>New password</span>
@@ -224,6 +402,7 @@ export default function LoginClient() {
 
               {tab === "signin" ? (
                 <form onSubmit={handleSignIn} className={styles.form}>
+                  {info && <div className={styles.info}>{info}</div>}
                   <label className={styles.field}>
                     <span className={styles.label}>Email</span>
                     <input className={styles.input} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -232,6 +411,9 @@ export default function LoginClient() {
                     <span className={styles.label}>Password</span>
                     <input className={styles.input} type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                   </label>
+                  <button type="button" className={`${styles.linkButton} ${styles.forgotLink}`} onClick={startForgot}>
+                    Forgot password?
+                  </button>
                   {error && <div className={styles.error}>{error}</div>}
                   <button type="submit" disabled={busy} className={styles.button}>
                     {busy ? "Signing in…" : "Sign in"}

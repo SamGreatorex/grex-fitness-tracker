@@ -22,7 +22,7 @@ import {
   cmToDisplayLength,
   formatWeight,
   kgToChartWeight,
-  lengthUnitLabel,
+  lengthUnitFor,
 } from "../../lib/units";
 import styles from "./page.module.css";
 
@@ -36,8 +36,7 @@ export default function ReportsPage() {
   const router = useRouter();
   const { user, loading: sessionLoading, profile } = useAuth();
   const weightUnit = profile?.weightUnit;
-  const heightUnit = profile?.heightUnit;
-  const lengthUnit = lengthUnitLabel(heightUnit);
+  const lengthUnit = lengthUnitFor(profile);
 
   const [sessions, setSessions] = useState(null);
   const [exerciseLibrary, setExerciseLibrary] = useState({});
@@ -103,12 +102,12 @@ export default function ReportsPage() {
             bodyEntries,
             (e) => {
               const cm = e.measurements?.[selectedMeasurement.key];
-              return cm != null ? cmToDisplayLength(cm, heightUnit) : null;
+              return cm != null ? cmToDisplayLength(cm, lengthUnit) : null;
             },
             granularity
           )
         : [],
-    [bodyEntries, selectedMeasurement, heightUnit, granularity]
+    [bodyEntries, selectedMeasurement, lengthUnit, granularity]
   );
 
   const stones = weightUnit === WEIGHT_UNITS.ST_LB;

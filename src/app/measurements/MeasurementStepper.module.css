@@ -1,0 +1,205 @@
+.stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Horizontally scrolling step strip. */
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -1rem;
+  padding: 0 1rem 2px;
+  scroll-padding: 0 1rem;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.chipFilled {
+  opacity: 1;
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.chipActive {
+  opacity: 1;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Diagram stacked above the input, both full width. */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.diagram {
+  align-self: center;
+  width: 120px;
+  padding: 6px 0;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: center;
+}
+
+.detail .inputWrap,
+.detail .pair {
+  width: 100%;
+}
+
+.stepCount {
+  font-size: 0.7rem;
+  opacity: 0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stepLabel {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Fixed at two lines (full width now) so the input and buttons don't jump between steps. */
+.hint {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  min-height: calc(0.8rem * 1.35 * 2);
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.sideNote {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.inputWrap {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.input {
+  width: 100%;
+  height: 52px;
+  padding: 0 44px;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 1.35rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.suffix {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.last {
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: 48px auto 1fr;
+  gap: 8px;
+}
+
+.nav:has(> :nth-child(2):last-child) {
+  grid-template-columns: 48px 1fr;
+}
+
+.navButton,
+.secondary,
+.primary {
+  height: 48px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.navButton {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 1.4rem;
+}
+
+.secondary {
+  padding: 0 16px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+
+.primary {
+  min-width: 0;
+  padding: 0 12px;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navButton:disabled,
+.secondary:disabled,
+.primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* On small tablets (up to 768px) keep the content a comfortable width
+   rather than stretching the input and buttons edge to edge. */
+.body,
+.nav {
+  width: 100%;
+  max-width: 480px;
+  align-self: center;
+}

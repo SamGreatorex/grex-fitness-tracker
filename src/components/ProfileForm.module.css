@@ -50,13 +50,6 @@
   font-weight: 600;
 }
 
-.labelRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
 .unitToggle {
   display: inline-flex;
   gap: 2px;
@@ -172,4 +165,37 @@
   background: rgba(22, 163, 74, 0.12);
   border-radius: 8px;
   padding: 8px 10px;
+}
+
+/* ---- Units ---- */
+
+.units {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background);
+}
+
+.unitsTitle {
+  padding: 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.units .hint {
+  margin-top: -4px;
+}
+
+.unitRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.unitRowLabel {
+  font-size: 0.9rem;
 }

@@ -41,3 +41,9 @@
   border-radius: 16px;
   background: var(--card-bg);
 }
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.75rem;
+}

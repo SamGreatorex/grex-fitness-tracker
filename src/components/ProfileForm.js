@@ -3,7 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../lib/apiClient";
 import { AVATAR_TYPES, AVATAR_MAX_BYTES, PROFILE_FIELDS } from "../lib/profile";
-import { HEIGHT_UNITS, WEIGHT_UNITS, cmToFtIn, ftInToCm, kgToStLb, stLbToKg } from "../lib/units";
+import {
+  HEIGHT_UNITS,
+  LENGTH_UNITS,
+  WEIGHT_UNITS,
+  cmToFtIn,
+  ftInToCm,
+  kgToStLb,
+  lengthUnitFor,
+  stLbToKg,
+} from "../lib/units";
 import Avatar from "./Avatar";
 import CameraCapture from "./CameraCapture";
 import styles from "./ProfileForm.module.css";
@@ -21,6 +30,8 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
   const [weightUnit, setWeightUnit] = useState(profile?.weightUnit ?? WEIGHT_UNITS.KG);
   const [weightKg, setWeightKg] = useState(profile?.weightKg ?? "");
   const [weightStLb, setWeightStLb] = useState(() => kgToStLb(profile?.weightKg));
+  // Tape measurements unit (used on the Body measurements page and charts).
+  const [measurementUnit, setMeasurementUnit] = useState(() => lengthUnitFor(profile));
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -129,6 +140,7 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
         weightKg: submitWeightKg,
         heightUnit,
         weightUnit,
+        measurementUnit,
         ...(avatarKey ? { avatarKey } : {}),
       });
       clearPickedFile();
@@ -201,9 +213,13 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
         />
       </label>
 
-      <div className={styles.field}>
-        <div className={styles.labelRow}>
-          <span className={styles.label} id="height-label">Height</span>
+      <fieldset className={styles.units}>
+        <legend className={styles.unitsTitle}>Units</legend>
+        <p className={styles.hint}>
+          How you&apos;d like each to be shown and entered across the app. Changing one also converts all your past
+          entries and charts.
+        </p>
+        <UnitRow label="Height">
           <UnitToggle
             value={heightUnit}
             onChange={switchHeightUnit}
@@ -213,7 +229,35 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
             ]}
             ariaLabel="Height unit"
           />
-        </div>
+        </UnitRow>
+        <UnitRow label="Weight">
+          <UnitToggle
+            value={weightUnit}
+            onChange={switchWeightUnit}
+            options={[
+              { value: WEIGHT_UNITS.KG, label: "kg" },
+              { value: WEIGHT_UNITS.ST_LB, label: "st / lb" },
+            ]}
+            ariaLabel="Weight unit"
+          />
+        </UnitRow>
+        <UnitRow label="Body measurements">
+          <UnitToggle
+            value={measurementUnit}
+            onChange={setMeasurementUnit}
+            options={[
+              { value: LENGTH_UNITS.CM, label: "cm" },
+              { value: LENGTH_UNITS.IN, label: "inches" },
+            ]}
+            ariaLabel="Body measurement unit"
+          />
+        </UnitRow>
+      </fieldset>
+
+      <div className={styles.field}>
+        <span className={styles.label} id="height-label">
+          Height
+        </span>
         {heightUnit === HEIGHT_UNITS.CM ? (
           <UnitInput label="cm" value={heightCm} onChange={setHeightCm} labelledBy="height-label" />
         ) : (
@@ -237,18 +281,9 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
       </div>
 
       <div className={styles.field}>
-        <div className={styles.labelRow}>
-          <span className={styles.label} id="weight-label">Weight</span>
-          <UnitToggle
-            value={weightUnit}
-            onChange={switchWeightUnit}
-            options={[
-              { value: WEIGHT_UNITS.KG, label: "kg" },
-              { value: WEIGHT_UNITS.ST_LB, label: "st / lb" },
-            ]}
-            ariaLabel="Weight unit"
-          />
-        </div>
+        <span className={styles.label} id="weight-label">
+          Weight
+        </span>
         {weightUnit === WEIGHT_UNITS.KG ? (
           <UnitInput label="kg" value={weightKg} onChange={setWeightKg} labelledBy="weight-label" />
         ) : (
@@ -278,6 +313,15 @@ export default function ProfileForm({ profile, onSaved, submitLabel = "Save" }) 
         {saving ? "Saving…" : submitLabel}
       </button>
     </form>
+  );
+}
+
+function UnitRow({ label, children }) {
+  return (
+    <div className={styles.unitRow}>
+      <span className={styles.unitRowLabel}>{label}</span>
+      {children}
+    </div>
   );
 }
 

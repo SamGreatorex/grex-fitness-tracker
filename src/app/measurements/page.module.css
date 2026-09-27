@@ -54,7 +54,7 @@
   min-height: 2.8em;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 769px) {
   .layout {
     grid-template-columns: 260px 1fr;
   }
@@ -272,4 +272,73 @@
 .deleteButton:hover {
   opacity: 1;
   color: #f87171;
+}
+
+/* ---- Phone layout (stepper) ---- */
+
+.phoneCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+.phoneDateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.phoneDateLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.phoneDate {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+}
+
+.editingBadge {
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* History collapses on phones (closed by default there). */
+.historySection > summary {
+  display: list-item;
+  cursor: pointer;
+}
+
+.historySection > summary::marker {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-top: 1rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    margin-bottom: 0.9rem;
+  }
+
+  .historySection > summary {
+    margin-top: 1.5rem;
+  }
 }

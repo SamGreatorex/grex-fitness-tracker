@@ -63,6 +63,7 @@ export const PROFILE_FIELDS = {
   // Display/entry preference only — heightCm/weightKg are always metric.
   heightUnit: { type: "enum", required: false, values: ["cm", "ftin"] },
   weightUnit: { type: "enum", required: false, values: ["kg", "stlb"] },
+  measurementUnit: { type: "enum", required: false, values: ["cm", "in"] },
 };
 
 export const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];

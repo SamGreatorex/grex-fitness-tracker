@@ -40,3 +40,22 @@ export function secondsToMinutes(seconds) {
   if (seconds == null) return "";
   return Math.round((Number(seconds) / 60) * 100) / 100;
 }
+
+// Where an exercise can be done (stored as a list, e.g. ["Gym", "Home"]).
+export const EXERCISE_LOCATIONS = ["Gym", "Home"];
+
+// Suggested equipment names (the admin form also suggests any already in
+// use, and accepts new ones).
+export const EQUIPMENT_SUGGESTIONS = [
+  "Ab Wheel", "Barbell", "Battle Rope", "Bench", "Bodyweight", "Cable", "Cardio Machine",
+  "Dip Station", "Dumbbell", "EZ Bar", "Kettlebell", "Landmine", "Machine", "Medicine Ball",
+  "Mini Band", "Plyo Box", "Pull-up Bar", "Resistance Band", "Smith Machine", "Stability Ball",
+  "Suspension Trainer", "Trap Bar",
+];
+export const EQUIPMENT_MAX_LENGTH = 40;
+
+// Body areas used for tagging (primary / secondary / stabilizer).
+export const BODY_AREAS = [
+  "Shoulders", "Chest", "Back", "Biceps", "Triceps", "Forearms",
+  "Core", "Glutes", "Quads", "Hamstrings", "Calves", "Full Body",
+];

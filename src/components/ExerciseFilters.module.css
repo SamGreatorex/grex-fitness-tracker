@@ -1,0 +1,165 @@
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  outline: none;
+}
+
+.search:focus {
+  border-color: var(--foreground);
+}
+
+/* Four multi-select dropdowns: 2 × 2, stacked on phones. Each opens in
+   place (pushing what's below down), so an open list never gets clipped. */
+.dropdowns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  align-items: start;
+}
+
+@media (max-width: 560px) {
+  .dropdowns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.count {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.clear {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clear:hover {
+  text-decoration: underline;
+}
+
+/* Search box + "Filters" toggle on one row. */
+.searchRow {
+  display: flex;
+  gap: 8px;
+}
+
+.searchRow .search {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: inherit;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  border-color: var(--foreground);
+}
+
+.toggleActive {
+  border-color: var(--accent);
+}
+
+.badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 20px;
+  text-align: center;
+}
+
+.chevron {
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: 0.6;
+}
+
+.chevronOpen {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+/* Phones: search gets the full width; the Filters button drops to its own
+   compact row underneath. */
+@media (max-width: 480px) {
+  .searchRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchRow .search {
+    width: 100%;
+    flex: none;
+    padding: 0 12px;
+  }
+
+  .toggle {
+    height: 36px;
+  }
+}

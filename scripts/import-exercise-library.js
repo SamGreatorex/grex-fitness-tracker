@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Loads data/exercise-library.json into the Exercises table.
 //
-//   - New exercises are created (name, tags, equipment, where) and pointed at their image's S3 key, e.g.
+//   - New exercises are created (name, tags, equipment, location) and pointed at their image's S3 key, e.g.
 //     exercises/kettlebell-swing.png. Upload the images to exactly those
 //     keys in the exercise-media bucket (the app shows a placeholder until
 //     the file exists).
-//   - Exercises that already exist only get `equipment` and `where` added.
+//   - Exercises that already exist only get `equipment` and `location` added.
 //     Their name, tags, defaults and media are left exactly as they are, so
 //     edits made in the admin exercise library are never overwritten —
 //     except that empty tag lists / missing media are filled in.
@@ -74,7 +74,7 @@ async function main() {
             secondaryTags: ex.secondaryTags,
             stabilizerTags: ex.stabilizerTags,
             equipment: ex.equipment,
-            where: ex.where,
+            location: ex.location,
             ...mediaFields(ex),
             createdAt: now,
             updatedAt: now,
@@ -87,7 +87,7 @@ async function main() {
     }
 
     // Existing: add equipment/where; only fill gaps elsewhere.
-    const set = { equipment: ex.equipment, where: ex.where, updatedAt: now };
+    const set = { equipment: ex.equipment, location: ex.location, updatedAt: now };
     for (const key of ["primaryTags", "secondaryTags", "stabilizerTags"]) {
       if (!current[key]?.length && ex[key].length) set[key] = ex[key];
     }

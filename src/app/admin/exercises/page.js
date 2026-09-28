@@ -6,26 +6,22 @@ import { useAuth } from "../../../components/AuthProvider";
 import { api } from "../../../lib/apiClient";
 import AppHeader from "../../../components/AppHeader";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
+import ExerciseFilters from "../../../components/ExerciseFilters";
+import { EMPTY_FILTERS, filterExercises } from "../../../lib/exerciseFilters";
+import InstructionsEditor, { newStep } from "../../../components/InstructionsEditor";
+import { TEXT_LIMITS, stripStepNumber } from "../../../lib/exerciseText";
 import { slugify } from "../../../lib/slugify";
-import { EXERCISE_TYPES, isCardio } from "../../../lib/exerciseTypes";
+import {
+  BODY_AREAS,
+  EQUIPMENT_MAX_LENGTH,
+  EQUIPMENT_SUGGESTIONS,
+  EXERCISE_LOCATIONS,
+  EXERCISE_TYPES,
+  isCardio,
+} from "../../../lib/exerciseTypes";
 import styles from "./page.module.css";
 
 const MAX_FILE_BYTES = 100 * 1024 * 1024;
-
-const BODY_AREAS = [
-  "Shoulders",
-  "Chest",
-  "Back",
-  "Biceps",
-  "Triceps",
-  "Forearms",
-  "Core",
-  "Glutes",
-  "Quads",
-  "Hamstrings",
-  "Calves",
-  "Full Body",
-];
 
 const TAG_TIERS = [
   { key: "primaryTags", label: "Primary", tone: "primary", hint: "The main muscle(s) this exercise targets." },
@@ -41,6 +37,11 @@ export default function AdminExercisesPage() {
   const [exercises, setExercises] = useState(null);
   const [name, setName] = useState("");
   const [type, setType] = useState(EXERCISE_TYPES.STRENGTH);
+  const [equipment, setEquipment] = useState("");
+  const [location, setLocation] = useState([]);
+  const [description, setDescription] = useState("");
+  // [{ key, text }] — bare step text; the API numbers them on save.
+  const [steps, setSteps] = useState([]);
   const [primaryTags, setPrimaryTags] = useState([]);
   const [secondaryTags, setSecondaryTags] = useState([]);
   const [stabilizerTags, setStabilizerTags] = useState([]);
@@ -50,7 +51,7 @@ export default function AdminExercisesPage() {
   const [error, setError] = useState("");
   const [usageByExerciseId, setUsageByExerciseId] = useState({});
   const [expandedUsageId, setExpandedUsageId] = useState(null);
-  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
 
   useEffect(() => {
     if (!sessionLoading && !user) router.replace("/login");
@@ -88,26 +89,25 @@ export default function AdminExercisesPage() {
 
   const editingExercise = editingId ? exercises?.find((e) => e.exerciseId === editingId) : null;
 
-  const filteredExercises = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    if (!term || !exercises) return exercises;
-    return exercises.filter((exercise) => {
-      const tags = [
-        ...(exercise.primaryTags || []),
-        ...(exercise.secondaryTags || []),
-        ...(exercise.stabilizerTags || []),
-      ];
-      return (
-        exercise.name.toLowerCase().includes(term) ||
-        tags.some((tag) => tag.toLowerCase().includes(term))
-      );
-    });
-  }, [exercises, search]);
+  // Suggestions: the standard list plus anything already used in the library.
+  const equipmentOptions = useMemo(
+    () => [...new Set([...EQUIPMENT_SUGGESTIONS, ...(exercises ?? []).map((e) => e.equipment).filter(Boolean)])].sort(),
+    [exercises]
+  );
+
+  const filteredExercises = useMemo(
+    () => (exercises ? filterExercises(exercises, filters) : exercises),
+    [exercises, filters]
+  );
 
   const resetForm = () => {
     setEditingId(null);
     setName("");
     setType(EXERCISE_TYPES.STRENGTH);
+    setEquipment("");
+    setLocation([]);
+    setDescription("");
+    setSteps([]);
     setPrimaryTags([]);
     setSecondaryTags([]);
     setStabilizerTags([]);
@@ -159,6 +159,10 @@ export default function AdminExercisesPage() {
     setEditingId(exercise.exerciseId);
     setName(exercise.name);
     setType(isCardio(exercise) ? EXERCISE_TYPES.CARDIO : EXERCISE_TYPES.STRENGTH);
+    setEquipment(exercise.equipment ?? "");
+    setLocation(exercise.location ?? []);
+    setDescription(exercise.description ?? "");
+    setSteps((exercise.instructions ?? []).map((step) => newStep(stripStepNumber(step))));
     setPrimaryTags(exercise.primaryTags || []);
     setSecondaryTags(exercise.secondaryTags || []);
     setStabilizerTags(exercise.stabilizerTags || []);
@@ -214,6 +218,10 @@ export default function AdminExercisesPage() {
       await api.post("/api/exercises", {
         name: name.trim(),
         type,
+        equipment,
+        location,
+        description,
+        instructions: steps.map((s) => s.text),
         primaryTags,
         secondaryTags,
         stabilizerTags,
@@ -264,28 +272,23 @@ export default function AdminExercisesPage() {
         </div>
 
         {exercises && exercises.length > 0 && (
-          <input
-            type="search"
-            className={styles.searchInput}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or tag…"
-            aria-label="Search exercises by name or tag"
-          />
+          <div className={styles.filterBar}>
+            <ExerciseFilters
+              value={filters}
+              onChange={setFilters}
+              exercises={exercises}
+              shown={filteredExercises.length}
+              total={exercises.length}
+            />
+          </div>
         )}
-
-        <h2 className={styles.listTitle}>
-          {search.trim() && exercises
-            ? `${filteredExercises.length} of ${exercises.length} exercises`
-            : `All exercises ${exercises ? `(${exercises.length})` : ""}`}
-        </h2>
 
         {!exercises ? (
           <p className={styles.empty}>Loading…</p>
         ) : exercises.length === 0 ? (
           <p className={styles.empty}>No exercises yet.</p>
         ) : filteredExercises.length === 0 ? (
-          <p className={styles.empty}>No exercises match &ldquo;{search.trim()}&rdquo;.</p>
+          <p className={styles.empty}>No exercises match these filters.</p>
         ) : (
           <div className={styles.list}>
             {filteredExercises.map((exercise) => {
@@ -411,6 +414,71 @@ export default function AdminExercisesPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className={styles.fieldPair}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="equipment">Equipment</label>
+                <input
+                  id="equipment"
+                  className={styles.input}
+                  list="equipment-options"
+                  maxLength={EQUIPMENT_MAX_LENGTH}
+                  value={equipment}
+                  onChange={(e) => setEquipment(e.target.value)}
+                  placeholder="e.g. Dumbbell"
+                />
+                <datalist id="equipment-options">
+                  {equipmentOptions.map((option) => (
+                    <option key={option} value={option} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div className={styles.field}>
+                <span className={styles.label} id="location-label">Location</span>
+                <div className={styles.locationToggle} role="group" aria-labelledby="location-label">
+                  {EXERCISE_LOCATIONS.map((place) => {
+                    const on = location.includes(place);
+                    return (
+                      <button
+                        key={place}
+                        type="button"
+                        aria-pressed={on}
+                        className={`${styles.locationOption} ${on ? styles.locationOptionActive : ""}`}
+                        onClick={() =>
+                          setLocation((prev) =>
+                            // Keep the Gym/Home order consistent whichever is tapped first.
+                            on ? prev.filter((p) => p !== place) : EXERCISE_LOCATIONS.filter((p) => p === place || prev.includes(p))
+                          )
+                        }
+                      >
+                        {on ? "✓ " : ""}
+                        {place}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                className={`${styles.input} ${styles.textarea}`}
+                rows={3}
+                maxLength={TEXT_LIMITS.description}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="A short summary of the exercise and what it works."
+              />
+            </div>
+
+            <div className={styles.field}>
+              <span className={styles.label}>Instructions</span>
+              <span className={styles.hint}>One step per box, in order. Steps are numbered automatically.</span>
+              <InstructionsEditor steps={steps} onChange={setSteps} />
             </div>
 
             <div className={styles.field}>

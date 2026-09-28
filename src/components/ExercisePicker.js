@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import ExerciseFilters from "./ExerciseFilters";
+import { EMPTY_FILTERS, filterExercises } from "../lib/exerciseFilters";
 import styles from "./ExercisePicker.module.css";
 
 // Lets a PT pick exercises from the library to add to a programme day.
@@ -8,26 +10,13 @@ import styles from "./ExercisePicker.module.css";
 // many times each one is already on the day.
 export default function ExercisePicker({ library, addedCounts, onAdd, onClose }) {
   const dialogRef = useRef(null);
-  const [search, setSearch] = useState("");
-  const [tag, setTag] = useState("");
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
 
   useEffect(() => {
     dialogRef.current?.showModal();
   }, []);
 
-  const tags = useMemo(
-    () => [...new Set(library.flatMap((e) => e.primaryTags ?? []))].sort((a, b) => a.localeCompare(b)),
-    [library]
-  );
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return library.filter(
-      (e) =>
-        (!q || e.name.toLowerCase().includes(q)) &&
-        (!tag || (e.primaryTags ?? []).includes(tag) || (e.secondaryTags ?? []).includes(tag))
-    );
-  }, [library, search, tag]);
+  const filtered = useMemo(() => filterExercises(library, filters), [library, filters]);
 
   const handleBackdropClick = (e) => {
     if (e.target === dialogRef.current) dialogRef.current.close();
@@ -43,27 +32,17 @@ export default function ExercisePicker({ library, addedCounts, onAdd, onClose })
           </button>
         </div>
 
-        <div className={styles.filters}>
-          <input
-            className={styles.search}
-            type="search"
-            placeholder="Search exercises"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
-          />
-          <select className={styles.tagSelect} value={tag} onChange={(e) => setTag(e.target.value)} aria-label="Filter by body area">
-            <option value="">All areas</option>
-            {tags.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
+        <ExerciseFilters
+          value={filters}
+          onChange={setFilters}
+          exercises={library}
+          shown={filtered.length}
+          total={library.length}
+          autoFocus
+        />
 
         <ul className={styles.list}>
-          {filtered.length === 0 && <li className={styles.empty}>No exercises match.</li>}
+          {filtered.length === 0 && <li className={styles.empty}>No exercises match these filters.</li>}
           {filtered.map((exercise) => {
             const count = addedCounts[exercise.name] ?? 0;
             return (

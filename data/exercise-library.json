@@ -11,12 +11,12 @@
       "Back"
     ],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/ab-wheel-rollout.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/ab-wheel-rollout.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "barbell-back-squat",
@@ -32,11 +32,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-back-squat.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-bench-press",
@@ -52,11 +52,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-bench-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-bent-over-row",
@@ -72,11 +72,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-bent-over-row.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-biceps-curl",
@@ -91,11 +91,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-biceps-curl.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-close-grip-bench-press",
@@ -111,11 +111,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-close-grip-bench-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-deadlift",
@@ -131,11 +131,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-deadlift.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-front-squat",
@@ -150,11 +150,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-front-squat.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-good-morning",
@@ -170,11 +170,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-good-morning.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-hip-thrust",
@@ -189,11 +189,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-hip-thrust.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-incline-bench-press",
@@ -209,11 +209,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-incline-bench-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-overhead-press",
@@ -229,11 +229,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-overhead-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-reverse-lunge",
@@ -249,11 +249,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-reverse-lunge.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-romanian-deadlift",
@@ -269,11 +269,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-romanian-deadlift.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "barbell-shrug",
@@ -288,11 +288,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/barbell-shrug.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "battle-rope-waves",
@@ -308,11 +308,11 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/battle-rope-waves.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "back-extension",
@@ -328,12 +328,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/back-extension.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/back-extension.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bench-dip",
@@ -349,12 +349,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/bench-dip.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/bench-dip.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bicycle-crunch",
@@ -367,12 +367,12 @@
     "stabilizerTags": [
       "Quads"
     ],
-    "where": [
+    "mediaKey": "exercises/bicycle-crunch.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/bicycle-crunch.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bird-dog",
@@ -388,12 +388,12 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
+    "mediaKey": "exercises/bird-dog.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/bird-dog.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bodyweight-calf-raise",
@@ -406,12 +406,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/bodyweight-calf-raise.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/bodyweight-calf-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bodyweight-reverse-lunge",
@@ -427,12 +427,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/bodyweight-reverse-lunge.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/bodyweight-reverse-lunge.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "bodyweight-squat",
@@ -448,12 +448,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/bodyweight-squat.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/bodyweight-squat.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "burpee",
@@ -469,12 +469,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/burpee.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/burpee.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "cossack-squat",
@@ -490,7 +490,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -504,12 +504,12 @@
     ],
     "secondaryTags": [],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/crunch.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/crunch.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dead-bug",
@@ -524,7 +524,7 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -543,7 +543,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -561,7 +561,7 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -579,12 +579,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/front-plank.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/front-plank.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "front-plank-toe-tap",
@@ -599,7 +599,7 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -617,12 +617,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/glute-bridge.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/glute-bridge.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "glute-march",
@@ -637,7 +637,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -655,12 +655,12 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
+    "mediaKey": "exercises/hollow-body-hold.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/hollow-body-hold.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "incline-push-up",
@@ -676,12 +676,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/incline-push-up.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/incline-push-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "inverted-row",
@@ -696,12 +696,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/inverted-row.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/inverted-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "jump-squat",
@@ -717,12 +717,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/jump-squat.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/jump-squat.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "knee-push-up",
@@ -738,12 +738,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/knee-push-up.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/knee-push-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "lying-90-to-90-switch",
@@ -758,7 +758,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -776,7 +776,7 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -792,12 +792,12 @@
       "Quads"
     ],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/lying-leg-raise.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/lying-leg-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mountain-climber",
@@ -813,12 +813,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/mountain-climber.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mountain-climber.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "pike-push-up",
@@ -833,12 +833,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/pike-push-up.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/pike-push-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "push-up",
@@ -854,7 +854,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -872,12 +872,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/side-plank.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/side-plank.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "single-leg-glute-bridge",
@@ -892,12 +892,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/single-leg-glute-bridge.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/single-leg-glute-bridge.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "sit-wall",
@@ -912,7 +912,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -930,7 +930,7 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -949,12 +949,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/superman.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/superman.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "cable-biceps-curls",
@@ -969,7 +969,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -986,11 +986,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-face-pull.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "cable-glute-kickback",
@@ -1005,11 +1005,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-glute-kickback.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "cable-lateral-raise",
@@ -1024,7 +1024,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1041,11 +1041,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-overhead-triceps-extension.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "cable-pallof-press",
@@ -1060,11 +1060,11 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-pallof-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "cable-pull-through",
@@ -1080,7 +1080,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1097,11 +1097,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-rope-hammer-curl.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "cable-seated-single-leg-extension",
@@ -1116,7 +1116,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1133,7 +1133,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1150,11 +1150,11 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/cable-woodchop.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "close-grip-lat-pulldown",
@@ -1170,7 +1170,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1185,11 +1185,11 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/kneeling-cable-crunch.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "seated-cable-row",
@@ -1206,7 +1206,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1223,7 +1223,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym"
     ]
   },
@@ -1240,11 +1240,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/straight-arm-cable-pulldown.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "wide-grip-lat-pulldown",
@@ -1260,11 +1260,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/wide-grip-lat-pulldown.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "parallel-bar-dip",
@@ -1280,11 +1280,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/parallel-bar-dip.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "dumbbell-bench-press",
@@ -1300,12 +1300,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-bench-press.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-bench-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-bent-over-row",
@@ -1321,7 +1321,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1340,7 +1340,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1359,7 +1359,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1375,12 +1375,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-calf-raise.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-calf-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-chest-supported-row",
@@ -1395,12 +1395,12 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-chest-supported-row.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-chest-supported-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-cossack-squat",
@@ -1416,7 +1416,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1434,7 +1434,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1453,7 +1453,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1472,12 +1472,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-farmers-carry.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-farmers-carry.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-floor-fly",
@@ -1492,7 +1492,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1511,7 +1511,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1529,7 +1529,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1548,7 +1548,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1567,7 +1567,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1586,7 +1586,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1604,12 +1604,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-hammer-curl.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-hammer-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-incline-bench-press",
@@ -1625,12 +1625,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-incline-bench-press.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-incline-bench-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-kickback",
@@ -1645,7 +1645,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1664,7 +1664,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1683,7 +1683,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1701,7 +1701,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1720,7 +1720,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1739,7 +1739,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1758,7 +1758,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1777,7 +1777,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1796,12 +1796,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-pullover.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-pullover.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-rear-fly",
@@ -1816,7 +1816,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1835,7 +1835,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1854,7 +1854,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1872,12 +1872,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-seated-shoulder-press.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-seated-shoulder-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-shrug",
@@ -1892,12 +1892,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-shrug.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-shrug.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-side-squat",
@@ -1913,7 +1913,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1931,12 +1931,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-single-leg-romanian-deadlift.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-single-leg-romanian-deadlift.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-standing-overhead-press",
@@ -1952,7 +1952,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1970,7 +1970,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -1989,12 +1989,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-step-up.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-step-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-strict-curl",
@@ -2009,7 +2009,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -2028,7 +2028,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -2047,12 +2047,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-thruster.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-thruster.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-upright-row",
@@ -2068,12 +2068,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-upright-row.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-upright-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-walking-lunge",
@@ -2089,12 +2089,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-walking-lunge.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-walking-lunge.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-wall-sit",
@@ -2109,7 +2109,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -2123,12 +2123,12 @@
     ],
     "secondaryTags": [],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/dumbbell-wrist-curl.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-wrist-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "dumbbell-zottman-curl",
@@ -2143,12 +2143,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/dumbbell-zottman-curl.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/dumbbell-zottman-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "lateral-raise",
@@ -2163,7 +2163,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Gym",
       "Home"
     ]
@@ -2181,11 +2181,11 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/ez-bar-preacher-curl.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "ez-bar-skull-crusher",
@@ -2200,11 +2200,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/ez-bar-skull-crusher.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "kettlebell-clean-and-press",
@@ -2220,12 +2220,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-clean-and-press.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-clean-and-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-deadlift",
@@ -2241,12 +2241,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-deadlift.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-deadlift.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-goblet-squat",
@@ -2261,12 +2261,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-goblet-squat.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-goblet-squat.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-halo",
@@ -2281,12 +2281,12 @@
     "stabilizerTags": [
       "Triceps"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-halo.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-halo.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-russian-twist",
@@ -2299,12 +2299,12 @@
       "Shoulders"
     ],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/kettlebell-russian-twist.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-russian-twist.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-single-arm-row",
@@ -2319,12 +2319,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-single-arm-row.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-single-arm-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-suitcase-carry",
@@ -2340,12 +2340,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-suitcase-carry.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-suitcase-carry.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-swing",
@@ -2361,12 +2361,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-swing.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-swing.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "kettlebell-turkish-get-up",
@@ -2382,12 +2382,12 @@
     "stabilizerTags": [
       "Quads"
     ],
-    "where": [
+    "mediaKey": "exercises/kettlebell-turkish-get-up.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/kettlebell-turkish-get-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "landmine-press",
@@ -2403,11 +2403,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/landmine-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "landmine-t-bar-row",
@@ -2423,11 +2423,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/landmine-t-bar-row.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "assisted-pull-up",
@@ -2443,11 +2443,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/assisted-pull-up.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "hack-squat",
@@ -2462,11 +2462,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/hack-squat.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "hip-abduction-machine",
@@ -2479,11 +2479,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/hip-abduction-machine.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "leg-extension",
@@ -2496,11 +2496,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/leg-extension.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "leg-press",
@@ -2516,11 +2516,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/leg-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "lying-leg-curl",
@@ -2536,11 +2536,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/lying-leg-curl.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "machine-chest-press",
@@ -2556,11 +2556,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/machine-chest-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "machine-chest-supported-row",
@@ -2575,11 +2575,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/machine-chest-supported-row.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "machine-shoulder-press",
@@ -2594,11 +2594,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/machine-shoulder-press.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "machine-standing-calf-raise",
@@ -2611,11 +2611,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/machine-standing-calf-raise.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "pec-deck-fly",
@@ -2630,11 +2630,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/pec-deck-fly.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "reverse-pec-deck",
@@ -2649,11 +2649,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/reverse-pec-deck.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "seated-calf-raise",
@@ -2666,11 +2666,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/seated-calf-raise.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "seated-leg-curl",
@@ -2685,11 +2685,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/seated-leg-curl.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "medicine-ball-slam",
@@ -2705,12 +2705,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/medicine-ball-slam.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/medicine-ball-slam.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-clamshell",
@@ -2723,12 +2723,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-clamshell.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-clamshell.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-fire-hydrant",
@@ -2741,12 +2741,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-fire-hydrant.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-fire-hydrant.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-glute-bridge",
@@ -2761,12 +2761,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-glute-bridge.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-glute-bridge.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-lateral-walk",
@@ -2781,12 +2781,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-lateral-walk.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-lateral-walk.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-monster-walk",
@@ -2801,12 +2801,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-monster-walk.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-monster-walk.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "mini-band-squat",
@@ -2821,12 +2821,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/mini-band-squat.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/mini-band-squat.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "box-jump",
@@ -2842,12 +2842,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/box-jump.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/box-jump.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "chin-up",
@@ -2862,12 +2862,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/chin-up.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/chin-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "hanging-knee-raise",
@@ -2882,12 +2882,12 @@
     "stabilizerTags": [
       "Shoulders"
     ],
-    "where": [
+    "mediaKey": "exercises/hanging-knee-raise.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/hanging-knee-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "pull-up",
@@ -2903,12 +2903,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/pull-up.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/pull-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-assisted-pull-up",
@@ -2924,12 +2924,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-assisted-pull-up.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-assisted-pull-up.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-bent-over-row",
@@ -2944,12 +2944,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-bent-over-row.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-bent-over-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-biceps-curl",
@@ -2964,12 +2964,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-biceps-curl.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-biceps-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-chest-fly",
@@ -2984,12 +2984,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-chest-fly.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-chest-fly.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-chest-press",
@@ -3005,12 +3005,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-chest-press.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-chest-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-deadlift",
@@ -3026,12 +3026,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-deadlift.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-deadlift.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-face-pull",
@@ -3046,12 +3046,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-face-pull.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-face-pull.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-front-raise",
@@ -3066,12 +3066,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-front-raise.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-front-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-glute-kickback",
@@ -3086,12 +3086,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-glute-kickback.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-glute-kickback.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-good-morning",
@@ -3107,12 +3107,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-good-morning.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-good-morning.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-lat-pulldown",
@@ -3127,12 +3127,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-lat-pulldown.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-lat-pulldown.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-lateral-raise",
@@ -3145,12 +3145,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-lateral-raise.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-lateral-raise.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-lying-leg-press",
@@ -3166,7 +3166,7 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "location": [
       "Home",
       "Gym"
     ]
@@ -3184,12 +3184,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-overhead-press.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-overhead-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-overhead-triceps-extension",
@@ -3204,12 +3204,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-overhead-triceps-extension.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-overhead-triceps-extension.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-pallof-press",
@@ -3224,12 +3224,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-pallof-press.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-pallof-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-pull-apart",
@@ -3244,12 +3244,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-pull-apart.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-pull-apart.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-pull-through",
@@ -3264,12 +3264,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-pull-through.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-pull-through.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-seated-row",
@@ -3284,12 +3284,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-seated-row.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-seated-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-squat",
@@ -3305,12 +3305,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-squat.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-squat.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-triceps-pushdown",
@@ -3323,12 +3323,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-triceps-pushdown.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-triceps-pushdown.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-upright-row",
@@ -3344,12 +3344,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-upright-row.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-upright-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "resistance-band-woodchop",
@@ -3364,12 +3364,12 @@
     "stabilizerTags": [
       "Glutes"
     ],
-    "where": [
+    "mediaKey": "exercises/resistance-band-woodchop.png",
+    "mediaType": "image",
+    "location": [
       "Home",
       "Gym"
-    ],
-    "mediaKey": "exercises/resistance-band-woodchop.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "smith-machine-squat",
@@ -3385,11 +3385,11 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/smith-machine-squat.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   },
   {
     "exerciseId": "stability-ball-crunch",
@@ -3400,12 +3400,12 @@
     ],
     "secondaryTags": [],
     "stabilizerTags": [],
-    "where": [
+    "mediaKey": "exercises/stability-ball-crunch.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/stability-ball-crunch.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "stability-ball-hamstring-curl",
@@ -3420,12 +3420,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/stability-ball-hamstring-curl.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/stability-ball-hamstring-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "stability-ball-knee-tuck",
@@ -3440,12 +3440,12 @@
     "stabilizerTags": [
       "Quads"
     ],
-    "where": [
+    "mediaKey": "exercises/stability-ball-knee-tuck.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/stability-ball-knee-tuck.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "suspension-trainer-chest-press",
@@ -3461,12 +3461,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/suspension-trainer-chest-press.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/suspension-trainer-chest-press.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "suspension-trainer-hamstring-curl",
@@ -3481,12 +3481,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/suspension-trainer-hamstring-curl.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/suspension-trainer-hamstring-curl.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "suspension-trainer-row",
@@ -3501,12 +3501,12 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
+    "mediaKey": "exercises/suspension-trainer-row.png",
+    "mediaType": "image",
+    "location": [
       "Gym",
       "Home"
-    ],
-    "mediaKey": "exercises/suspension-trainer-row.png",
-    "mediaType": "image"
+    ]
   },
   {
     "exerciseId": "trap-bar-deadlift",
@@ -3523,10 +3523,10 @@
     "stabilizerTags": [
       "Core"
     ],
-    "where": [
-      "Gym"
-    ],
     "mediaKey": "exercises/trap-bar-deadlift.png",
-    "mediaType": "image"
+    "mediaType": "image",
+    "location": [
+      "Gym"
+    ]
   }
 ]

@@ -43,38 +43,6 @@
   cursor: pointer;
 }
 
-.filters {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.search,
-.tagSelect {
-  height: 44px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--background);
-  color: var(--foreground);
-  outline: none;
-}
-
-.search {
-  flex: 1;
-  min-width: 0;
-  padding: 0 14px;
-}
-
-.tagSelect {
-  max-width: 40%;
-  padding: 0 10px;
-  text-transform: capitalize;
-}
-
-.search:focus,
-.tagSelect:focus {
-  border-color: var(--foreground);
-}
-
 .list {
   list-style: none;
   flex: 1;

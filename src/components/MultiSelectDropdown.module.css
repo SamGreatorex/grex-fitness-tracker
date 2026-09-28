@@ -93,7 +93,8 @@
    other scrolling container. */
 .menu {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* As many ~140px columns as fit: 1 in a narrow cell, more when wide. */
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 2px;
   max-height: 280px;
   overflow-y: auto;
@@ -140,8 +141,3 @@
   white-space: nowrap;
 }
 
-@media (max-width: 420px) {
-  .menu {
-    grid-template-columns: 1fr;
-  }
-}

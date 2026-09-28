@@ -7,6 +7,7 @@ import { effortColor } from "../lib/effort";
 import RestPicker from "./RestPicker";
 import SwitchExerciseDialog from "./SwitchExerciseDialog";
 import { formatCardio, isCardio } from "../lib/exerciseTypes";
+import { stripStepNumber } from "../lib/exerciseText";
 
 // Vimeo links can be turned into a real thumbnail image via vumbnail.com
 // (no API key needed). Other sources (e.g. jamessmithacademy course pages)
@@ -85,6 +86,12 @@ export default function ExerciseCard({
   const candidates = isVideo ? [] : buildImageCandidates(exercise, libraryEntry);
   const hasImage = candidateIndex < candidates.length;
   const currentSrc = hasImage ? candidates[candidateIndex] : null;
+  // How-to text from the exercise library, shown under the picture when it's
+  // opened (or on its own if there's no picture yet).
+  const description = libraryEntry?.description?.trim() || null;
+  const steps = (libraryEntry?.instructions ?? []).map(stripStepNumber).filter(Boolean);
+  const hasDetails = !!description || steps.length > 0;
+  const canOpen = hasImage || hasDetails;
 
   const openLightbox = () => lightboxRef.current?.showModal();
   const closeLightbox = () => lightboxRef.current?.close();
@@ -120,6 +127,15 @@ export default function ExerciseCard({
           loading="lazy"
           onError={() => setCandidateIndex((i) => i + 1)}
         />
+      </button>
+    );
+  } else if (hasDetails) {
+    // No picture, but there's a description/instructions to show.
+    thumb = (
+      <button type="button" className={styles.thumbLink} onClick={openLightbox} aria-label={`How to do ${exercise.name}`}>
+        <span className={styles.thumbFallback}>
+          <ThumbIcon />
+        </span>
       </button>
     );
   } else if (exercise.videoLink) {
@@ -253,14 +269,30 @@ export default function ExerciseCard({
         </>
       )}
 
-      {hasImage && (
-        <dialog ref={lightboxRef} className={styles.lightbox} onClick={handleLightboxBackdropClick}>
+      {canOpen && (
+        <dialog ref={lightboxRef} className={styles.lightbox} onClick={handleLightboxBackdropClick} aria-label={exercise.name}>
           <div className={styles.lightboxInner}>
             <button type="button" className={styles.lightboxClose} aria-label="Close" onClick={closeLightbox}>
               ×
             </button>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={styles.lightboxImage} src={currentSrc} alt={exercise.name} />
+            {hasImage && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img className={styles.lightboxImage} src={currentSrc} alt={exercise.name} />
+            )}
+            <div className={styles.details}>
+              <p className={styles.detailsName}>{exercise.name}</p>
+              {description && <p className={styles.detailsDescription}>{description}</p>}
+              {steps.length > 0 && (
+                <>
+                  <p className={styles.detailsHeading}>How to do it</p>
+                  <ol className={styles.detailsSteps}>
+                    {steps.map((step, i) => (
+                      <li key={i}>{step}</li>
+                    ))}
+                  </ol>
+                </>
+              )}
+            </div>
             {exercise.videoLink && (
               <a className={styles.lightboxLink} href={exercise.videoLink} target="_blank" rel="noreferrer">
                 Open original source ↗

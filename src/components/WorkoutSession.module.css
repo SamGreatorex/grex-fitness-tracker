@@ -33,6 +33,23 @@
   font-size: 0.9rem;
 }
 
+.addExerciseButton {
+  width: 100%;
+  height: 44px;
+  margin-top: 0.25rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addExerciseButton:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
 .footer {
   position: sticky;
   bottom: 0;

@@ -10,6 +10,7 @@ import ElapsedTimer from "./ElapsedTimer";
 import RestOverlay from "./RestOverlay";
 import EffortDialog from "./EffortDialog";
 import WorkoutSummary from "./WorkoutSummary";
+import ExercisePicker from "./ExercisePicker";
 import { slugify } from "../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../lib/sessionStats";
 import { useWakeLock } from "../lib/useWakeLock";
@@ -124,6 +125,10 @@ export default function WorkoutSession() {
   useWakeLock();
 
   const [program, setProgram] = useState(null);
+  // Adding and switching exercises change the programme itself, so they're
+  // only offered on programmes the user built themselves (or, in trainer
+  // mode, their client's) — never on ones their PT built for them.
+  const [canEdit, setCanEdit] = useState(false);
   const [day, setDay] = useState(null);
   const [lastSetsByExerciseId, setLastSetsByExerciseId] = useState({});
   const [exerciseLibrary, setExerciseLibrary] = useState({});
@@ -141,6 +146,7 @@ export default function WorkoutSession() {
   // period starts, without reaching for an impure Date.now()/Math.random()
   // key during an event handler.
   const restOverlayKeyRef = useRef(0);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [finishing, setFinishing] = useState(false);
   // Which summary screen is showing right now, and the (possibly several)
   // summaries queued up behind it — finishing a day can also complete the
@@ -166,7 +172,7 @@ export default function WorkoutSession() {
     if (!user || !runId) return;
     (async () => {
       try {
-        const [{ program }, { sessions }, { exercises }] = await Promise.all([
+        const [{ program, canEdit }, { sessions }, { exercises }] = await Promise.all([
           api.get(`/api/programs/${programId}`),
           // History (for last-time prefill) is the client's, not the trainer's.
           api.get("/api/sessions", clientUserId ? { userId: clientUserId } : undefined),
@@ -210,6 +216,7 @@ export default function WorkoutSession() {
         }
 
         setProgram(program);
+        setCanEdit(canEdit);
         setDay(foundDay);
         setLastSetsByExerciseId(lastSetsByExerciseId);
         setExerciseLibrary(libraryBySlug);
@@ -328,6 +335,51 @@ export default function WorkoutSession() {
       }),
     }));
   };
+
+  // Adding one mid-workout also persists to the programme (appended to this
+  // day), so it's there every future time this day comes up too.
+  const handleAddExercise = async (libraryExercise) => {
+    setError("");
+    let exercise;
+    try {
+      ({ exercise } = await api.post(`/api/programs/${programId}/exercises`, {
+        dayId,
+        name: libraryExercise.name,
+        type: isCardio(libraryExercise) ? EXERCISE_TYPES.CARDIO : EXERCISE_TYPES.STRENGTH,
+      }));
+    } catch (err) {
+      // Close the picker so the error (shown on the page) isn't hidden behind it.
+      setPickerOpen(false);
+      setError(err.message || "Could not add the exercise to the programme.");
+      return;
+    }
+
+    if (isCardio(exercise)) {
+      const lastCardio = findLastCardioForExercise(sessionsCache, exercise.name);
+      setLastSetsByExerciseId((prev) => ({ ...prev, [exercise.exerciseId]: lastCardio }));
+      setSetsByExercise((prev) => ({
+        ...prev,
+        [exercise.exerciseId]: buildCardioRow({ targetSettings: null, targetSeconds: exercise.targetSeconds, lastCardio }),
+      }));
+    } else {
+      const lastSets = findLastSetsForExercise(sessionsCache, exercise.name);
+      setLastSetsByExerciseId((prev) => ({ ...prev, [exercise.exerciseId]: lastSets }));
+      setSetsByExercise((prev) => ({
+        ...prev,
+        [exercise.exerciseId]: buildSetRows({
+          targetSets: exercise.targetSets,
+          restSeconds: exercise.restSeconds,
+          lastSets,
+          startWeight: null,
+          startReps: numericReps(exercise.targetReps),
+        }),
+      }));
+    }
+    setDay((prev) => ({ ...prev, exercises: [...prev.exercises, exercise] }));
+  };
+
+  const addedCounts = {};
+  for (const e of day.exercises) addedCounts[e.name] = (addedCounts[e.name] ?? 0) + 1;
 
   const onSetField = (exerciseId, setIndex, field, value) => {
     setSetsByExercise((prev) => ({
@@ -524,9 +576,15 @@ export default function WorkoutSession() {
             onEditEffort={(setIndex) => onEditEffort(exercise.exerciseId, setIndex)}
             onApplyRestToAll={(secs) => onApplyRestToAll(exercise.exerciseId, secs)}
             showRest={!untimed}
-            onSwitchExercise={(newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise)}
+            onSwitchExercise={canEdit ? (newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise) : undefined}
           />
         ))}
+
+        {canEdit && (
+          <button type="button" className={styles.addExerciseButton} onClick={() => setPickerOpen(true)}>
+            + Add exercise
+          </button>
+        )}
 
         <div className={styles.footer}>
           <button type="button" className={styles.finishButton} disabled={finishing} onClick={handleFinish}>
@@ -537,6 +595,15 @@ export default function WorkoutSession() {
 
       {restOverlay && (
         <RestOverlay key={restOverlay.key} seconds={restOverlay.seconds} onClose={() => setRestOverlay(null)} />
+      )}
+
+      {pickerOpen && (
+        <ExercisePicker
+          library={exerciseLibraryList}
+          addedCounts={addedCounts}
+          onAdd={handleAddExercise}
+          onClose={() => setPickerOpen(false)}
+        />
       )}
 
       {effortContext && (

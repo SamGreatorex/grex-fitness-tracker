@@ -5,6 +5,7 @@ import { ddb, TABLES } from "../../../lib/dynamo";
 import { getRequestUser } from "../../../lib/users";
 import { ROLES } from "../../../lib/profile";
 import { canManageUser, isProgramManager, listProgramsForOwner, listTemplates, normaliseProgramInput, sortPrograms } from "../../../lib/programs";
+import { PROGRAM_LEADS } from "../../../lib/programLead";
 import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -52,27 +53,32 @@ export const GET = withLogging("GET /api/programs", async (request) => {
 // A PT creates a programme for one of their clients (admins: anyone): { ownerUserId, name, goal,
 // ledBy ("user" | "trainer"), durationWeeks, days: [{ label, subtitle, exercises: [{ name, targetSets,
 // targetReps, restSeconds }] }] }.
+// Anyone can create a programme for themselves (ownerUserId omitted or their
+// own userId); it's always user-led unless they're an admin training themselves.
 export const POST = withLogging("POST /api/programs", async (request) => {
   const user = await getRequestUser(request);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!isProgramManager(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();
   const isTemplate = body.isTemplate === true;
-  const { ownerUserId } = body;
+  const ownerUserId = isTemplate ? null : body.ownerUserId || user.userId;
+  const forSelf = ownerUserId === user.userId;
+  const managesOwner = !isTemplate && (await canManageUser(user, ownerUserId));
 
-  if (!isTemplate) {
-    if (!ownerUserId) return NextResponse.json({ error: "ownerUserId is required" }, { status: 400 });
+  if (isTemplate) {
+    if (!isProgramManager(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  } else if (!forSelf) {
     const { Item: owner } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: ownerUserId } }));
     // Not-your-client reads the same as not-found, so PTs can't probe for
     // other PTs' clients.
-    if (!owner || !(await canManageUser(user, ownerUserId))) {
+    if (!owner || !managesOwner) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
   }
 
   const { program: fields, error } = normaliseProgramInput(body);
   if (error) return NextResponse.json({ error }, { status: 400 });
+  if (forSelf && !managesOwner) fields.ledBy = PROGRAM_LEADS.USER;
 
   const now = new Date().toISOString();
   const program = {

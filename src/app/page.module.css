@@ -93,3 +93,22 @@
   opacity: 0.6;
   padding: 2rem 0;
 }
+
+.newProgramme {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  margin-top: 0.9rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.newProgramme:hover,
+.newProgramme:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}

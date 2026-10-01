@@ -5,7 +5,8 @@ import ExerciseFilters from "./ExerciseFilters";
 import { EMPTY_FILTERS, filterExercises } from "../lib/exerciseFilters";
 import styles from "./ExercisePicker.module.css";
 
-// Lets a PT pick exercises from the library to add to a programme day.
+// Picks exercises from the library to add to a programme day — in the
+// builder, or mid-workout.
 // Stays open so several can be added in one go; `addedCounts` shows how
 // many times each one is already on the day.
 export default function ExercisePicker({ library, addedCounts, onAdd, onClose }) {

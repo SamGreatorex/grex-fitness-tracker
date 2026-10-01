@@ -31,9 +31,6 @@ export default function ProgrammeDetail({ clientName }) {
   const [sessionByDayId, setSessionByDayId] = useState({});
   const [starting, setStarting] = useState(false);
   const [restarting, setRestarting] = useState(false);
-  const [editingName, setEditingName] = useState(false);
-  const [nameDraft, setNameDraft] = useState("");
-  const [savingName, setSavingName] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -95,34 +92,6 @@ export default function ProgrammeDetail({ clientName }) {
     }
   };
 
-  const startEditingName = () => {
-    setNameDraft(program.name);
-    setEditingName(true);
-  };
-
-  const cancelEditingName = () => {
-    setEditingName(false);
-    setError("");
-  };
-
-  const saveName = async () => {
-    if (!nameDraft.trim() || nameDraft.trim() === program.name) {
-      setEditingName(false);
-      return;
-    }
-    setSavingName(true);
-    setError("");
-    try {
-      const { program: updated } = await api.patch(`/api/programs/${programId}`, { name: nameDraft.trim() });
-      setProgram(updated);
-      setEditingName(false);
-    } catch (err) {
-      setError(err.message || "Could not rename program.");
-    } finally {
-      setSavingName(false);
-    }
-  };
-
   const restart = async (scope) => {
     const confirmMessage =
       scope === "program"
@@ -159,6 +128,8 @@ export default function ProgrammeDetail({ clientName }) {
   const trainerLed = isTrainerLed(program);
   // The client looking at a programme their trainer runs with them.
   const viewOnly = trainerLed && !clientUserId;
+  // One the client built themselves — fully editable from the builder.
+  const ownBuild = !clientUserId && program.ownerUserId === user.userId && program.createdBy === user.userId;
   const canStart = !run && !viewOnly;
   const dayHref = (day) => `${basePath}/day/${day.dayId}?runId=${encodeURIComponent(run.runId)}&week=${run.currentWeek}`;
 
@@ -166,39 +137,21 @@ export default function ProgrammeDetail({ clientName }) {
     <>
       <AppHeader backHref={backHref} backLabel={backLabel} />
       <main className={styles.main}>
-        {editingName ? (
-          <div className={styles.nameEditRow}>
-            <input
-              className={styles.nameInput}
-              type="text"
-              value={nameDraft}
-              onChange={(e) => setNameDraft(e.target.value)}
-              autoFocus
-              disabled={savingName}
-            />
-            <button type="button" className={styles.nameSaveButton} disabled={savingName} onClick={saveName}>
-              {savingName ? "Saving…" : "Save"}
-            </button>
-            <button type="button" className={styles.nameCancelButton} disabled={savingName} onClick={cancelEditingName}>
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <div className={styles.titleRow}>
-            <h1 className={styles.title}>{program.name}</h1>
-            {clientUserId ? (
-              <Link href={`/trainer/clients/${clientUserId}/programmes/${programId}`} className={styles.editNameButton}>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>{program.name}</h1>
+          {clientUserId ? (
+            <Link href={`/trainer/clients/${clientUserId}/programmes/${programId}`} className={styles.editNameButton}>
+              Edit programme
+            </Link>
+          ) : (
+            // Ones their PT built can't be changed by the client at all.
+            ownBuild && (
+              <Link href={`/programs/${programId}/edit`} className={styles.editNameButton}>
                 Edit programme
               </Link>
-            ) : (
-              !viewOnly && (
-                <button type="button" className={styles.editNameButton} aria-label="Rename program" onClick={startEditingName}>
-                  Rename
-                </button>
-              )
-            )}
-          </div>
-        )}
+            )
+          )}
+        </div>
         <p className={styles.goal}>
           {[program.goal, `${program.days.length} days/week`, `${program.durationWeeks} weeks`].filter(Boolean).join(" · ")}
         </p>

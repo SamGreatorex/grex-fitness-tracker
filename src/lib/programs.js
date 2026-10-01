@@ -8,8 +8,12 @@ import { PROGRAM_LEADS, isTrainerLed } from "./programLead";
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
 // edit programmes only for their own clients (users whose ptUserId is the
 // PT's userId); admins can for anyone. Everyone else only ever sees their
-// own — and runs and tweaks their own user-led ones. Trainer-led ones are
-// run by the owner's PT (or an admin) and are view-only for the owner.
+// own, and runs their own user-led ones — but can't change any programme
+// their PT built (no renaming, editing, or adding/switching exercises).
+// Trainer-led ones are run by the owner's PT (or an admin) and are
+// view-only for the owner. Any user may also build programmes for
+// themselves (always user-led); they can change and delete those, and
+// their PT can too.
 //
 // Templates (isTemplate: true) have no owner: they're a library shared by
 // every PT and admin, copied into a client's programme to start from. Only
@@ -39,10 +43,18 @@ export function canEditTemplate(user, template) {
   return isProgramManager(user) && (user.role === ROLES.ADMIN || template.createdBy === user.userId);
 }
 
+// A programme the owner built for themselves (rather than their PT or an
+// admin building it for them).
+export function isSelfBuilt(program) {
+  return !!program && !program.isTemplate && program.createdBy === program.ownerUserId;
+}
+
 // Whether `user` may edit, rename or delete this programme: a template's
-// creator (or an admin), or a client programme's PT (or an admin).
+// creator (or an admin), a client programme's PT (or an admin), or the
+// owner of a programme they built themselves.
 export async function canEditProgram(user, program) {
   if (program.isTemplate) return canEditTemplate(user, program);
+  if (isSelfBuilt(program) && program.ownerUserId === user.userId) return true;
   return canManageUser(user, program.ownerUserId);
 }
 
@@ -131,7 +143,7 @@ export function sortPrograms(programs) {
   );
 }
 
-const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500 };
+export const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500 };
 
 function intInRange(value, min, max) {
   const n = Number(value);

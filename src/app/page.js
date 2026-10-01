@@ -138,7 +138,9 @@ export default function Home() {
         {!programs ? (
           <p className={styles.empty}>Loading programs…</p>
         ) : programs.length === 0 ? (
-          <p className={styles.empty}>No programmes yet — your PT will set one up for you.</p>
+          <p className={styles.empty}>
+            No programmes yet — {trainer ? "your PT will set one up for you, or build" : "build"} your own below.
+          </p>
         ) : (
           <div className={styles.grid}>
             {programs.map((program) => {
@@ -155,6 +157,12 @@ export default function Home() {
               );
             })}
           </div>
+        )}
+
+        {programs && (
+          <Link href="/programs/new" className={styles.newProgramme}>
+            + Build your own programme
+          </Link>
         )}
       </main>
     </>

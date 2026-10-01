@@ -88,8 +88,19 @@ function move(list, index, delta) {
 // exercises from the library. Used from trainer mode. With `isTemplate`,
 // creates/edits a shared template instead (no owner). `template` prefills a
 // new programme from a template. Client programmes also offer "Save as
-// template", copying what's in the form into a new template.
-export default function ProgrammeBuilder({ ownerUserId, program, template, isTemplate = false, backHref }) {
+// template", copying what's in the form into a new template. With
+// `selfBuilt`, a user is building a programme for themselves: always
+// user-led, and no templates. `deletedHref` is where to go after deleting
+// (default: `backHref`).
+export default function ProgrammeBuilder({
+  ownerUserId,
+  program,
+  template,
+  isTemplate = false,
+  selfBuilt = false,
+  backHref,
+  deletedHref = backHref,
+}) {
   const router = useRouter();
   const [form, setForm] = useState(() => (program ? toFormState(program) : toFormState(template, { fromTemplate: true })));
   const [savingTemplate, setSavingTemplate] = useState(false);
@@ -211,13 +222,15 @@ export default function ProgrammeBuilder({ ownerUserId, program, template, isTem
   const handleDelete = async () => {
     const message = isTemplate
       ? `Delete the "${program.name}" template? Programmes already created from it are kept.`
-      : `Delete "${program.name}"? Their logged workouts are kept, but the programme is removed.`;
+      : selfBuilt
+        ? `Delete "${program.name}"? Your logged workouts are kept, but the programme is removed.`
+        : `Delete "${program.name}"? Their logged workouts are kept, but the programme is removed.`;
     if (!window.confirm(message)) return;
     setDeleting(true);
     setError("");
     try {
       await api.delete(`/api/programs/${program.programId}`);
-      router.push(backHref);
+      router.push(deletedHref);
     } catch (err) {
       setError(err.message || "Could not delete the programme.");
       setDeleting(false);
@@ -263,24 +276,26 @@ export default function ProgrammeBuilder({ ownerUserId, program, template, isTem
             />
           </label>
         </div>
-        <fieldset className={styles.leadChoice}>
-          <legend className={styles.label}>Who runs it?</legend>
-          {LEAD_OPTIONS.map((option) => (
-            <label key={option.value} className={`${styles.leadOption} ${form.ledBy === option.value ? styles.leadOptionActive : ""}`}>
-              <input
-                type="radio"
-                name="ledBy"
-                value={option.value}
-                checked={form.ledBy === option.value}
-                onChange={() => setField("ledBy", option.value)}
-              />
-              <span>
-                <span className={styles.leadTitle}>{option.title}</span>
-                <span className={styles.leadHint}>{option.hint}</span>
-              </span>
-            </label>
-          ))}
-        </fieldset>
+        {!selfBuilt && (
+          <fieldset className={styles.leadChoice}>
+            <legend className={styles.label}>Who runs it?</legend>
+            {LEAD_OPTIONS.map((option) => (
+              <label key={option.value} className={`${styles.leadOption} ${form.ledBy === option.value ? styles.leadOptionActive : ""}`}>
+                <input
+                  type="radio"
+                  name="ledBy"
+                  value={option.value}
+                  checked={form.ledBy === option.value}
+                  onChange={() => setField("ledBy", option.value)}
+                />
+                <span>
+                  <span className={styles.leadTitle}>{option.title}</span>
+                  <span className={styles.leadHint}>{option.hint}</span>
+                </span>
+              </label>
+            ))}
+          </fieldset>
+        )}
       </section>
 
       {form.days.map((day, dayIndex) => (
@@ -395,7 +410,11 @@ export default function ProgrammeBuilder({ ownerUserId, program, template, isTem
                             value={ex.targetWeight}
                             onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
                             placeholder="—"
-                            title="Optional — prefills the client's first workout; their logged weights take over after that"
+                            title={
+                              selfBuilt
+                                ? "Optional — prefills your first workout; your logged weights take over after that"
+                                : "Optional — prefills the client's first workout; their logged weights take over after that"
+                            }
                           />
                         </label>
                         <NumberField
@@ -457,7 +476,7 @@ export default function ProgrammeBuilder({ ownerUserId, program, template, isTem
             {deleting ? "Deleting…" : isTemplate ? "Delete template" : "Delete programme"}
           </button>
         )}
-        {!isTemplate && (
+        {!isTemplate && !selfBuilt && (
           <button type="button" className={styles.templateButton} onClick={handleSaveAsTemplate} disabled={savingTemplate || saving || deleting}>
             {savingTemplate ? "Saving template…" : "Save as template"}
           </button>

@@ -126,8 +126,8 @@ export default function WorkoutSession() {
 
   const [program, setProgram] = useState(null);
   // Adding and switching exercises change the programme itself, so they're
-  // only offered on programmes the user built themselves (or, in trainer
-  // mode, their client's) — never on ones their PT built for them.
+  // only offered on programmes the person running this workout created —
+  // never on ones someone else built (e.g. a PT's programme for a client).
   const [canEdit, setCanEdit] = useState(false);
   const [day, setDay] = useState(null);
   const [lastSetsByExerciseId, setLastSetsByExerciseId] = useState({});
@@ -172,7 +172,7 @@ export default function WorkoutSession() {
     if (!user || !runId) return;
     (async () => {
       try {
-        const [{ program, canEdit }, { sessions }, { exercises }] = await Promise.all([
+        const [{ program, canChangeExercises }, { sessions }, { exercises }] = await Promise.all([
           api.get(`/api/programs/${programId}`),
           // History (for last-time prefill) is the client's, not the trainer's.
           api.get("/api/sessions", clientUserId ? { userId: clientUserId } : undefined),
@@ -216,7 +216,7 @@ export default function WorkoutSession() {
         }
 
         setProgram(program);
-        setCanEdit(canEdit);
+        setCanEdit(!!canChangeExercises);
         setDay(foundDay);
         setLastSetsByExerciseId(lastSetsByExerciseId);
         setExerciseLibrary(libraryBySlug);

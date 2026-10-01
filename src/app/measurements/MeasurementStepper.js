@@ -6,14 +6,16 @@ import { MEASUREMENTS } from "../../lib/measurements";
 import { WEIGHT_UNITS } from "../../lib/units";
 import styles from "./MeasurementStepper.module.css";
 
-export const STEPS = [
-  {
-    key: "weight",
-    label: "Weight",
-    hint: "For consistent readings, weigh yourself at the same time of day — ideally first thing in the morning.",
-  },
-  ...MEASUREMENTS,
-];
+const WEIGHT_STEP = {
+  key: "weight",
+  label: "Weight",
+  hint: "For consistent readings, weigh yourself at the same time of day — ideally first thing in the morning.",
+};
+
+// Weight first, then the measurements the user tracks (default: all).
+export function stepsFor(measurements = MEASUREMENTS) {
+  return [WEIGHT_STEP, ...measurements];
+}
 
 // Keeps focus (and so the phone keyboard) in the input when tapping
 // a step button, instead of the button stealing it.
@@ -25,7 +27,8 @@ const keepFocus = (e) => e.preventDefault();
 // advances. The same input element is reused for every tape measurement,
 // so the keyboard stays open while stepping through.
 export default function MeasurementStepper({
-  stepIndex,
+  steps: STEPS,
+  stepIndex: requestedStepIndex,
   onStepChange,
   form,
   setForm,
@@ -40,6 +43,8 @@ export default function MeasurementStepper({
   // keyboard comes up without another tap.
   autoFocus = false,
 }) {
+  // Clamped in case the tracked list just shrank under the current step.
+  const stepIndex = Math.min(requestedStepIndex, STEPS.length - 1);
   const step = STEPS[stepIndex];
   const isWeight = step.key === "weight";
   const isLast = stepIndex === STEPS.length - 1;
@@ -112,6 +117,7 @@ export default function MeasurementStepper({
             compact
             active={isWeight ? null : step.key}
             filled={form.lengths}
+            keys={STEPS.filter((s) => s.key !== "weight").map((s) => s.key)}
             onSelect={(key) => goTo(STEPS.findIndex((s) => s.key === key))}
           />
         </div>

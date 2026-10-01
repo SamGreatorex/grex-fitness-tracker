@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { DeleteCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { getRequestUser } from "../../../../lib/users";
-import { canAccessProgram, canEditProgram, canManageUser, getProgram, normaliseProgramInput } from "../../../../lib/programs";
+import {
+  canAccessProgram,
+  canChangeExercisesMidWorkout,
+  canEditProgram,
+  canManageUser,
+  getProgram,
+  normaliseProgramInput,
+} from "../../../../lib/programs";
 import { PROGRAM_LEADS } from "../../../../lib/programLead";
 import { withLogging } from "../../../../lib/apiHandler";
 
@@ -26,12 +33,13 @@ async function loadAccessible(request, params) {
   return { user, program };
 }
 
-// `canEdit`: whether the caller may change this programme at all (rename,
-// edit, delete, and add or switch exercises mid-workout) — see canEditProgram.
+// `canChangeExercises`: whether the caller may switch or add exercises
+// mid-workout — only on a programme they created and are running (see
+// canChangeExercisesMidWorkout).
 export const GET = withLogging("GET /api/programs/[programId]", async (request, { params }) => {
   const { user, program, denied } = await loadAccessible(request, params);
   if (denied) return denied;
-  return NextResponse.json({ program, canEdit: await canEditProgram(user, program) });
+  return NextResponse.json({ program, canChangeExercises: await canChangeExercisesMidWorkout(user, program) });
 });
 
 // Rename. Owners can only rename programmes they built themselves — ones

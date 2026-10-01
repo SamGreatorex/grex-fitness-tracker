@@ -8,9 +8,10 @@ import { api } from "../../lib/apiClient";
 import AppHeader from "../../components/AppHeader";
 import BodyDiagram from "../../components/BodyDiagram";
 import MeasurementDialog from "./MeasurementDialog";
-import { STEPS } from "./MeasurementStepper";
+import TrackedMeasurementsDialog from "./TrackedMeasurementsDialog";
+import { stepsFor } from "./MeasurementStepper";
 import { useMediaQuery } from "../../lib/useMediaQuery";
-import { MEASUREMENTS, MEASUREMENT_LABELS, todayLocal } from "../../lib/measurements";
+import { MEASUREMENTS, MEASUREMENT_LABELS, todayLocal, trackedMeasurementsFor } from "../../lib/measurements";
 import {
   WEIGHT_UNITS,
   cmToDisplayLength,
@@ -50,6 +51,10 @@ export default function MeasurementsPage() {
   // Only "has the profile loaded" matters for the initial load — not every
   // profile change (saving a weigh-in updates the profile's weight).
   const profileReady = !!profile;
+  // The measurements this user has chosen to track (all, until they choose).
+  const tracked = useMemo(() => trackedMeasurementsFor(profile), [profile]);
+  const trackedKeys = useMemo(() => tracked.map((m) => m.key), [tracked]);
+  const steps = useMemo(() => stepsFor(tracked), [tracked]);
 
   const [entries, setEntries] = useState(null);
   const [date, setDate] = useState(todayLocal);
@@ -61,6 +66,7 @@ export default function MeasurementsPage() {
   // a form below it; wider screens get the diagram beside the full grid.
   const isPhone = useMediaQuery("(max-width: 768px)");
   const [stepDialogOpen, setStepDialogOpen] = useState(false);
+  const [choosingTracked, setChoosingTracked] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
@@ -106,6 +112,9 @@ export default function MeasurementsPage() {
     setSavedMessage("");
     try {
       const weightKg = weightUnit === WEIGHT_UNITS.ST_LB ? stLbToKg(form.weightSt, form.weightLb) : form.weightKg;
+      // Every measurement, not just the tracked ones: the form holds what was
+      // already logged for this date, so ones the user has since stopped
+      // tracking are re-sent unchanged rather than wiped.
       const measurements = {};
       for (const { key } of MEASUREMENTS) measurements[key] = displayLengthToCm(form.lengths[key], lengthUnit);
 
@@ -157,16 +166,25 @@ export default function MeasurementsPage() {
       : lastValues.lengths[key] != null && formatLength(lastValues.lengths[key], lengthUnit);
   const lastPlaceholder = (key) =>
     lastValues.lengths[key] != null ? String(cmToDisplayLength(lastValues.lengths[key], lengthUnit)) : "";
-  const activeHint = MEASUREMENTS.find((m) => m.key === active)?.hint;
+  // The highlighted measurement, falling back to the first tracked one if
+  // the user has stopped tracking it.
+  const shownActive = trackedKeys.includes(active) ? active : trackedKeys[0] ?? null;
+  const activeHint = MEASUREMENTS.find((m) => m.key === shownActive)?.hint;
   const isEditing = !!entriesByDate[date];
   const saveLabel = isEditing ? "Update entry" : "Save entry";
 
   // Phone: open the one-at-a-time dialog on a body part (or "weight").
   const openStep = (key) => {
     if (key !== "weight") setActive(key);
-    setStepIndex(Math.max(0, STEPS.findIndex((s) => s.key === key)));
+    setStepIndex(Math.max(0, steps.findIndex((s) => s.key === key)));
     setStepDialogOpen(true);
   };
+
+  const chooseButton = (
+    <button type="button" className={styles.chooseButton} onClick={() => setChoosingTracked(true)}>
+      Choose measurements
+    </button>
+  );
 
   const weightText =
     weightUnit === WEIGHT_UNITS.ST_LB
@@ -198,10 +216,20 @@ export default function MeasurementsPage() {
 
   const measurementFields = (
     <>
-      <p className={styles.sectionLabel}>Measurements ({lengthUnit}) — fill in whichever you track</p>
+      <div className={styles.sectionRow}>
+        <p className={styles.sectionLabel}>
+          Measurements ({lengthUnit}) · {tracked.length} of {MEASUREMENTS.length} tracked
+        </p>
+        {chooseButton}
+      </div>
+      {tracked.length === 0 && (
+        <p className={styles.noneTracked}>
+          You&apos;re only tracking weight. Use <strong>Choose measurements</strong> to add body measurements.
+        </p>
+      )}
       <div className={styles.grid}>
-        {MEASUREMENTS.map(({ key, label }) => (
-          <label key={key} className={`${styles.field} ${active === key ? styles.fieldActive : ""}`}>
+        {tracked.map(({ key, label }) => (
+          <label key={key} className={`${styles.field} ${shownActive === key ? styles.fieldActive : ""}`}>
             <span className={styles.label}>{label}</span>
             <UnitInput
               id={`m-${key}`}
@@ -290,9 +318,10 @@ export default function MeasurementsPage() {
               </button>
 
               <div className={styles.phoneDiagram}>
-                <BodyDiagram active={active} filled={form.lengths} onSelect={openStep} />
+                <BodyDiagram active={shownActive} filled={form.lengths} keys={trackedKeys} onSelect={openStep} />
               </div>
               <p className={styles.phoneLegend}>Solid lines are logged for this date.</p>
+              <div className={styles.phoneChooseRow}>{chooseButton}</div>
             </div>
 
             <section id="all-measurements" className={styles.card} aria-label="All measurements">
@@ -306,10 +335,11 @@ export default function MeasurementsPage() {
             {stepDialogOpen && (
               <MeasurementDialog
                 onClose={() => setStepDialogOpen(false)}
+                steps={steps}
                 stepIndex={stepIndex}
                 onStepChange={(i) => {
                   setStepIndex(i);
-                  if (STEPS[i].key !== "weight") setActive(STEPS[i].key);
+                  if (steps[i].key !== "weight") setActive(steps[i].key);
                 }}
                 form={form}
                 setForm={setForm}
@@ -327,10 +357,15 @@ export default function MeasurementsPage() {
         ) : (
           <div className={styles.layout}>
             <aside className={styles.guide}>
-              <BodyDiagram active={active} filled={form.lengths} onSelect={(key) => document.getElementById(`m-${key}`)?.focus()} />
+              <BodyDiagram
+                active={shownActive}
+                filled={form.lengths}
+                keys={trackedKeys}
+                onSelect={(key) => document.getElementById(`m-${key}`)?.focus()}
+              />
               {activeHint && (
                 <p className={styles.hint}>
-                  <strong>{MEASUREMENT_LABELS[active]}:</strong> {activeHint}
+                  <strong>{MEASUREMENT_LABELS[shownActive]}:</strong> {activeHint}
                 </p>
               )}
             </aside>
@@ -397,6 +432,18 @@ export default function MeasurementsPage() {
           )}
         </details>
       </main>
+
+      {choosingTracked && (
+        <TrackedMeasurementsDialog
+          tracked={trackedKeys}
+          onClose={() => setChoosingTracked(false)}
+          onSaved={(updatedProfile) => {
+            setProfile(updatedProfile);
+            // The step list may have changed under the stepper.
+            setStepIndex(0);
+          }}
+        />
+      )}
     </>
   );
 }

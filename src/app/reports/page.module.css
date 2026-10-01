@@ -117,3 +117,62 @@
   padding: 2rem 0;
   font-size: 0.9rem;
 }
+
+.errorText {
+  color: var(--accent-text);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* A report on the overview that opens its detail page. The chart card's
+   own bottom margin moves to the link, so "View details" sits beneath it. */
+.reportLink {
+  display: block;
+  margin-bottom: 1rem;
+  border-radius: 14px;
+  color: inherit;
+}
+
+.reportLink :global(.vizRoot) > div {
+  margin-bottom: 0;
+  transition: border-color 0.15s ease;
+}
+
+.reportLink:hover :global(.vizRoot) > div,
+.reportLink:focus-visible :global(.vizRoot) > div {
+  border-color: var(--accent);
+}
+
+.reportLink:focus-visible {
+  outline: none;
+}
+
+.reportLinkMore {
+  display: block;
+  padding: 0.4rem 0.25rem 0;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-text);
+}
+
+/* Body area cards open their own detail page. */
+.areaLink {
+  display: block;
+  border-radius: 12px;
+  color: inherit;
+}
+
+.areaLink :global(.vizRoot) > div {
+  height: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.areaLink:hover :global(.vizRoot) > div,
+.areaLink:focus-visible :global(.vizRoot) > div {
+  border-color: var(--accent);
+}
+
+.areaLink:focus-visible {
+  outline: none;
+}

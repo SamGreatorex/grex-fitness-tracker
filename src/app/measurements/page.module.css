@@ -98,6 +98,48 @@
   margin-top: 0.25rem;
 }
 
+/* "Measurements (cm) · 6 of 11 tracked" + Choose measurements. */
+.sectionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.sectionRow .sectionLabel {
+  margin-top: 0;
+}
+
+.chooseButton {
+  height: 32px;
+  padding: 0 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chooseButton:hover,
+.chooseButton:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.noneTracked {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.phoneChooseRow {
+  display: flex;
+  justify-content: center;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

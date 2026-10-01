@@ -1,5 +1,7 @@
 // Shared by the client and the API routes — no server-only imports here.
 
+import { MEASUREMENT_KEYS } from "./measurements";
+
 // Everyone signs up as BASIC. Promote someone by editing the `role`
 // attribute on their row in the users table; the app never changes it.
 export const ROLES = {
@@ -64,6 +66,10 @@ export const PROFILE_FIELDS = {
   heightUnit: { type: "enum", required: false, values: ["cm", "ftin"] },
   weightUnit: { type: "enum", required: false, values: ["kg", "stlb"] },
   measurementUnit: { type: "enum", required: false, values: ["cm", "in"] },
+  // Which tape measurements they track on the Body measurements page (a
+  // subset of MEASUREMENT_KEYS). Unset means all of them; weight is always
+  // tracked.
+  trackedMeasurements: { type: "keyList", required: false, values: MEASUREMENT_KEYS },
 };
 
 export const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];

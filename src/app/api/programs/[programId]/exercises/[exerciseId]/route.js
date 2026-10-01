@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../../lib/dynamo";
 import { getRequestUser } from "../../../../../../lib/users";
-import { canAccessProgram, canEditProgram, getProgram } from "../../../../../../lib/programs";
+import { canAccessProgram, canChangeExercisesMidWorkout, getProgram } from "../../../../../../lib/programs";
 import { withLogging } from "../../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -28,9 +28,9 @@ export const PATCH = withLogging("PATCH /api/programs/[programId]/exercises/[exe
 
   const program = await getProgram(programId);
   if (!(await canAccessProgram(user, program))) return NextResponse.json({ error: "Program not found" }, { status: 404 });
-  // Templates are only changed from the builder. Owners can only change
-  // programmes they built themselves, not ones their PT built.
-  if (program.isTemplate || !(await canEditProgram(user, program))) {
+  // Only on a programme the caller created and is running (never a
+  // template, or a programme someone else built).
+  if (!(await canChangeExercisesMidWorkout(user, program))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

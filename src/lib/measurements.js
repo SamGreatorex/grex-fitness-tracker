@@ -20,6 +20,14 @@ export const MEASUREMENTS = [
 export const MEASUREMENT_KEYS = MEASUREMENTS.map((m) => m.key);
 export const MEASUREMENT_LABELS = Object.fromEntries(MEASUREMENTS.map((m) => [m.key, m.label]));
 
+// The measurements this user has chosen to track (profile.trackedMeasurements),
+// in MEASUREMENTS order — all of them if they've never chosen.
+export function trackedMeasurementsFor(profile) {
+  const chosen = profile?.trackedMeasurements;
+  if (!Array.isArray(chosen)) return MEASUREMENTS;
+  return MEASUREMENTS.filter((m) => chosen.includes(m.key));
+}
+
 export const MEASUREMENT_LIMITS_CM = { min: 5, max: 300 };
 export const WEIGHT_LIMITS_KG = { min: 20, max: 400 };
 

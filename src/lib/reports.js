@@ -130,6 +130,38 @@ export function trendDelta(series) {
   return ((current - prev) / prev) * 100;
 }
 
+// { change, pct } from `from` to `to` — pct null when `from` is 0.
+function changeBetween(from, to) {
+  const change = to - from;
+  return { change, pct: from ? (change / Math.abs(from)) * 100 : null };
+}
+
+// The latest period against the one before it (e.g. this week vs last
+// week), or null without two periods to compare.
+export function latestPeriodChange(series) {
+  if (series.length < 2) return null;
+  const prev = series[series.length - 2];
+  const last = series[series.length - 1];
+  return { ...changeBetween(prev.value, last.value), from: prev, to: last };
+}
+
+// The first period against the latest — the whole history — or null
+// without two periods.
+export function overallChange(series) {
+  if (series.length < 2) return null;
+  const first = series[0];
+  const last = series[series.length - 1];
+  return { ...changeBetween(first.value, last.value), from: first, to: last };
+}
+
+// Each period with its change from the one before (the first has none),
+// newest first — for detail tables.
+export function periodBreakdown(series) {
+  return series
+    .map((point, i) => ({ ...point, ...(i > 0 ? changeBetween(series[i - 1].value, point.value) : { change: null, pct: null }) }))
+    .reverse();
+}
+
 // Body weight / a tape measurement over time from measurement entries
 // ({ date: "YYYY-MM-DD", weightKg, measurements }). `getValue(entry)`
 // picks the number (or null if that entry didn't record it). Each period

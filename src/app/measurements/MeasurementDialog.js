@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import MeasurementStepper, { STEPS } from "./MeasurementStepper";
+import MeasurementStepper from "./MeasurementStepper";
 import styles from "./MeasurementDialog.module.css";
 
 // Phone: tapping a body part (or weight) opens this, on that measurement.
@@ -28,7 +28,7 @@ export default function MeasurementDialog({ onClose, error, ...stepperProps }) {
       className={styles.dialog}
       onClose={onClose}
       onClick={handleBackdropClick}
-      aria-label={`Log ${STEPS[stepperProps.stepIndex].label.toLowerCase()}`}
+      aria-label={`Log ${stepperProps.steps[stepperProps.stepIndex]?.label.toLowerCase() ?? "measurements"}`}
     >
       <div className={styles.inner}>
         <div className={styles.header}>

@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getRequestUser } from "../../../../../lib/users";
-import { LIMITS, canAccessProgram, canEditProgram, getProgram } from "../../../../../lib/programs";
+import { LIMITS, canAccessProgram, canChangeExercisesMidWorkout, getProgram } from "../../../../../lib/programs";
 import { EXERCISE_TYPES } from "../../../../../lib/exerciseTypes";
 import { withLogging } from "../../../../../lib/apiHandler";
 
@@ -34,9 +34,9 @@ export const POST = withLogging("POST /api/programs/[programId]/exercises", asyn
 
   const program = await getProgram(programId);
   if (!(await canAccessProgram(user, program))) return NextResponse.json({ error: "Program not found" }, { status: 404 });
-  // Templates are only changed from the builder. Owners can only change
-  // programmes they built themselves, not ones their PT built.
-  if (program.isTemplate || !(await canEditProgram(user, program))) {
+  // Only on a programme the caller created and is running (never a
+  // template, or a programme someone else built).
+  if (!(await canChangeExercisesMidWorkout(user, program))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

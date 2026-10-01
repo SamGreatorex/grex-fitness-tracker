@@ -44,6 +44,12 @@ export const PATCH = withLogging("PATCH /api/me", async (request) => {
         return NextResponse.json({ error: `${key} must be between ${def.min} and ${def.max}` }, { status: 400 });
       }
       set[key] = n;
+    } else if (def.type === "keyList") {
+      // A list of allowed keys; an empty list is a valid choice ("none").
+      if (!Array.isArray(raw) || raw.some((k) => !def.values.includes(k))) {
+        return NextResponse.json({ error: `${key} must be a list of: ${def.values.join(", ")}` }, { status: 400 });
+      }
+      set[key] = [...new Set(raw)];
     } else if (def.type === "enum") {
       if (!def.values.includes(raw)) {
         return NextResponse.json({ error: `${key} must be one of ${def.values.join(", ")}` }, { status: 400 });

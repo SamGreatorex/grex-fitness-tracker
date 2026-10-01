@@ -68,6 +68,16 @@ export async function canRunProgram(user, program) {
   return program.ownerUserId === user.userId;
 }
 
+// Whether `user` may switch or add exercises mid-workout. Stricter than
+// canEditProgram: only on a programme they created themselves, and are the
+// one running — a user's own build, or a trainer-led one their PT built and
+// runs with them. Never someone else's (not even for admins, who can still
+// change it from the builder).
+export async function canChangeExercisesMidWorkout(user, program) {
+  if (!program || program.isTemplate || program.createdBy !== user?.userId) return false;
+  return canRunProgram(user, program);
+}
+
 // Runs and sessions are always stored under the programme owner's userId,
 // whoever logged them. By default a request acts on the caller's own; a
 // trainer passes `requestedUserId` to act on one of their clients'. Returns

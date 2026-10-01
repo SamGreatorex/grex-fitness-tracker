@@ -22,7 +22,9 @@ const MEASURE_LINES = {
 // `filled` are drawn solid. Clicking a line calls onSelect(key).
 // `compact` drops the in-figure label and caption, for small renderings
 // where that text would be unreadable (the caller shows it instead).
-export default function BodyDiagram({ active, filled = {}, onSelect, compact = false }) {
+// `keys` limits the lines to those measurements (default: all).
+export default function BodyDiagram({ active, filled = {}, onSelect, compact = false, keys }) {
+  const lines = Object.entries(MEASURE_LINES).filter(([key]) => !keys || keys.includes(key));
   return (
     <svg className={`${styles.svg} ${compact ? styles.compact : ""}`} viewBox="0 0 200 400" role="img" aria-label="Body measurement guide">
       <g className={styles.body}>
@@ -45,7 +47,7 @@ export default function BodyDiagram({ active, filled = {}, onSelect, compact = f
         <ellipse cx="122" cy="380" rx="13" ry="7" />
       </g>
 
-      {Object.entries(MEASURE_LINES).map(([key, [x1, x2, y]]) => {
+      {lines.map(([key, [x1, x2, y]]) => {
         const isActive = key === active;
         const isFilled = filled[key] != null && filled[key] !== "";
         return (
@@ -70,7 +72,7 @@ export default function BodyDiagram({ active, filled = {}, onSelect, compact = f
         );
       })}
 
-      {!compact && active && MEASURE_LINES[active] && (
+      {!compact && active && MEASURE_LINES[active] && (!keys || keys.includes(active)) && (
         <text
           className={styles.label}
           x={(MEASURE_LINES[active][0] + MEASURE_LINES[active][1]) / 2}

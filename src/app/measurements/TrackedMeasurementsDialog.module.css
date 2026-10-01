@@ -1,0 +1,178 @@
+.dialog {
+  width: min(480px, calc(100vw - 1.5rem));
+  max-height: calc(100dvh - 1.5rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  color: var(--foreground);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: calc(100dvh - 1.5rem);
+  padding: 1.1rem;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.intro {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  opacity: 0.75;
+}
+
+.bulk {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.count {
+  flex: 1;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.bulkButton {
+  height: 30px;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bulkButton:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.optionOn {
+  border-color: var(--accent);
+}
+
+.option input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--accent);
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionLabel {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.optionHint {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  opacity: 0.6;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.actions {
+  position: sticky;
+  bottom: -1.1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin: 0 -1.1rem -1.1rem;
+  padding: 0.85rem 1.1rem 1.1rem;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+}
+
+.cancel,
+.save {
+  height: 46px;
+  padding: 0 1.2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+}
+
+.save {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+}
+
+.cancel:disabled,
+.save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

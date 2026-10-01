@@ -221,12 +221,7 @@ a.row:focus-visible {
   font-weight: 600;
 }
 
-.templatePicker select {
-  height: 44px;
-  padding: 0 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--foreground);
-  font-size: 0.95rem;
+/* The picker's Dropdown sets its own font; don't inherit the bold label. */
+.templatePicker > div {
+  font-weight: 400;
 }

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { ROLES, ROLE_LABELS, MODE_HOME, MODE_LABELS, modeForPath, modesForRole } from "../lib/profile";
 import Avatar from "./Avatar";
+import Dropdown from "./Dropdown";
 import styles from "./AppHeader.module.css";
 
 export default function AppHeader({ backHref, backLabel }) {
@@ -54,18 +55,13 @@ export default function AppHeader({ backHref, backLabel }) {
       </div>
       <div className={styles.right} ref={menuRef}>
         {modes.length > 1 && (
-          <select
-            className={styles.modeSelect}
+          <Dropdown
+            variant="pill"
             value={currentMode}
-            onChange={(e) => router.push(MODE_HOME[e.target.value])}
+            onChange={(mode) => router.push(MODE_HOME[mode])}
             aria-label="Switch mode"
-          >
-            {modes.map((m) => (
-              <option key={m} value={m}>
-                {MODE_LABELS[m]} mode
-              </option>
-            ))}
-          </select>
+            options={modes.map((m) => ({ value: m, label: `${MODE_LABELS[m]} mode` }))}
+          />
         )}
         <button
           type="button"

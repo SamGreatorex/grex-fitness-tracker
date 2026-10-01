@@ -60,29 +60,6 @@
   flex-shrink: 0;
 }
 
-.modeSelect {
-  height: 36px;
-  padding: 0 28px 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background-color: var(--card-bg);
-  /* Custom chevron so the pill looks the same across browsers. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23f1f5f9' stroke-width='1.5'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 11px center;
-  appearance: none;
-  color: var(--foreground);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.modeSelect:hover,
-.modeSelect:focus-visible {
-  border-color: var(--accent);
-  outline: none;
-}
-
 .avatarButton {
   display: inline-flex;
   padding: 2px;

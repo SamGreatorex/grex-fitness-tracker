@@ -31,9 +31,12 @@
   cursor: pointer;
 }
 
+/* Same red hover/focus as the native dropdowns (see globals.css). */
 .trigger:hover,
+.trigger:focus-visible,
 .triggerOpen {
-  border-color: var(--foreground);
+  border-color: var(--accent);
+  outline: none;
 }
 
 .chips {

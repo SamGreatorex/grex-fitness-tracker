@@ -1,0 +1,139 @@
+/* Sized by the parent via `className` on the root (e.g. a width); the
+   trigger fills it. */
+.root {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--foreground);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.trigger:hover:not(:disabled),
+.trigger:focus-visible,
+.triggerOpen {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  opacity: 0.55;
+}
+
+/* Same chevron as MultiSelectDropdown. */
+.chevron {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-right: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: 0.7;
+  transition: transform 0.15s ease;
+}
+
+.triggerOpen .chevron {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+/* Compact rounded pill, e.g. the header's mode switcher. */
+.pill .trigger {
+  min-height: 36px;
+  height: 36px;
+  padding: 0 12px 0 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* The open list. Shown in the top layer by the Popover API, positioned by
+   the component next to its trigger — so the UA's centred-popover defaults
+   (inset: 0; margin: auto) are reset here. */
+.menu {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--foreground);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+  outline: none;
+}
+
+.groupLabel {
+  padding: 10px 10px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px 0 8px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.optionActive {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.optionSelected {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.check {
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.optionLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empty {
+  padding: 10px;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}

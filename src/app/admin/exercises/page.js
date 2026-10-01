@@ -9,6 +9,7 @@ import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import ExerciseFilters from "../../../components/ExerciseFilters";
 import { EMPTY_FILTERS, filterExercises } from "../../../lib/exerciseFilters";
 import InstructionsEditor, { newStep } from "../../../components/InstructionsEditor";
+import ConfirmDialog from "../../../components/ConfirmDialog";
 import ReplaceExerciseDialog from "./ReplaceExerciseDialog";
 import UsageItem from "./UsageItem";
 import { TEXT_LIMITS, stripStepNumber } from "../../../lib/exerciseText";
@@ -55,6 +56,10 @@ export default function AdminExercisesPage() {
   const [expandedUsageId, setExpandedUsageId] = useState(null);
   // { exercise, usage } while picking what to switch a used exercise to.
   const [replacing, setReplacing] = useState(null);
+  // The (unused) exercise awaiting "are you sure?" before it's deleted.
+  const [confirmingDelete, setConfirmingDelete] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   // userId → display name, for showing whose programme each use is in.
   const [userNames, setUserNames] = useState({});
   const [filters, setFilters] = useState(EMPTY_FILTERS);
@@ -264,24 +269,36 @@ export default function AdminExercisesPage() {
   };
 
   // An exercise programmes still use must be switched for another in all of
-  // them first — that happens in ReplaceExerciseDialog.
-  const handleDelete = async (exercise) => {
+  // them first — that happens in ReplaceExerciseDialog. Otherwise, just
+  // confirm (ConfirmDialog) and delete.
+  const handleDelete = (exercise) => {
     const usage = usageByExerciseId[exercise.exerciseId] || [];
     if (usage.length > 0) {
       setReplacing({ exercise, usage });
       return;
     }
-    if (!window.confirm(`Delete "${exercise.name}"? This also removes its uploaded media.`)) return;
+    setDeleteError("");
+    setConfirmingDelete(exercise);
+  };
+
+  const confirmDelete = async () => {
+    const exercise = confirmingDelete;
+    setDeleteBusy(true);
+    setDeleteError("");
     try {
       await api.delete(`/api/exercises/${exercise.exerciseId}`);
+      setConfirmingDelete(null);
       await afterDelete(exercise);
     } catch (err) {
       // Someone added it to a programme since this page loaded.
       if (err.status === 409 && err.data?.usage) {
+        setConfirmingDelete(null);
         setReplacing({ exercise, usage: err.data.usage });
         return;
       }
-      setError(err.message || "Could not delete exercise.");
+      setDeleteError(err.message || "Could not delete exercise.");
+    } finally {
+      setDeleteBusy(false);
     }
   };
 
@@ -580,6 +597,25 @@ export default function AdminExercisesPage() {
           </form>
         </div>
       </dialog>
+
+      {confirmingDelete && (
+        <ConfirmDialog
+          title="Delete exercise?"
+          confirmLabel="Delete exercise"
+          busyLabel="Deleting…"
+          danger
+          busy={deleteBusy}
+          error={deleteError}
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmingDelete(null)}
+        >
+          <p>
+            Are you sure you want to delete <strong>{confirmingDelete.name}</strong>? It isn&apos;t used in any
+            programme.
+          </p>
+          <p>Its uploaded image or video is removed too. This can&apos;t be undone.</p>
+        </ConfirmDialog>
+      )}
 
       {replacing && (
         <ReplaceExerciseDialog

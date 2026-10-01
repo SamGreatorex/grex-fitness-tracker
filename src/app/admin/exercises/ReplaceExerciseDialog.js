@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../../lib/apiClient";
 import { isCardio } from "../../../lib/exerciseTypes";
 import { rankAlternatives } from "../../../lib/exerciseSimilarity";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import Dropdown from "../../../components/Dropdown";
 import UsageItem from "./UsageItem";
 import styles from "./page.module.css";
 
@@ -17,6 +19,7 @@ export default function ReplaceExerciseDialog({ exercise, usage, library, userNa
   const [replacementId, setReplacementId] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     dialogRef.current?.showModal();
@@ -37,9 +40,15 @@ export default function ReplaceExerciseDialog({ exercise, usage, library, userNa
     if (e.target === dialogRef.current && !deleting) dialogRef.current.close();
   };
 
-  const handleConfirm = async (e) => {
+  // Submitting only asks "are you sure?"; confirming that does the work.
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!replacement) return;
+    setError("");
+    setConfirming(true);
+  };
+
+  const handleConfirm = async () => {
     setDeleting(true);
     setError("");
     try {
@@ -61,7 +70,7 @@ export default function ReplaceExerciseDialog({ exercise, usage, library, userNa
           </button>
         </div>
 
-        <form className={styles.form} onSubmit={handleConfirm}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <p className={styles.replaceIntro}>
             It&apos;s used in {programmeCount} programme{programmeCount === 1 ? "" : "s"}. Pick an exercise to switch it
             to everywhere before it&apos;s deleted — each slot keeps its sets, reps and rest
@@ -75,31 +84,28 @@ export default function ReplaceExerciseDialog({ exercise, usage, library, userNa
           </ul>
 
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="replacement">Switch to</label>
-            <select
-              id="replacement"
-              className={styles.input}
+            <span className={styles.label} id="replacement-label">Switch to</span>
+            <Dropdown
+              className={styles.select}
+              aria-labelledby="replacement-label"
               value={replacementId}
-              onChange={(e) => setReplacementId(e.target.value)}
+              onChange={setReplacementId}
               disabled={deleting}
-              required
-            >
-              <option value="">Choose a {isCardio(exercise) ? "cardio" : "strength"} exercise…</option>
-              {matches.length > 0 && (
-                <optgroup label="Closest matches">
-                  {matches.map(({ exercise: e }) => (
-                    <option key={e.exerciseId} value={e.exerciseId}>{e.name}</option>
-                  ))}
-                </optgroup>
-              )}
-              {others.length > 0 && (
-                <optgroup label={matches.length > 0 ? "Other exercises" : "Exercises"}>
-                  {others.map(({ exercise: e }) => (
-                    <option key={e.exerciseId} value={e.exerciseId}>{e.name}</option>
-                  ))}
-                </optgroup>
-              )}
-            </select>
+              placeholder={`Choose a ${isCardio(exercise) ? "cardio" : "strength"} exercise…`}
+              options={[
+                ...(matches.length > 0
+                  ? [{ label: "Closest matches", options: matches.map(({ exercise: e }) => ({ value: e.exerciseId, label: e.name })) }]
+                  : []),
+                ...(others.length > 0
+                  ? [
+                      {
+                        label: matches.length > 0 ? "Other exercises" : "Exercises",
+                        options: others.map(({ exercise: e }) => ({ value: e.exerciseId, label: e.name })),
+                      },
+                    ]
+                  : []),
+              ]}
+            />
             {ranked.length === 0 && (
               <span className={styles.hint}>
                 There&apos;s no other {isCardio(exercise) ? "cardio" : "strength"} exercise to switch to — create one first.
@@ -107,18 +113,41 @@ export default function ReplaceExerciseDialog({ exercise, usage, library, userNa
             )}
           </div>
 
-          {error && <div className={styles.error}>{error}</div>}
-
           <div className={styles.dialogActions}>
             <button type="button" className={styles.rowButton} disabled={deleting} onClick={() => dialogRef.current?.close()}>
               Cancel
             </button>
             <button type="submit" className={`${styles.submitButton} ${styles.dangerButton}`} disabled={!replacement || deleting}>
-              {deleting ? "Switching…" : replacement ? `Switch to ${replacement.name} & delete` : "Switch & delete"}
+              {replacement ? `Switch to ${replacement.name} & delete` : "Switch & delete"}
             </button>
           </div>
         </form>
       </div>
+
+      {confirming && replacement && (
+        <ConfirmDialog
+          title="Delete exercise?"
+          confirmLabel="Switch & delete"
+          busyLabel="Switching…"
+          danger
+          busy={deleting}
+          error={error}
+          onConfirm={handleConfirm}
+          onCancel={() => {
+            setConfirming(false);
+            setError("");
+          }}
+        >
+          <p>
+            Are you sure you want to delete <strong>{exercise.name}</strong>?
+          </p>
+          <p>
+            It will be switched to <strong>{replacement.name}</strong> in {programmeCount} programme
+            {programmeCount === 1 ? "" : "s"} ({usage.length} day{usage.length === 1 ? "" : "s"}), then deleted along
+            with its uploaded image or video. This can&apos;t be undone.
+          </p>
+        </ConfirmDialog>
+      )}
     </dialog>
   );
 }

@@ -7,6 +7,7 @@ import { ROLES, ROLE_LABELS } from "../../../lib/profile";
 import { formatHeight, formatWeight } from "../../../lib/units";
 import AppHeader from "../../../components/AppHeader";
 import Avatar from "../../../components/Avatar";
+import Dropdown from "../../../components/Dropdown";
 import styles from "./page.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" });
@@ -143,14 +144,13 @@ export default function AdminUsersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <select className={styles.select} value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} aria-label="Filter by role">
-            <option value="">All roles</option>
-            {Object.values(ROLES).map((r) => (
-              <option key={r} value={r}>
-                {ROLE_LABELS[r]}
-              </option>
-            ))}
-          </select>
+          <Dropdown
+            className={styles.select}
+            value={roleFilter}
+            onChange={setRoleFilter}
+            aria-label="Filter by role"
+            options={[{ value: "", label: "All roles" }, ...Object.values(ROLES).map((r) => ({ value: r, label: ROLE_LABELS[r] }))]}
+          />
         </div>
 
         {error && <p className={styles.error}>{error}</p>}
@@ -198,46 +198,38 @@ export default function AdminUsersPage() {
                     </details>
                   </div>
                   <div className={styles.controls}>
-                    <label className={styles.controlLabel}>
-                      <span>Role</span>
-                      <select
+                    <div className={styles.controlLabel}>
+                      <span aria-hidden="true">Role</span>
+                      <Dropdown
                         className={styles.select}
                         value={u.role}
                         disabled={isMe || savingUserId === u.userId}
                         title={isMe ? "You can't change your own role" : undefined}
-                        onChange={(e) => changeRole(u, e.target.value)}
+                        onChange={(role) => changeRole(u, role)}
                         aria-label={`Role for ${u.name || u.email}`}
-                      >
-                        {Object.values(ROLES).map((r) => (
-                          <option key={r} value={r}>
-                            {ROLE_LABELS[r]}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className={styles.controlLabel}>
-                      <span>PT</span>
-                      <select
+                        options={Object.values(ROLES).map((r) => ({ value: r, label: ROLE_LABELS[r] }))}
+                      />
+                    </div>
+                    <div className={styles.controlLabel}>
+                      <span aria-hidden="true">PT</span>
+                      <Dropdown
                         className={styles.select}
                         value={u.ptUserId ?? ""}
                         disabled={savingUserId === u.userId}
-                        onChange={(e) => changePt(u, e.target.value)}
+                        onChange={(ptUserId) => changePt(u, ptUserId)}
                         aria-label={`PT for ${u.name || u.email}`}
-                      >
-                        <option value="">No PT</option>
-                        {u.ptUserId && !trainers.some((t) => t.userId === u.ptUserId) && (
-                          <option value={u.ptUserId}>{nameById[u.ptUserId] ?? "Unknown"}</option>
-                        )}
-                        {trainers
-                          // Admins can be their own PT; nobody else can.
-                          .filter((t) => t.userId !== u.userId || u.role === ROLES.ADMIN)
-                          .map((t) => (
-                            <option key={t.userId} value={t.userId}>
-                              {t.userId === u.userId ? "Themselves" : t.name || t.email}
-                            </option>
-                          ))}
-                      </select>
-                    </label>
+                        options={[
+                          { value: "", label: "No PT" },
+                          ...(u.ptUserId && !trainers.some((t) => t.userId === u.ptUserId)
+                            ? [{ value: u.ptUserId, label: nameById[u.ptUserId] ?? "Unknown" }]
+                            : []),
+                          ...trainers
+                            // Admins can be their own PT; nobody else can.
+                            .filter((t) => t.userId !== u.userId || u.role === ROLES.ADMIN)
+                            .map((t) => ({ value: t.userId, label: t.userId === u.userId ? "Themselves" : t.name || t.email })),
+                        ]}
+                      />
+                    </div>
                   </div>
                 </li>
               );

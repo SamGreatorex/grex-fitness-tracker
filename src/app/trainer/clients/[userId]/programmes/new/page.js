@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { api } from "../../../../../../lib/apiClient";
 import AppHeader from "../../../../../../components/AppHeader";
 import ProgrammeBuilder from "../../../../../../components/ProgrammeBuilder";
+import Dropdown from "../../../../../../components/Dropdown";
 import { useClient } from "../../../../useClient";
 import styles from "../../../../page.module.css";
 
@@ -48,17 +49,21 @@ export default function NewProgrammePage() {
         ) : (
           <>
             {templates.length > 0 && (
-              <label className={styles.templatePicker}>
-                Start from a template
-                <select value={templateId} onChange={(e) => chooseTemplate(e.target.value)}>
-                  <option value="">Blank programme</option>
-                  {templates.map((t) => (
-                    <option key={t.programId} value={t.programId}>
-                      {t.name} · {t.days.length} days/week · {t.durationWeeks} weeks
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className={styles.templatePicker}>
+                <span id="template-picker-label">Start from a template</span>
+                <Dropdown
+                  aria-labelledby="template-picker-label"
+                  value={templateId}
+                  onChange={chooseTemplate}
+                  options={[
+                    { value: "", label: "Blank programme" },
+                    ...templates.map((t) => ({
+                      value: t.programId,
+                      label: `${t.name} · ${t.days.length} days/week · ${t.durationWeeks} weeks`,
+                    })),
+                  ]}
+                />
+              </div>
             )}
             {/* Remounts on each pick, so the form starts fresh from that template. */}
             <ProgrammeBuilder key={templateId || "blank"} ownerUserId={userId} template={template} backHref={clientHref} />

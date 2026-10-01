@@ -337,6 +337,11 @@
   border: 1px solid var(--border);
 }
 
+/* The "Switch to" Dropdown fills the dialog's width. */
+.select {
+  width: 100%;
+}
+
 .dialogActions {
   display: flex;
   justify-content: flex-end;

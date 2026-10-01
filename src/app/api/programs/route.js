@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
 import { getRequestUser } from "../../../lib/users";
 import { ROLES } from "../../../lib/profile";
-import { canManageUser, isProgramManager, listProgramsForOwner, listTemplates, normaliseProgramInput, sortPrograms } from "../../../lib/programs";
+import { canManageUser, isProgramManager, listAllPrograms, listProgramsForOwner, listTemplates, normaliseProgramInput } from "../../../lib/programs";
 import { PROGRAM_LEADS } from "../../../lib/programLead";
 import { withLogging } from "../../../lib/apiHandler";
 
@@ -31,14 +31,7 @@ export const GET = withLogging("GET /api/programs", async (request) => {
 
   if (searchParams.get("scope") === "all") {
     if (user.role !== ROLES.ADMIN) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    const programs = [];
-    let ExclusiveStartKey;
-    do {
-      const page = await ddb.send(new ScanCommand({ TableName: TABLES.programs, ExclusiveStartKey }));
-      programs.push(...(page.Items ?? []));
-      ExclusiveStartKey = page.LastEvaluatedKey;
-    } while (ExclusiveStartKey);
-    return NextResponse.json({ programs: sortPrograms(programs) });
+    return NextResponse.json({ programs: await listAllPrograms() });
   }
 
   const ownerUserId = searchParams.get("userId") || user.userId;

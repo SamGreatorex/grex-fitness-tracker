@@ -313,6 +313,47 @@
   opacity: 0.75;
 }
 
+.usageOwner {
+  font-weight: 600;
+}
+
+.usageTemplate {
+  font-style: italic;
+}
+
+/* "Switch & delete" dialog for an exercise programmes still use. */
+.replaceIntro {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.replaceUsage {
+  margin: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dialogActions .rowButton {
+  height: 48px;
+  padding: 0 1rem;
+}
+
+.dangerButton {
+  padding: 0 1.1rem;
+  background: #dc2626;
+}
+
 .rowActions {
   display: flex;
   justify-content: flex-end;

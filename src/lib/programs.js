@@ -4,6 +4,7 @@ import { ddb, TABLES } from "./dynamo";
 import { ROLES } from "./profile";
 import { CARDIO_LIMITS, EXERCISE_TYPES, isCardio } from "./exerciseTypes";
 import { PROGRAM_LEADS, isTrainerLed } from "./programLead";
+import { slugify } from "./slugify";
 
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
 // edit programmes only for their own clients (users whose ptUserId is the
@@ -132,6 +133,38 @@ export async function listTemplates() {
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);
   return templates.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Every programme and template (the programmes table is small).
+export async function listAllPrograms() {
+  const programs = [];
+  let ExclusiveStartKey;
+  do {
+    const page = await ddb.send(new ScanCommand({ TableName: TABLES.programs, ExclusiveStartKey }));
+    programs.push(...(page.Items ?? []));
+    ExclusiveStartKey = page.LastEvaluatedKey;
+  } while (ExclusiveStartKey);
+  return sortPrograms(programs);
+}
+
+// Where a library exercise is used: one entry per programme day that has it
+// (programme exercises are matched to the library by name, via its slug).
+export function exerciseUsage(programs, exerciseSlug) {
+  const usage = [];
+  for (const program of programs) {
+    for (const day of program.days ?? []) {
+      if (day.exercises.some((e) => slugify(e.name) === exerciseSlug)) {
+        usage.push({
+          programId: program.programId,
+          programName: program.name,
+          isTemplate: !!program.isTemplate,
+          ownerUserId: program.ownerUserId ?? null,
+          dayLabel: day.label,
+        });
+      }
+    }
+  }
+  return usage;
 }
 
 // Seeded programmes carry an explicit `order`; PT-built ones sort after

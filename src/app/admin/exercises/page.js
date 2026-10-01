@@ -9,6 +9,8 @@ import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import ExerciseFilters from "../../../components/ExerciseFilters";
 import { EMPTY_FILTERS, filterExercises } from "../../../lib/exerciseFilters";
 import InstructionsEditor, { newStep } from "../../../components/InstructionsEditor";
+import ReplaceExerciseDialog from "./ReplaceExerciseDialog";
+import UsageItem from "./UsageItem";
 import { TEXT_LIMITS, stripStepNumber } from "../../../lib/exerciseText";
 import { slugify } from "../../../lib/slugify";
 import {
@@ -51,6 +53,10 @@ export default function AdminExercisesPage() {
   const [error, setError] = useState("");
   const [usageByExerciseId, setUsageByExerciseId] = useState({});
   const [expandedUsageId, setExpandedUsageId] = useState(null);
+  // { exercise, usage } while picking what to switch a used exercise to.
+  const [replacing, setReplacing] = useState(null);
+  // userId → display name, for showing whose programme each use is in.
+  const [userNames, setUserNames] = useState({});
   const [filters, setFilters] = useState(EMPTY_FILTERS);
 
   useEffect(() => {
@@ -59,18 +65,29 @@ export default function AdminExercisesPage() {
 
   const load = useCallback(async () => {
     try {
-      const [{ exercises }, { programs }] = await Promise.all([
+      const [{ exercises }, { programs }, { users }] = await Promise.all([
         api.get("/api/exercises"),
         api.get("/api/programs", { scope: "all" }),
+        // Only for showing whose programme each use is in — never block the page on it.
+        api.get("/api/admin/users").catch(() => ({ users: [] })),
       ]);
       setExercises(exercises);
+      const names = {};
+      for (const u of users) names[u.userId] = u.name || u.email;
+      setUserNames(names);
 
       const usage = {};
       for (const program of programs) {
         for (const day of program.days) {
           for (const exercise of day.exercises) {
             const slug = slugify(exercise.name);
-            (usage[slug] ??= []).push({ programName: program.isTemplate ? `${program.name} (template)` : program.name, dayLabel: day.label });
+            (usage[slug] ??= []).push({
+              programId: program.programId,
+              programName: program.name,
+              isTemplate: !!program.isTemplate,
+              ownerUserId: program.ownerUserId ?? null,
+              dayLabel: day.label,
+            });
           }
         }
       }
@@ -241,13 +258,29 @@ export default function AdminExercisesPage() {
     setExpandedUsageId((prev) => (prev === exerciseId ? null : exerciseId));
   };
 
+  const afterDelete = async (exercise) => {
+    if (editingId === exercise.exerciseId) dialogRef.current?.close();
+    await load();
+  };
+
+  // An exercise programmes still use must be switched for another in all of
+  // them first — that happens in ReplaceExerciseDialog.
   const handleDelete = async (exercise) => {
+    const usage = usageByExerciseId[exercise.exerciseId] || [];
+    if (usage.length > 0) {
+      setReplacing({ exercise, usage });
+      return;
+    }
     if (!window.confirm(`Delete "${exercise.name}"? This also removes its uploaded media.`)) return;
     try {
       await api.delete(`/api/exercises/${exercise.exerciseId}`);
-      if (editingId === exercise.exerciseId) dialogRef.current?.close();
-      await load();
+      await afterDelete(exercise);
     } catch (err) {
+      // Someone added it to a programme since this page loaded.
+      if (err.status === 409 && err.data?.usage) {
+        setReplacing({ exercise, usage: err.data.usage });
+        return;
+      }
       setError(err.message || "Could not delete exercise.");
     }
   };
@@ -340,7 +373,7 @@ export default function AdminExercisesPage() {
                   {usageExpanded && usage.length > 0 && (
                     <ul className={styles.usageList}>
                       {usage.map((u, i) => (
-                        <li key={i} className={styles.usageItem}>{u.programName} · {u.dayLabel}</li>
+                        <UsageItem key={i} usage={u} userNames={userNames} />
                       ))}
                     </ul>
                   )}
@@ -547,6 +580,21 @@ export default function AdminExercisesPage() {
           </form>
         </div>
       </dialog>
+
+      {replacing && (
+        <ReplaceExerciseDialog
+          exercise={replacing.exercise}
+          usage={replacing.usage}
+          library={exercises ?? []}
+          userNames={userNames}
+          onCancel={() => setReplacing(null)}
+          onDeleted={async () => {
+            const { exercise } = replacing;
+            setReplacing(null);
+            await afterDelete(exercise);
+          }}
+        />
+      )}
     </>
   );
 }

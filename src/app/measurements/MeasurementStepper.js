@@ -36,6 +36,9 @@ export default function MeasurementStepper({
   saving,
   saveLabel,
   canSave,
+  // Focus the input straight away (e.g. when opened in a dialog), so the
+  // keyboard comes up without another tap.
+  autoFocus = false,
 }) {
   const step = STEPS[stepIndex];
   const isWeight = step.key === "weight";
@@ -44,7 +47,7 @@ export default function MeasurementStepper({
 
   const inputRef = useRef(null);
   const chipRefs = useRef({});
-  const focusAfterStep = useRef(false);
+  const focusAfterStep = useRef(autoFocus);
 
   const isFilled = (key) =>
     key === "weight"

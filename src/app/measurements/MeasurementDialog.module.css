@@ -1,0 +1,69 @@
+/* Pinned to the top of the screen (not centred) so the on-screen keyboard
+   doesn't cover the input or the buttons. */
+.dialog {
+  width: calc(100vw - 1.5rem);
+  max-width: 520px;
+  max-height: calc(100dvh - 1.5rem);
+  margin: 0.75rem auto auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  color: var(--foreground);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: calc(100dvh - 1.5rem);
+  padding: 0.9rem 1rem 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.close {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.close:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}

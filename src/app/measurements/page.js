@@ -7,7 +7,8 @@ import { useAuth } from "../../components/AuthProvider";
 import { api } from "../../lib/apiClient";
 import AppHeader from "../../components/AppHeader";
 import BodyDiagram from "../../components/BodyDiagram";
-import MeasurementStepper from "./MeasurementStepper";
+import MeasurementDialog from "./MeasurementDialog";
+import { STEPS } from "./MeasurementStepper";
 import { useMediaQuery } from "../../lib/useMediaQuery";
 import { MEASUREMENTS, MEASUREMENT_LABELS, todayLocal } from "../../lib/measurements";
 import {
@@ -55,9 +56,11 @@ export default function MeasurementsPage() {
   const [form, setForm] = useState(emptyForm);
   const [active, setActive] = useState("waist");
   const [stepIndex, setStepIndex] = useState(0);
-  // Phones and small tablets (≤768px) get the one-at-a-time stepper with
-  // the diagram stacked above the input; wider screens get the full grid.
+  // Phones and small tablets (≤768px) get a tap-a-body-part diagram that
+  // opens the one-at-a-time stepper in a dialog, with every field also in
+  // a form below it; wider screens get the diagram beside the full grid.
   const isPhone = useMediaQuery("(max-width: 768px)");
+  const [stepDialogOpen, setStepDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
@@ -114,6 +117,7 @@ export default function MeasurementsPage() {
       setEntries((list) => [...list.filter((x) => x.date !== date), entry].sort((a, b) => a.date.localeCompare(b.date)));
       if (updatedProfile) setProfile(updatedProfile);
       setSavedMessage(`Saved for ${formatDate(date)}.`);
+      setStepDialogOpen(false);
     } catch (err) {
       setError(err.message || "Could not save.");
     } finally {
@@ -155,15 +159,92 @@ export default function MeasurementsPage() {
     lastValues.lengths[key] != null ? String(cmToDisplayLength(lastValues.lengths[key], lengthUnit)) : "";
   const activeHint = MEASUREMENTS.find((m) => m.key === active)?.hint;
   const isEditing = !!entriesByDate[date];
+  const saveLabel = isEditing ? "Update entry" : "Save entry";
+
+  // Phone: open the one-at-a-time dialog on a body part (or "weight").
+  const openStep = (key) => {
+    if (key !== "weight") setActive(key);
+    setStepIndex(Math.max(0, STEPS.findIndex((s) => s.key === key)));
+    setStepDialogOpen(true);
+  };
+
+  const weightText =
+    weightUnit === WEIGHT_UNITS.ST_LB
+      ? form.weightSt !== "" || form.weightLb !== ""
+        ? `${form.weightSt || 0} st ${form.weightLb || 0} lb`
+        : ""
+      : form.weightKg !== ""
+        ? `${form.weightKg} kg`
+        : "";
 
   if (sessionLoading || !user) return null;
+
+  // Shared by the phone and desktop forms.
+  const weightField = (
+    <div className={styles.field}>
+      <label className={styles.label} htmlFor="weight">
+        Weight
+      </label>
+      {weightUnit === WEIGHT_UNITS.ST_LB ? (
+        <div className={styles.pair}>
+          <UnitInput id="weight" unit="st" step="1" value={form.weightSt} onChange={(v) => setForm((f) => ({ ...f, weightSt: v }))} />
+          <UnitInput unit="lb" value={form.weightLb} onChange={(v) => setForm((f) => ({ ...f, weightLb: v }))} />
+        </div>
+      ) : (
+        <UnitInput id="weight" unit="kg" value={form.weightKg} onChange={(v) => setForm((f) => ({ ...f, weightKg: v }))} />
+      )}
+    </div>
+  );
+
+  const measurementFields = (
+    <>
+      <p className={styles.sectionLabel}>Measurements ({lengthUnit}) — fill in whichever you track</p>
+      <div className={styles.grid}>
+        {MEASUREMENTS.map(({ key, label }) => (
+          <label key={key} className={`${styles.field} ${active === key ? styles.fieldActive : ""}`}>
+            <span className={styles.label}>{label}</span>
+            <UnitInput
+              id={`m-${key}`}
+              unit={lengthUnit}
+              value={form.lengths[key] ?? ""}
+              placeholder={lastPlaceholder(key)}
+              onChange={(v) => setLength(key, v)}
+              onFocus={() => setActive(key)}
+            />
+          </label>
+        ))}
+      </div>
+    </>
+  );
+
+  const messages = (
+    <>
+      {error && <div className={styles.error}>{error}</div>}
+      {savedMessage && !error && <div className={styles.success}>{savedMessage}</div>}
+    </>
+  );
+
+  const saveFooter = (
+    <>
+      <button type="submit" className={styles.button} disabled={saving || !entries}>
+        {saving ? "Saving…" : saveLabel}
+      </button>
+      <p className={styles.unitNote}>
+        Units follow your{" "}
+        <Link href="/settings" className={styles.link}>
+          profile settings
+        </Link>
+        .
+      </p>
+    </>
+  );
 
   return (
     <>
       <AppHeader backHref="/" backLabel="Programs" />
       <main className={styles.main}>
         <h1 className={styles.title}>Body measurements</h1>
-        {/* Skipped on phones to keep the stepper above the keyboard. */}
+        {/* Skipped on phones, which get their own shorter intro in the card. */}
         {!isPhone && (
           <p className={styles.subtitle}>
             Log your weight and tape measurements to track changes over time. See the trends in{" "}
@@ -175,39 +256,73 @@ export default function MeasurementsPage() {
         )}
 
         {isPhone ? (
-          <form className={styles.phoneCard} onSubmit={handleSave}>
-            <div className={styles.phoneDateRow}>
-              <label className={styles.phoneDateLabel} htmlFor="entry-date">
-                Date
-              </label>
-              <input
-                id="entry-date"
-                className={`${styles.input} ${styles.phoneDate}`}
-                type="date"
-                required
-                max={todayLocal()}
-                value={date}
-                onChange={(e) => e.target.value && loadDate(e.target.value, entriesByDate)}
-              />
-              {isEditing && <span className={styles.editingBadge}>Saved</span>}
+          // One form: the tap-a-body-part guide, then every field to scroll
+          // down to. The dialog lives inside it too, so its Save submits it.
+          <form className={styles.phoneForm} onSubmit={handleSave}>
+            <div className={styles.phoneCard}>
+              <div className={styles.phoneDateRow}>
+                <label className={styles.phoneDateLabel} htmlFor="entry-date">
+                  Date
+                </label>
+                <input
+                  id="entry-date"
+                  className={`${styles.input} ${styles.phoneDate}`}
+                  type="date"
+                  required
+                  max={todayLocal()}
+                  value={date}
+                  onChange={(e) => e.target.value && loadDate(e.target.value, entriesByDate)}
+                />
+                {isEditing && <span className={styles.editingBadge}>Saved</span>}
+              </div>
+
+              <p className={styles.phoneIntro}>
+                Tap a body part to log it, or{" "}
+                <a href="#all-measurements" className={styles.link}>
+                  scroll down
+                </a>{" "}
+                to fill everything in.
+              </p>
+
+              <button type="button" className={styles.weightTile} onClick={() => openStep("weight")}>
+                <span className={styles.weightTileLabel}>Weight</span>
+                <span className={weightText ? styles.weightTileValue : styles.weightTileEmpty}>{weightText || "Tap to add"}</span>
+              </button>
+
+              <div className={styles.phoneDiagram}>
+                <BodyDiagram active={active} filled={form.lengths} onSelect={openStep} />
+              </div>
+              <p className={styles.phoneLegend}>Solid lines are logged for this date.</p>
             </div>
 
-            <MeasurementStepper
-              stepIndex={stepIndex}
-              onStepChange={setStepIndex}
-              form={form}
-              setForm={setForm}
-              setLength={setLength}
-              weightUnit={weightUnit}
-              lengthUnit={lengthUnit}
-              lastText={lastText}
-              saving={saving}
-              saveLabel={isEditing ? "Update entry" : "Save entry"}
-              canSave={!!entries}
-            />
+            <section id="all-measurements" className={styles.card} aria-label="All measurements">
+              <p className={styles.phoneSectionTitle}>All measurements</p>
+              {weightField}
+              {measurementFields}
+              {messages}
+              {saveFooter}
+            </section>
 
-            {error && <div className={styles.error}>{error}</div>}
-            {savedMessage && !error && <div className={styles.success}>{savedMessage}</div>}
+            {stepDialogOpen && (
+              <MeasurementDialog
+                onClose={() => setStepDialogOpen(false)}
+                stepIndex={stepIndex}
+                onStepChange={(i) => {
+                  setStepIndex(i);
+                  if (STEPS[i].key !== "weight") setActive(STEPS[i].key);
+                }}
+                form={form}
+                setForm={setForm}
+                setLength={setLength}
+                weightUnit={weightUnit}
+                lengthUnit={lengthUnit}
+                lastText={lastText}
+                saving={saving}
+                saveLabel={saveLabel}
+                canSave={!!entries}
+                error={error}
+              />
+            )}
           </form>
         ) : (
           <div className={styles.layout}>
@@ -234,57 +349,12 @@ export default function MeasurementsPage() {
                   />
                 </label>
 
-                <div className={styles.field}>
-                  <label className={styles.label} htmlFor="weight">
-                    Weight
-                  </label>
-                  {weightUnit === WEIGHT_UNITS.ST_LB ? (
-                    <div className={styles.pair}>
-                      <UnitInput
-                        id="weight"
-                        unit="st"
-                        step="1"
-                        value={form.weightSt}
-                        onChange={(v) => setForm((f) => ({ ...f, weightSt: v }))}
-                      />
-                      <UnitInput unit="lb" value={form.weightLb} onChange={(v) => setForm((f) => ({ ...f, weightLb: v }))} />
-                    </div>
-                  ) : (
-                    <UnitInput id="weight" unit="kg" value={form.weightKg} onChange={(v) => setForm((f) => ({ ...f, weightKg: v }))} />
-                  )}
-                </div>
+                {weightField}
               </div>
 
-              <p className={styles.sectionLabel}>Measurements ({lengthUnit}) — fill in whichever you track</p>
-              <div className={styles.grid}>
-                {MEASUREMENTS.map(({ key, label }) => (
-                  <label key={key} className={`${styles.field} ${active === key ? styles.fieldActive : ""}`}>
-                    <span className={styles.label}>{label}</span>
-                    <UnitInput
-                      id={`m-${key}`}
-                      unit={lengthUnit}
-                      value={form.lengths[key] ?? ""}
-                      placeholder={lastPlaceholder(key)}
-                      onChange={(v) => setLength(key, v)}
-                      onFocus={() => setActive(key)}
-                    />
-                  </label>
-                ))}
-              </div>
-
-              {error && <div className={styles.error}>{error}</div>}
-              {savedMessage && !error && <div className={styles.success}>{savedMessage}</div>}
-
-              <button type="submit" className={styles.button} disabled={saving || !entries}>
-                {saving ? "Saving…" : isEditing ? "Update entry" : "Save entry"}
-              </button>
-              <p className={styles.unitNote}>
-                Units follow your{" "}
-                <Link href="/settings" className={styles.link}>
-                  profile settings
-                </Link>
-                .
-              </p>
+              {measurementFields}
+              {messages}
+              {saveFooter}
             </form>
           </div>
         )}
@@ -331,7 +401,7 @@ export default function MeasurementsPage() {
   );
 }
 
-function UnitInput({ id, unit, value, onChange, onFocus, step = "0.1" }) {
+function UnitInput({ id, unit, value, onChange, onFocus, placeholder, step = "0.1" }) {
   return (
     <span className={styles.unitInputWrap}>
       <input
@@ -342,6 +412,7 @@ function UnitInput({ id, unit, value, onChange, onFocus, step = "0.1" }) {
         min="0"
         step={step}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
       />

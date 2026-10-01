@@ -274,7 +274,77 @@
   color: #f87171;
 }
 
-/* ---- Phone layout (stepper) ---- */
+/* ---- Phone layout: tap-a-body-part card, then every field below ---- */
+
+.phoneForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Jumping here via "scroll down" leaves room for the sticky header. */
+.phoneForm .card {
+  scroll-margin-top: 80px;
+}
+
+.phoneSectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.phoneIntro {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.weightTile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 52px;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background);
+  color: inherit;
+  cursor: pointer;
+}
+
+.weightTile:hover,
+.weightTile:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.weightTileLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.weightTileValue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.weightTileEmpty {
+  font-size: 0.85rem;
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.phoneDiagram {
+  align-self: center;
+  width: min(240px, 70vw);
+}
+
+.phoneLegend {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  text-align: center;
+}
 
 .phoneCard {
   display: flex;

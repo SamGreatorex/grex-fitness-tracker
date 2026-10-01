@@ -2,6 +2,7 @@ import { BatchWriteCommand, DeleteCommand, QueryCommand, ScanCommand, UpdateComm
 import { AdminDeleteUserCommand, CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import { ddb, TABLES } from "./dynamo";
 import { deleteMediaObject } from "./s3";
+import { conversationIdsInvolving, keysForConversation } from "./chat";
 
 // Hardcoded rather than read from AWS_REGION — see src/lib/dynamo.js.
 const cognito = new CognitoIdentityProviderClient({ region: "eu-west-2" });
@@ -131,6 +132,15 @@ export async function deleteUserCompletely(user) {
   summary.runs = await batchDelete(TABLES.runs, await keysForUser(TABLES.runs, "runId", userId));
   summary.workouts = await batchDelete(TABLES.sessions, await keysForUser(TABLES.sessions, "sessionId", userId));
   summary.measurements = await batchDelete(TABLES.measurements, await keysForUser(TABLES.measurements, "date", userId));
+
+  // Their chats, with their PT and (if they were one) with their clients.
+  summary.chats = 0;
+  if (TABLES.chat) {
+    for (const conversationId of await conversationIdsInvolving(userId)) {
+      await batchDelete(TABLES.chat, await keysForConversation(conversationId));
+      summary.chats++;
+    }
+  }
 
   // If they were a PT, their clients become unassigned.
   summary.clientsReleased = await releaseClientsOf(userId);

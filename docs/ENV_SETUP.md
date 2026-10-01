@@ -30,6 +30,7 @@ DYNAMODB_TABLE_SESSIONS=grex-fitness-tracker-dev-workout-sessions
 DYNAMODB_TABLE_EXERCISES=grex-fitness-tracker-dev-exercises
 DYNAMODB_TABLE_USERS=grex-fitness-tracker-dev-users
 DYNAMODB_TABLE_MEASUREMENTS=grex-fitness-tracker-dev-body-measurements
+DYNAMODB_TABLE_CHAT=grex-fitness-tracker-dev-chat-messages
 S3_EXERCISE_MEDIA_BUCKET=
 
 AWS_PROFILE=sam-personal
@@ -69,10 +70,10 @@ deploys under, so the two stacks never collide:
 updating the existing live stack — it will never rename or recreate it.
 Running with no argument at all is the same as `prod`.
 
-1. `./aws/deploy.sh dev` — creates the dev Cognito User Pool, the six dev
+1. `./aws/deploy.sh dev` — creates the dev Cognito User Pool, the seven dev
    tables, and the dev exercise-media S3 bucket.
 2. Copy the printed outputs into `.env.development.local` (`ExerciseMediaBucketName`
-   → `S3_EXERCISE_MEDIA_BUCKET`, `ExercisesTableName` → `DYNAMODB_TABLE_EXERCISES`, `UsersTableName` → `DYNAMODB_TABLE_USERS`, `BodyMeasurementsTableName` → `DYNAMODB_TABLE_MEASUREMENTS`, etc.).
+   → `S3_EXERCISE_MEDIA_BUCKET`, `ExercisesTableName` → `DYNAMODB_TABLE_EXERCISES`, `UsersTableName` → `DYNAMODB_TABLE_USERS`, `BodyMeasurementsTableName` → `DYNAMODB_TABLE_MEASUREMENTS`, `ChatMessagesTableName` → `DYNAMODB_TABLE_CHAT`, etc.).
 3. `npm run dev`, sign up, then `node --env-file=.env.development.local scripts/seed-programs.js you@example.com`
 4. `node --env-file=.env.development.local scripts/seed-exercises.js`
 5. `npm run dev` — sign up a *dev* user (this pool is separate from prod,

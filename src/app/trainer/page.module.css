@@ -151,6 +151,13 @@ a.row:focus-visible {
   cursor: default;
 }
 
+/* The client page's Message link, laid out like the buttons beside it. */
+.messageButton {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+}
+
 .ghostButton {
   display: inline-flex;
   align-items: center;

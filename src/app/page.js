@@ -118,7 +118,7 @@ export default function Home() {
 
         {trainer !== undefined && (
           <div className={styles.trainer}>
-            <TrainerCard trainer={trainer} />
+            <TrainerCard trainer={trainer} chatHref={trainer?.canMessage ? `/chat/${trainer.userId}` : null} />
           </div>
         )}
 

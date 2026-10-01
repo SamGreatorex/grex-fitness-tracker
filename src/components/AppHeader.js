@@ -7,6 +7,7 @@ import { useAuth } from "./AuthProvider";
 import { ROLES, ROLE_LABELS, MODE_HOME, MODE_LABELS, modeForPath, modesForRole } from "../lib/profile";
 import Avatar from "./Avatar";
 import Dropdown from "./Dropdown";
+import ChatButton from "./ChatButton";
 import styles from "./AppHeader.module.css";
 
 export default function AppHeader({ backHref, backLabel }) {
@@ -63,6 +64,7 @@ export default function AppHeader({ backHref, backLabel }) {
             options={modes.map((m) => ({ value: m, label: `${MODE_LABELS[m]} mode` }))}
           />
         )}
+        <ChatButton />
         <button
           type="button"
           className={styles.avatarButton}

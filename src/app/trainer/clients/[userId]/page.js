@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/apiClient";
 import { useAuth } from "../../../../components/AuthProvider";
@@ -74,6 +75,12 @@ export default function TrainerClientPage() {
                   </span>
                 )}
               </div>
+              {/* Not for an admin who is their own trainer — nobody to message. */}
+              {client && client.userId !== me?.userId && (
+                <Link href={`/chat/${userId}`} className={`${styles.secondaryButton} ${styles.messageButton}`}>
+                  Message
+                </Link>
+              )}
               {client && (
                 <button type="button" className={styles.ghostButton} onClick={release} disabled={releasing}>
                   {releasing ? "Releasing…" : "Release client"}

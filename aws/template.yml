@@ -175,6 +175,27 @@ Resources:
         - AttributeName: date
           KeyType: RANGE
 
+  # Trainer <-> client chat. One conversation per client/PT pair
+  # (conversationId = "<clientUserId>#<trainerUserId>"). Each holds its
+  # messages (itemKey = "msg#<sentAt ISO>#<random>", so they sort by time)
+  # and one "meta" item: the pair, the last message, and when each side
+  # last read it (for unread counts).
+  ChatMessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AppName}-chat-messages'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: conversationId
+          AttributeType: S
+        - AttributeName: itemKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: conversationId
+          KeyType: HASH
+        - AttributeName: itemKey
+          KeyType: RANGE
+
   ExerciseMediaBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -232,6 +253,9 @@ Outputs:
   BodyMeasurementsTableName:
     Description: Set as DYNAMODB_TABLE_MEASUREMENTS
     Value: !Ref BodyMeasurementsTable
+  ChatMessagesTableName:
+    Description: Set as DYNAMODB_TABLE_CHAT
+    Value: !Ref ChatMessagesTable
   ExerciseMediaBucketName:
     Description: Set as S3_EXERCISE_MEDIA_BUCKET
     Value: !Ref ExerciseMediaBucket

@@ -23,6 +23,27 @@
   min-width: 0;
 }
 
+.messageButton {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  margin-left: auto;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent-text);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.messageButton:hover,
+.messageButton:focus-visible {
+  background: var(--accent);
+  color: #fff;
+  outline: none;
+}
+
 .label {
   font-size: 0.72rem;
   font-weight: 600;

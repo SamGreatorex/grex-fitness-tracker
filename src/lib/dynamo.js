@@ -22,4 +22,5 @@ export const TABLES = {
   exercises: process.env.DYNAMODB_TABLE_EXERCISES,
   users: process.env.DYNAMODB_TABLE_USERS,
   measurements: process.env.DYNAMODB_TABLE_MEASUREMENTS,
+  chat: process.env.DYNAMODB_TABLE_CHAT,
 };

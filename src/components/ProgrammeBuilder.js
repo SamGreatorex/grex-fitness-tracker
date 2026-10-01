@@ -5,7 +5,21 @@ import { useRouter } from "next/navigation";
 import { api } from "../lib/apiClient";
 import ExercisePicker from "./ExercisePicker";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
+import { PROGRAM_LEADS } from "../lib/programLead";
 import styles from "./ProgrammeBuilder.module.css";
+
+const LEAD_OPTIONS = [
+  {
+    value: PROGRAM_LEADS.USER,
+    title: "User led",
+    hint: "They run it themselves — starting workouts, logging sets and rating effort.",
+  },
+  {
+    value: PROGRAM_LEADS.TRAINER,
+    title: "Trainer led",
+    hint: "You run it with them from trainer mode (no timers). They can view it but not start it.",
+  },
+];
 
 let keyCounter = 0;
 const newKey = () => `k${++keyCounter}`;
@@ -20,19 +34,22 @@ function emptyDay(index) {
 }
 
 // Stored programme → editable form state (every row gets a stable React key).
-function toFormState(program) {
+// `fromTemplate` starts a new programme from a template: a copy, so its days
+// get fresh ids rather than the template's.
+function toFormState(program, { fromTemplate = false } = {}) {
   if (!program) {
-    return { name: "", goal: "", durationWeeks: 4, days: [emptyDay(0)] };
+    return { name: "", goal: "", ledBy: PROGRAM_LEADS.USER, durationWeeks: 4, days: [emptyDay(0)] };
   }
   return {
     name: program.name ?? "",
     goal: program.goal ?? "",
+    ledBy: program.ledBy ?? PROGRAM_LEADS.USER,
     durationWeeks: program.durationWeeks ?? 4,
     days: [...program.days]
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((d) => ({
         key: newKey(),
-        dayId: d.dayId,
+        dayId: fromTemplate ? null : d.dayId,
         label: d.label ?? "",
         subtitle: d.subtitle ?? "",
         exercises: [...d.exercises]
@@ -68,10 +85,15 @@ function move(list, index, delta) {
 }
 
 // Create (no `program`) or edit a programme for `ownerUserId`, picking
-// exercises from the library. Used from trainer mode.
-export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
+// exercises from the library. Used from trainer mode. With `isTemplate`,
+// creates/edits a shared template instead (no owner). `template` prefills a
+// new programme from a template. Client programmes also offer "Save as
+// template", copying what's in the form into a new template.
+export default function ProgrammeBuilder({ ownerUserId, program, template, isTemplate = false, backHref }) {
   const router = useRouter();
-  const [form, setForm] = useState(() => toFormState(program));
+  const [form, setForm] = useState(() => (program ? toFormState(program) : toFormState(template, { fromTemplate: true })));
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [notice, setNotice] = useState("");
   const [library, setLibrary] = useState(null);
   const [pickerDayKey, setPickerDayKey] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -129,14 +151,10 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
     return counts;
   }, [pickerDay]);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-    const payload = {
-      ownerUserId,
+  const buildPayload = () => ({
       name: form.name,
       goal: form.goal,
+      ledBy: form.ledBy,
       durationWeeks: Number(form.durationWeeks),
       days: form.days.map((d) => ({
         dayId: d.dayId,
@@ -154,7 +172,14 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
               }
         ),
       })),
-    };
+  });
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    setNotice("");
+    const payload = { ...buildPayload(), ...(isTemplate ? { isTemplate: true } : { ownerUserId }) };
     try {
       if (program) await api.put(`/api/programs/${program.programId}`, payload);
       else await api.post("/api/programs", payload);
@@ -165,8 +190,29 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
     }
   };
 
+  // Copies what's in the form now (saved or not) into a new shared template.
+  // The client's programme itself is left as it is.
+  const handleSaveAsTemplate = async () => {
+    const name = window.prompt("Template name", form.name);
+    if (name === null) return;
+    setSavingTemplate(true);
+    setError("");
+    setNotice("");
+    try {
+      await api.post("/api/programs", { ...buildPayload(), name, isTemplate: true });
+      setNotice(`Saved "${name.trim()}" as a template.`);
+    } catch (err) {
+      setError(err.message || "Could not save the template.");
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
   const handleDelete = async () => {
-    if (!window.confirm(`Delete "${program.name}"? Their logged workouts are kept, but the programme is removed.`)) return;
+    const message = isTemplate
+      ? `Delete the "${program.name}" template? Programmes already created from it are kept.`
+      : `Delete "${program.name}"? Their logged workouts are kept, but the programme is removed.`;
+    if (!window.confirm(message)) return;
     setDeleting(true);
     setError("");
     try {
@@ -217,6 +263,24 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
             />
           </label>
         </div>
+        <fieldset className={styles.leadChoice}>
+          <legend className={styles.label}>Who runs it?</legend>
+          {LEAD_OPTIONS.map((option) => (
+            <label key={option.value} className={`${styles.leadOption} ${form.ledBy === option.value ? styles.leadOptionActive : ""}`}>
+              <input
+                type="radio"
+                name="ledBy"
+                value={option.value}
+                checked={form.ledBy === option.value}
+                onChange={() => setField("ledBy", option.value)}
+              />
+              <span>
+                <span className={styles.leadTitle}>{option.title}</span>
+                <span className={styles.leadHint}>{option.hint}</span>
+              </span>
+            </label>
+          ))}
+        </fieldset>
       </section>
 
       {form.days.map((day, dayIndex) => (
@@ -385,15 +449,21 @@ export default function ProgrammeBuilder({ ownerUserId, program, backHref }) {
       )}
 
       {error && <div className={styles.error}>{error}</div>}
+      {notice && <div className={styles.notice}>{notice}</div>}
 
       <div className={styles.actions}>
         {program && (
           <button type="button" className={styles.deleteButton} onClick={handleDelete} disabled={deleting || saving}>
-            {deleting ? "Deleting…" : "Delete programme"}
+            {deleting ? "Deleting…" : isTemplate ? "Delete template" : "Delete programme"}
+          </button>
+        )}
+        {!isTemplate && (
+          <button type="button" className={styles.templateButton} onClick={handleSaveAsTemplate} disabled={savingTemplate || saving || deleting}>
+            {savingTemplate ? "Saving template…" : "Save as template"}
           </button>
         )}
         <button type="submit" className={styles.saveButton} disabled={saving || deleting}>
-          {saving ? "Saving…" : program ? "Save changes" : "Create programme"}
+          {saving ? "Saving…" : program ? "Save changes" : isTemplate ? "Create template" : "Create programme"}
         </button>
       </div>
 

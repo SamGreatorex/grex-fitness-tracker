@@ -72,6 +72,8 @@ export default function ExerciseCard({
   onEditEffort,
   onApplyRestToAll,
   onSwitchExercise,
+  // Off for untimed (trainer-led) workouts — there's no rest countdown.
+  showRest = true,
 }) {
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
@@ -165,7 +167,7 @@ export default function ExerciseCard({
           <p className={styles.meta}>
             {cardio
               ? formatCardio({ settings: exercise.settings, seconds: exercise.targetSeconds })
-              : `${exercise.targetSets} sets × ${exercise.targetReps} reps · ${exercise.restSeconds}s rest`}
+              : `${exercise.targetSets} sets × ${exercise.targetReps} reps${showRest ? ` · ${exercise.restSeconds}s rest` : ""}`}
           </p>
           {hasTags && (
             <div className={styles.tags}>
@@ -195,11 +197,11 @@ export default function ExerciseCard({
         <CardioRow row={sets[0]} last={lastSets} onSetField={onSetField} onLog={() => onLogSet(0)} onEditEffort={() => onEditEffort(0)} />
       ) : (
         <>
-          <div className={styles.setsHeader}>
+          <div className={`${styles.setsHeader} ${showRest ? "" : styles.noRest}`}>
             <span>Set</span>
             <span>Weight (kg)</span>
             <span>Reps</span>
-            <span>Rest</span>
+            {showRest && <span>Rest</span>}
             <span />
           </div>
 
@@ -210,7 +212,7 @@ export default function ExerciseCard({
             const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""} ${set.completed ? styles.setNumberButton : ""}`;
             const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
             return (
-              <div key={i} className={styles.setRow}>
+              <div key={i} className={`${styles.setRow} ${showRest ? "" : styles.noRest}`}>
                 {set.completed ? (
                   <button
                     type="button"
@@ -251,11 +253,13 @@ export default function ExerciseCard({
                   onChange={(e) => onSetField(i, "reps", e.target.value)}
                   onMouseUp={selectAllOnMouseUp}
                 />
-                <RestPicker
-                  seconds={set.restSeconds ?? exercise.restSeconds}
-                  onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
-                  onApplyToAll={(secs) => onApplyRestToAll(secs)}
-                />
+                {showRest && (
+                  <RestPicker
+                    seconds={set.restSeconds ?? exercise.restSeconds}
+                    onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
+                    onApplyToAll={(secs) => onApplyRestToAll(secs)}
+                  />
+                )}
                 <button
                   type="button"
                   className={`${styles.logButton} ${set.completed ? styles.logButtonDone : ""}`}

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { DeleteCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { getRequestUser } from "../../../../lib/users";
-import { canAccessProgram, canManageUser, getProgram, normaliseProgramInput } from "../../../../lib/programs";
+import { canAccessProgram, canEditProgram, canManageUser, getProgram, normaliseProgramInput } from "../../../../lib/programs";
+import { isTrainerLed } from "../../../../lib/programLead";
 import { withLogging } from "../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -31,10 +32,15 @@ export const GET = withLogging("GET /api/programs/[programId]", async (request, 
   return NextResponse.json({ program });
 });
 
-// Rename — the owner can do this from their programme page.
+// Rename — the owner can do this from their programme page (trainer-led
+// ones are view-only for them, so only their PT or an admin).
 export const PATCH = withLogging("PATCH /api/programs/[programId]", async (request, { params }) => {
-  const { program, denied } = await loadAccessible(request, params);
+  const { user, program, denied } = await loadAccessible(request, params);
   if (denied) return denied;
+  const allowed = program.isTemplate
+    ? await canEditProgram(user, program)
+    : !isTrainerLed(program) || (await canManageUser(user, program.ownerUserId));
+  if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { name } = await request.json();
   if (!name?.trim()) {
@@ -54,12 +60,13 @@ export const PATCH = withLogging("PATCH /api/programs/[programId]", async (reque
   return NextResponse.json({ program: result.Attributes });
 });
 
-// Full edit from the programme builder (the owner's PT, or an admin). Ownership, creator and
+// Full edit from the programme builder (the owner's PT, or an admin; for a
+// template, its creator or an admin). Ownership, creator and
 // programId never change, and existing days keep their dayIds.
 export const PUT = withLogging("PUT /api/programs/[programId]", async (request, { params }) => {
   const { user, program, denied } = await loadAccessible(request, params);
   if (denied) return denied;
-  if (!(await canManageUser(user, program.ownerUserId))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!(await canEditProgram(user, program))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { program: fields, error } = normaliseProgramInput(await request.json(), program);
   if (error) return NextResponse.json({ error }, { status: 400 });
@@ -69,12 +76,13 @@ export const PUT = withLogging("PUT /api/programs/[programId]", async (request, 
   return NextResponse.json({ program: updated });
 });
 
-// The owner's PT, or an admin. The owner's past runs and logged sessions are kept
+// The owner's PT, or an admin (templates: their creator, or an admin). Clients'
+// programmes copied from a template are unaffected. The owner's past runs and logged sessions are kept
 // (reports still use them); they just no longer have a programme to open.
 export const DELETE = withLogging("DELETE /api/programs/[programId]", async (request, { params }) => {
   const { user, program, denied } = await loadAccessible(request, params);
   if (denied) return denied;
-  if (!(await canManageUser(user, program.ownerUserId))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!(await canEditProgram(user, program))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   await ddb.send(new DeleteCommand({ TableName: TABLES.programs, Key: { programId: program.programId } }));
   return NextResponse.json({ ok: true });

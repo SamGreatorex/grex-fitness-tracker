@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../../lib/dynamo";
 import { getRequestUser } from "../../../../../../lib/users";
-import { canAccessProgram, getProgram } from "../../../../../../lib/programs";
+import { canAccessProgram, canManageUser, getProgram } from "../../../../../../lib/programs";
+import { isTrainerLed } from "../../../../../../lib/programLead";
 import { withLogging } from "../../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -28,6 +29,12 @@ export const PATCH = withLogging("PATCH /api/programs/[programId]/exercises/[exe
 
   const program = await getProgram(programId);
   if (!(await canAccessProgram(user, program))) return NextResponse.json({ error: "Program not found" }, { status: 404 });
+  // Templates are only changed from the builder; trainer-led programmes are
+  // view-only for their owner.
+  if (program.isTemplate) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (isTrainerLed(program) && !(await canManageUser(user, program.ownerUserId))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const day = program.days.find((d) => d.dayId === dayId);
   if (!day) return NextResponse.json({ error: "Day not found" }, { status: 404 });

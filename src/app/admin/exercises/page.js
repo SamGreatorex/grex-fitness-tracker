@@ -70,7 +70,7 @@ export default function AdminExercisesPage() {
         for (const day of program.days) {
           for (const exercise of day.exercises) {
             const slug = slugify(exercise.name);
-            (usage[slug] ??= []).push({ programName: program.name, dayLabel: day.label });
+            (usage[slug] ??= []).push({ programName: program.isTemplate ? `${program.name} (template)` : program.name, dayLabel: day.label });
           }
         }
       }

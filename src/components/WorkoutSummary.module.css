@@ -50,6 +50,11 @@
   margin-bottom: 2.5rem;
 }
 
+/* Three stats (untimed sessions have no duration): let the last fill the row. */
+.stats > :last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
 .stat {
   display: flex;
   flex-direction: column;

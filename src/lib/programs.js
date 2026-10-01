@@ -1,13 +1,19 @@
 import { randomUUID } from "crypto";
-import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "./dynamo";
 import { ROLES } from "./profile";
 import { CARDIO_LIMITS, EXERCISE_TYPES, isCardio } from "./exerciseTypes";
+import { PROGRAM_LEADS, isTrainerLed } from "./programLead";
 
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
 // edit programmes only for their own clients (users whose ptUserId is the
-// PT's userId); admins can for anyone. Everyone else only ever sees, runs
-// and tweaks their own.
+// PT's userId); admins can for anyone. Everyone else only ever sees their
+// own — and runs and tweaks their own user-led ones. Trainer-led ones are
+// run by the owner's PT (or an admin) and are view-only for the owner.
+//
+// Templates (isTemplate: true) have no owner: they're a library shared by
+// every PT and admin, copied into a client's programme to start from. Only
+// their creator (or an admin) may edit or delete one, and nobody runs them.
 export const PROGRAM_MANAGER_ROLES = [ROLES.PT, ROLES.ADMIN];
 
 export function isProgramManager(user) {
@@ -25,7 +31,51 @@ export async function canManageUser(manager, targetUserId) {
 
 export async function canAccessProgram(user, program) {
   if (!user || !program) return false;
+  if (program.isTemplate) return isProgramManager(user);
   return program.ownerUserId === user.userId || canManageUser(user, program.ownerUserId);
+}
+
+export function canEditTemplate(user, template) {
+  return isProgramManager(user) && (user.role === ROLES.ADMIN || template.createdBy === user.userId);
+}
+
+// Whether `user` may edit, rename or delete this programme: a template's
+// creator (or an admin), or a client programme's PT (or an admin).
+export async function canEditProgram(user, program) {
+  if (program.isTemplate) return canEditTemplate(user, program);
+  return canManageUser(user, program.ownerUserId);
+}
+
+// Whether `user` may start, log workouts for, and restart runs of this
+// programme: the owner for user-led ones; the owner's PT (or an admin) for
+// trainer-led ones.
+export async function canRunProgram(user, program) {
+  if (!user || !program || program.isTemplate) return false;
+  if (isTrainerLed(program)) return canManageUser(user, program.ownerUserId);
+  return program.ownerUserId === user.userId;
+}
+
+// Runs and sessions are always stored under the programme owner's userId,
+// whoever logged them. By default a request acts on the caller's own; a
+// trainer passes `requestedUserId` to act on one of their clients'. Returns
+// that userId, or null if the caller may not see that user's data.
+export async function resolveSubjectUserId(user, requestedUserId) {
+  if (!requestedUserId || requestedUserId === user.userId) return user.userId;
+  return (await canManageUser(user, requestedUserId)) ? requestedUserId : null;
+}
+
+// Loads one of `requestedUserId`'s runs (default: the caller's) for a
+// complete/restart action, checking the caller may drive its programme.
+// Returns { userId, run }, or null if it's missing or not theirs to drive.
+export async function getRunnableRun(user, requestedUserId, runId) {
+  const userId = await resolveSubjectUserId(user, requestedUserId);
+  if (!userId) return null;
+  const { Item: run } = await ddb.send(new GetCommand({ TableName: TABLES.runs, Key: { userId, runId } }));
+  if (!run) return null;
+  const program = await getProgram(run.programId);
+  // Programme since deleted: only its owner can still tidy up the run.
+  if (!program) return userId === user.userId ? { userId, run } : null;
+  return (await canRunProgram(user, program)) ? { userId, run } : null;
 }
 
 export async function getProgram(programId) {
@@ -50,6 +100,26 @@ export async function listProgramsForOwner(ownerUserId) {
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);
   return sortPrograms(programs);
+}
+
+// Every template. They have no ownerUserId, so they aren't in OwnerIndex —
+// scan for them instead (the programmes table is small).
+export async function listTemplates() {
+  const templates = [];
+  let ExclusiveStartKey;
+  do {
+    const page = await ddb.send(
+      new ScanCommand({
+        TableName: TABLES.programs,
+        FilterExpression: "isTemplate = :t",
+        ExpressionAttributeValues: { ":t": true },
+        ExclusiveStartKey,
+      })
+    );
+    templates.push(...(page.Items ?? []));
+    ExclusiveStartKey = page.LastEvaluatedKey;
+  } while (ExclusiveStartKey);
+  return templates.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // Seeded programmes carry an explicit `order`; PT-built ones sort after
@@ -78,6 +148,8 @@ export function normaliseProgramInput(body, existing = null) {
   if (name.length > 100) return { error: "Programme name must be at most 100 characters" };
 
   const goal = String(body?.goal ?? "").trim().slice(0, 200) || null;
+
+  const ledBy = body?.ledBy === PROGRAM_LEADS.TRAINER ? PROGRAM_LEADS.TRAINER : PROGRAM_LEADS.USER;
 
   const durationWeeks = intInRange(body?.durationWeeks, 1, LIMITS.weeks);
   if (!durationWeeks) return { error: `Duration must be 1–${LIMITS.weeks} weeks` };
@@ -168,5 +240,5 @@ export function normaliseProgramInput(body, existing = null) {
     });
   }
 
-  return { program: { name, goal, durationWeeks, days } };
+  return { program: { name, goal, ledBy, durationWeeks, days } };
 }

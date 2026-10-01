@@ -254,6 +254,11 @@
   color: #fff;
 }
 
+/* Untimed (trainer-led) workouts: badge · weight · reps · log — no rest. */
+.noRest {
+  grid-template-columns: 1.75rem 1fr 1fr 3.75rem;
+}
+
 /* Cardio: badge · settings (wide) · time · log — no weight/reps/rest. */
 .cardioGrid {
   grid-template-columns: 1.75rem 2fr 1fr 3.75rem;

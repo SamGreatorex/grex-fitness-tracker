@@ -61,10 +61,13 @@ export default function WorkoutSummary({
           </span>
           <span className={styles.statLabel}>Avg. effort</span>
         </div>
-        <div className={styles.stat}>
-          <span className={styles.statValue}>{formatDuration(durationSeconds)}</span>
-          <span className={styles.statLabel}>Duration</span>
-        </div>
+        {/* Untimed (trainer-led) sessions have no duration. */}
+        {durationSeconds != null && (
+          <div className={styles.stat}>
+            <span className={styles.statValue}>{formatDuration(durationSeconds)}</span>
+            <span className={styles.statLabel}>Duration</span>
+          </div>
+        )}
       </div>
 
       <button type="button" className={styles.continueButton} onClick={onContinue}>

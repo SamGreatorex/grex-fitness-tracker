@@ -60,7 +60,12 @@ export default function TrainerHome() {
       <AppHeader />
       <main className={styles.main}>
         <h1 className={styles.title}>Trainer</h1>
-        <p className={styles.subtitle}>Manage your clients and build their programmes.</p>
+        <div className={styles.headerRow}>
+          <p className={styles.subtitle}>Manage your clients and build their programmes.</p>
+          <Link href="/trainer/templates" className={styles.ghostButton}>
+            Programme templates
+          </Link>
+        </div>
 
         <input
           className={styles.search}

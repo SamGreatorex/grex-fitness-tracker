@@ -252,3 +252,40 @@
     width: auto;
   }
 }
+
+/* Trainer-led programmes: who runs it. */
+.leadNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.75rem 0 1.5rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.leadBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+/* View-only days list what's in them, since they can't be opened. */
+.dayExercises {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+}
+
+.dayExerciseTarget {
+  margin-left: 0.5rem;
+  opacity: 0.6;
+}

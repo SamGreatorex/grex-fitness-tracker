@@ -9,6 +9,7 @@ import { averageEffortOf } from "../../../../lib/sessionStats";
 import { averageEffortSeries, bodyMetricSeries, totalWeightSeries } from "../../../../lib/reports";
 import { WEIGHT_UNITS, chartWeightToKg, formatWeight, kgToChartWeight } from "../../../../lib/units";
 import { formatCardio } from "../../../../lib/exerciseTypes";
+import { isTrainerLed } from "../../../../lib/programLead";
 import styles from "./ClientProgress.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { weekday: "short", day: "numeric", month: "short" });
@@ -33,7 +34,28 @@ export default function ClientProgress({ userId, data, weightUnit }) {
           + New programme
         </Link>
       </div>
-      <ProgrammeProgress userId={userId} programs={programs} runs={runs} sessions={sessions} />
+      {programs.length === 0 ? (
+        <p className={styles.empty}>No programmes yet — create one to get them started.</p>
+      ) : (
+        <>
+          <h3 className={styles.subsectionTitle}>Trainer led</h3>
+          <ProgrammeProgress
+            userId={userId}
+            programs={programs.filter(isTrainerLed)}
+            runs={runs}
+            sessions={sessions}
+            emptyText="None yet — these are the programmes you run with them in person."
+          />
+          <h3 className={styles.subsectionTitle}>User led</h3>
+          <ProgrammeProgress
+            userId={userId}
+            programs={programs.filter((p) => !isTrainerLed(p))}
+            runs={runs}
+            sessions={sessions}
+            emptyText="None yet — these are the programmes they run themselves."
+          />
+        </>
+      )}
 
       <h2 className={`${styles.sectionTitle} ${styles.spaced}`}>Recent workouts</h2>
       <RecentWorkouts sessions={sessions} programs={programs} runs={runs} />
@@ -82,9 +104,11 @@ const STATUS_LABEL = {
   notStarted: "Not started",
 };
 
-function ProgrammeProgress({ userId, programs, runs, sessions }) {
+// Trainer-led rows can be opened and run from here; user-led ones are the
+// client's to run, so the trainer can only follow and edit them.
+function ProgrammeProgress({ userId, programs, runs, sessions, emptyText }) {
   if (programs.length === 0) {
-    return <p className={styles.empty}>No programmes yet — create one to get them started.</p>;
+    return <p className={styles.empty}>{emptyText}</p>;
   }
 
   // In-progress first, then not started, then finished/stopped.
@@ -133,12 +157,21 @@ function ProgrammeProgress({ userId, programs, runs, sessions }) {
               Stopped in week {progress.currentWeek} after {progress.daysDone} of {progress.totalDays} workouts
             </span>
           )}
-          {progress.status === "notStarted" && <span className={styles.meta}>They haven&apos;t started this programme yet.</span>}
+          {progress.status === "notStarted" && (
+            <span className={styles.meta}>
+              {isTrainerLed(program) ? "Not started yet — open it to start your first session." : "They haven’t started this programme yet."}
+            </span>
+          )}
 
           <div className={styles.programmeActions}>
             <Link href={`/trainer/clients/${userId}/programmes/${program.programId}`} className={styles.ghostButton}>
               Edit programme
             </Link>
+            {isTrainerLed(program) && (
+              <Link href={`/trainer/clients/${userId}/programmes/${program.programId}/run`} className={styles.primaryButton}>
+                Open programme
+              </Link>
+            )}
           </div>
         </li>
       ))}

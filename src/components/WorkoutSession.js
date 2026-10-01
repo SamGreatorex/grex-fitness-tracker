@@ -2,19 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { useAuth } from "../../../../../components/AuthProvider";
-import { api } from "../../../../../lib/apiClient";
-import AppHeader from "../../../../../components/AppHeader";
-import ExerciseCard from "../../../../../components/ExerciseCard";
-import ElapsedTimer from "../../../../../components/ElapsedTimer";
-import RestOverlay from "../../../../../components/RestOverlay";
-import EffortDialog from "../../../../../components/EffortDialog";
-import WorkoutSummary from "../../../../../components/WorkoutSummary";
-import { slugify } from "../../../../../lib/slugify";
-import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../../../../../lib/sessionStats";
-import { useWakeLock } from "../../../../../lib/useWakeLock";
-import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../../../../../lib/exerciseTypes";
-import styles from "./page.module.css";
+import { useAuth } from "./AuthProvider";
+import { api } from "../lib/apiClient";
+import AppHeader from "./AppHeader";
+import ExerciseCard from "./ExerciseCard";
+import ElapsedTimer from "./ElapsedTimer";
+import RestOverlay from "./RestOverlay";
+import EffortDialog from "./EffortDialog";
+import WorkoutSummary from "./WorkoutSummary";
+import { slugify } from "../lib/slugify";
+import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../lib/sessionStats";
+import { useWakeLock } from "../lib/useWakeLock";
+import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
+import { programmeBasePath } from "../lib/programLead";
+import styles from "./WorkoutSession.module.css";
 
 // Walks backward from `index` through this exercise's sets (in the current
 // session) for the last non-empty value of `field` — weight/reps use "" as
@@ -99,8 +100,16 @@ function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startRep
   });
 }
 
-export default function WorkoutSessionClient() {
-  const { programId, dayId } = useParams();
+// The live workout for one day. Shared by the client's own
+// /programs/[programId]/day/[dayId] page and trainer mode's
+// /trainer/clients/[userId]/programmes/[programId]/run/day/[dayId] — the
+// `userId` route param is set only in the latter, where a trainer runs a
+// trainer-led programme with their client in person. Those sessions are
+// untimed: no elapsed workout timer, no rest countdowns, no duration saved.
+export default function WorkoutSession() {
+  const { programId, dayId, userId: clientUserId } = useParams();
+  const untimed = !!clientUserId;
+  const basePath = programmeBasePath(programId, clientUserId);
   const searchParams = useSearchParams();
   const runId = searchParams.get("runId");
   const week = Number(searchParams.get("week")) || 1;
@@ -149,9 +158,9 @@ export default function WorkoutSessionClient() {
 
   useEffect(() => {
     if (!runId) {
-      router.replace(`/programs/${programId}`);
+      router.replace(basePath);
     }
-  }, [runId, programId, router]);
+  }, [runId, basePath, router]);
 
   useEffect(() => {
     if (!user || !runId) return;
@@ -159,7 +168,8 @@ export default function WorkoutSessionClient() {
       try {
         const [{ program }, { sessions }, { exercises }] = await Promise.all([
           api.get(`/api/programs/${programId}`),
-          api.get("/api/sessions"),
+          // History (for last-time prefill) is the client's, not the trainer's.
+          api.get("/api/sessions", clientUserId ? { userId: clientUserId } : undefined),
           api.get("/api/exercises"),
         ]);
         const foundDay = program.days.find((d) => d.dayId === dayId);
@@ -210,7 +220,7 @@ export default function WorkoutSessionClient() {
         setError(err.message || "Could not load workout.");
       }
     })();
-  }, [user, programId, dayId, runId]);
+  }, [user, programId, dayId, runId, clientUserId]);
 
   if (sessionLoading || !user || !program || !day || !setsByExercise) return null;
 
@@ -225,7 +235,7 @@ export default function WorkoutSessionClient() {
         averageWeight={daySummary.averageWeight}
         averageEffort={daySummary.averageEffort}
         continueLabel={nextStage ? "See week summary →" : "Back to program"}
-        onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(`/programs/${programId}`))}
+        onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(basePath))}
       />
     );
   }
@@ -236,12 +246,12 @@ export default function WorkoutSessionClient() {
       <WorkoutSummary
         title={`Week ${week} complete! 🎉`}
         subtitle={`${weekSummary.sessionCount} day${weekSummary.sessionCount === 1 ? "" : "s"} logged this week`}
-        durationSeconds={weekSummary.durationSeconds}
+        durationSeconds={untimed ? null : weekSummary.durationSeconds}
         totalWeightLifted={weekSummary.totalWeightLifted}
         averageWeight={weekSummary.averageWeight}
         averageEffort={weekSummary.averageEffort}
         continueLabel={nextStage ? "See programme summary →" : "Back to program"}
-        onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(`/programs/${programId}`))}
+        onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(basePath))}
       />
     );
   }
@@ -251,12 +261,12 @@ export default function WorkoutSessionClient() {
       <WorkoutSummary
         title="Programme complete! 🏆"
         subtitle={`${program.name} · ${programSummary.sessionCount} day${programSummary.sessionCount === 1 ? "" : "s"} logged in total`}
-        durationSeconds={programSummary.durationSeconds}
+        durationSeconds={untimed ? null : programSummary.durationSeconds}
         totalWeightLifted={programSummary.totalWeightLifted}
         averageWeight={programSummary.averageWeight}
         averageEffort={programSummary.averageEffort}
         continueLabel="Back to program"
-        onContinue={() => router.push(`/programs/${programId}`)}
+        onContinue={() => router.push(basePath)}
       />
     );
   }
@@ -358,7 +368,7 @@ export default function WorkoutSessionClient() {
     // Always ask about effort. Only start a rest countdown if there's
     // actually more to rest for — not after the very last set of the day.
     setEffortContext({ exerciseId, setIndex });
-    if (!isLastSetOverall) {
+    if (!isLastSetOverall && !untimed) {
       restOverlayKeyRef.current += 1;
       setRestOverlay({ key: restOverlayKeyRef.current, seconds: restSeconds });
     }
@@ -437,7 +447,7 @@ export default function WorkoutSessionClient() {
         })
         .filter(Boolean);
 
-      const durationSeconds = Math.floor((Date.now() - startedAt) / 1000);
+      const durationSeconds = untimed ? null : Math.floor((Date.now() - startedAt) / 1000);
       const { session } = await api.post("/api/sessions", {
         runId,
         programId,
@@ -465,7 +475,7 @@ export default function WorkoutSessionClient() {
       const programCompleted = weekCompleted && week === program.durationWeeks;
 
       if (weekCompleted) {
-        const { sessions: runSessions } = await api.get("/api/sessions", { runId });
+        const { sessions: runSessions } = await api.get("/api/sessions", { runId, ...(clientUserId && { userId: clientUserId }) });
         const withThisOne = [...runSessions.filter((s) => s.sessionId !== session.sessionId), session];
 
         setWeekSummary(aggregateSessionStats(withThisOne.filter((s) => s.week === week)));
@@ -483,13 +493,15 @@ export default function WorkoutSessionClient() {
 
   return (
     <>
-      <AppHeader backHref={`/programs/${programId}`} backLabel={program.name} />
+      <AppHeader backHref={basePath} backLabel={program.name} />
       <main className={styles.main}>
         <div className={styles.headerRow}>
           <h1 className={styles.title}>{day.label}</h1>
-          <span className={styles.timer}>
-            <ElapsedTimer startedAt={startedAt} />
-          </span>
+          {!untimed && (
+            <span className={styles.timer}>
+              <ElapsedTimer startedAt={startedAt} />
+            </span>
+          )}
         </div>
         <p className={styles.meta}>
           Week {week} of {program.durationWeeks}
@@ -511,6 +523,7 @@ export default function WorkoutSessionClient() {
             onLogSet={(setIndex) => onLogSet(exercise.exerciseId, setIndex)}
             onEditEffort={(setIndex) => onEditEffort(exercise.exerciseId, setIndex)}
             onApplyRestToAll={(secs) => onApplyRestToAll(exercise.exerciseId, secs)}
+            showRest={!untimed}
             onSwitchExercise={(newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise)}
           />
         ))}

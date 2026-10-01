@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { GetCommand, QueryCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
-import { getUserId } from "../../../../../lib/verifyToken";
+import { getRequestUser } from "../../../../../lib/users";
+import { getRunnableRun } from "../../../../../lib/programs";
 import { withLogging } from "../../../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -21,18 +22,20 @@ export const dynamic = "force-dynamic";
 // sessions — the program page falls back to the pre-start screen ("Start
 // program"/"Start again"), and a future run starts clean from week 1.
 export const POST = withLogging("POST /api/runs/[runId]/restart", async (request, { params }) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getRequestUser(request);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { runId } = await params;
   const body = await request.json();
-  const { scope, week } = body;
+  // `userId`: a trainer acting on their client's run of a trainer-led programme.
+  const { scope, week, userId: requestedUserId } = body;
   if (scope !== "week" && scope !== "program") {
     return NextResponse.json({ error: "scope must be 'week' or 'program'" }, { status: 400 });
   }
 
-  const runResult = await ddb.send(new GetCommand({ TableName: TABLES.runs, Key: { userId, runId } }));
-  if (!runResult.Item) return NextResponse.json({ error: "Run not found" }, { status: 404 });
+  const found = await getRunnableRun(user, requestedUserId, runId);
+  if (!found) return NextResponse.json({ error: "Run not found" }, { status: 404 });
+  const { userId, run } = found;
 
   if (scope === "program") {
     await ddb.send(
@@ -47,7 +50,7 @@ export const POST = withLogging("POST /api/runs/[runId]/restart", async (request
     return NextResponse.json({ ok: true });
   }
 
-  const targetWeek = week ?? runResult.Item.currentWeek;
+  const targetWeek = week ?? run.currentWeek;
 
   const sessionsResult = await ddb.send(
     new QueryCommand({

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
-import { getUserId } from "../../../lib/verifyToken";
+import { getRequestUser } from "../../../lib/users";
+import { canRunProgram, getProgram, resolveSubjectUserId } from "../../../lib/programs";
+import { isTrainerLed } from "../../../lib/programLead";
 import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -9,12 +11,16 @@ import { withLogging } from "../../../lib/apiHandler";
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
 
+// The caller's own logged sessions, or (?userId=X) a client's — for their
+// PT or an admin.
 export const GET = withLogging("GET /api/sessions", async (request) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getRequestUser(request);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
   const runId = searchParams.get("runId");
+  const userId = await resolveSubjectUserId(user, searchParams.get("userId"));
+  if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const result = await ddb.send(
     new QueryCommand({
@@ -31,9 +37,12 @@ export const GET = withLogging("GET /api/sessions", async (request) => {
   return NextResponse.json({ sessions });
 });
 
+// Logs a finished workout. Always stored under the programme's owner — for
+// a trainer-led programme, the trainer logs it for their client (and no
+// duration is recorded, since those sessions aren't timed).
 export const POST = withLogging("POST /api/sessions", async (request) => {
-  const userId = await getUserId(request);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getRequestUser(request);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
   const {
@@ -54,6 +63,13 @@ export const POST = withLogging("POST /api/sessions", async (request) => {
     return NextResponse.json({ error: "Missing required session fields" }, { status: 400 });
   }
 
+  const program = await getProgram(programId);
+  if (!(await canRunProgram(user, program))) {
+    return NextResponse.json({ error: "Program not found" }, { status: 404 });
+  }
+  const userId = program.ownerUserId;
+  const trainerLed = isTrainerLed(program);
+
   const completedAt = new Date().toISOString();
   const totalWeightLifted = exercises.reduce((sum, ex) => {
     return sum + ex.sets.reduce((s, set) => s + (Number(set.weight) || 0) * (Number(set.reps) || 0), 0);
@@ -70,9 +86,10 @@ export const POST = withLogging("POST /api/sessions", async (request) => {
     week,
     startedAt,
     completedAt,
-    durationSeconds,
+    durationSeconds: trainerLed ? null : durationSeconds,
     totalWeightLifted,
     exercises,
+    ...(trainerLed && { loggedByUserId: user.userId, loggedByName: user.name || user.email }),
   };
 
   await ddb.send(new PutCommand({ TableName: TABLES.sessions, Item: session }));

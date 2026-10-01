@@ -259,3 +259,82 @@
   font-weight: 700;
   vertical-align: middle;
 }
+
+/* User led / trainer led choice. */
+.leadChoice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.leadChoice legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+.leadOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.leadOption input {
+  margin-top: 0.2rem;
+  accent-color: var(--accent);
+}
+
+.leadOptionActive {
+  border-color: var(--accent);
+}
+
+.leadTitle {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.leadHint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .leadChoice {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.notice {
+  font-size: 0.85rem;
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.templateButton {
+  height: 48px;
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.templateButton:hover:not(:disabled) {
+  border-color: var(--foreground);
+}
+
+.templateButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

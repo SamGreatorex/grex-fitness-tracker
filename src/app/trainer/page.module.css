@@ -152,6 +152,9 @@ a.row:focus-visible {
 }
 
 .ghostButton {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   height: 36px;
   padding: 0 12px;
   border: 1px solid var(--border);
@@ -183,7 +186,8 @@ a.row:focus-visible {
   background: var(--accent-hover);
 }
 
-.youBadge {
+.youBadge,
+.badge {
   margin-left: 0.4rem;
   padding: 1px 7px;
   border-radius: 999px;
@@ -191,4 +195,38 @@ a.row:focus-visible {
   font-size: 0.7rem;
   font-weight: 600;
   vertical-align: middle;
+}
+
+/* Subtitle with an action beside it. */
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.headerRow .subtitle {
+  margin: 0;
+}
+
+/* "Start from a template" on a client's new programme. */
+.templatePicker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.templatePicker select {
+  height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--foreground);
+  font-size: 0.95rem;
 }

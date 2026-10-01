@@ -4,7 +4,7 @@ import { GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
 import { getRequestUser } from "../../../lib/users";
 import { ROLES } from "../../../lib/profile";
-import { canManageUser, isProgramManager, listProgramsForOwner, normaliseProgramInput, sortPrograms } from "../../../lib/programs";
+import { canManageUser, isProgramManager, listProgramsForOwner, listTemplates, normaliseProgramInput, sortPrograms } from "../../../lib/programs";
 import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 // Default: the caller's own programmes.
 // ?userId=X — a client's programmes (their PT, or an admin).
+// ?scope=templates — the shared template library (PTs and admins).
 // ?scope=all — every programme (admins only; used by the exercise library's
 //   "used in" view).
 export const GET = withLogging("GET /api/programs", async (request) => {
@@ -21,6 +22,11 @@ export const GET = withLogging("GET /api/programs", async (request) => {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
+
+  if (searchParams.get("scope") === "templates") {
+    if (!isProgramManager(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ programs: await listTemplates() });
+  }
 
   if (searchParams.get("scope") === "all") {
     if (user.role !== ROLES.ADMIN) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -42,8 +48,9 @@ export const GET = withLogging("GET /api/programs", async (request) => {
   return NextResponse.json({ programs: await listProgramsForOwner(ownerUserId) });
 });
 
+// A PT or admin saves a template (no owner) with { isTemplate: true, ...fields }.
 // A PT creates a programme for one of their clients (admins: anyone): { ownerUserId, name, goal,
-// durationWeeks, days: [{ label, subtitle, exercises: [{ name, targetSets,
+// ledBy ("user" | "trainer"), durationWeeks, days: [{ label, subtitle, exercises: [{ name, targetSets,
 // targetReps, restSeconds }] }] }.
 export const POST = withLogging("POST /api/programs", async (request) => {
   const user = await getRequestUser(request);
@@ -51,14 +58,17 @@ export const POST = withLogging("POST /api/programs", async (request) => {
   if (!isProgramManager(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();
+  const isTemplate = body.isTemplate === true;
   const { ownerUserId } = body;
-  if (!ownerUserId) return NextResponse.json({ error: "ownerUserId is required" }, { status: 400 });
 
-  const { Item: owner } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: ownerUserId } }));
-  // Not-your-client reads the same as not-found, so PTs can't probe for
-  // other PTs' clients.
-  if (!owner || !(await canManageUser(user, ownerUserId))) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (!isTemplate) {
+    if (!ownerUserId) return NextResponse.json({ error: "ownerUserId is required" }, { status: 400 });
+    const { Item: owner } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: ownerUserId } }));
+    // Not-your-client reads the same as not-found, so PTs can't probe for
+    // other PTs' clients.
+    if (!owner || !(await canManageUser(user, ownerUserId))) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
   }
 
   const { program: fields, error } = normaliseProgramInput(body);
@@ -67,7 +77,9 @@ export const POST = withLogging("POST /api/programs", async (request) => {
   const now = new Date().toISOString();
   const program = {
     programId: randomUUID(),
-    ownerUserId,
+    // Templates have no owner, which keeps them out of OwnerIndex (and so
+    // out of every client's programme list).
+    ...(isTemplate ? { isTemplate: true } : { ownerUserId }),
     ...fields,
     createdBy: user.userId,
     createdByName: user.name || user.email,

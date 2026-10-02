@@ -59,6 +59,9 @@ function fittedDomain(values) {
 // tooltip on hover. One axis, one series — no legend needed.
 // `zeroBaseline={false}` fits the y-axis to the data instead of 0..max.
 // `formatAxis` formats y-axis ticks (defaults to formatValue).
+// `selectedKey` (optional) focuses one period instead of the latest: it gets
+// the dot, the value label and the headline number — or "—" in the
+// headline if nothing was logged in it.
 export default function TrendChart({
   title,
   unit = "",
@@ -67,6 +70,7 @@ export default function TrendChart({
   formatAxis,
   zeroBaseline = true,
   emptyText = "No data yet for this period.",
+  selectedKey,
 }) {
   const svgRef = useRef(null);
   const [hoverIndex, setHoverIndex] = useState(null);
@@ -89,7 +93,9 @@ export default function TrendChart({
       : "";
 
   const gridSteps = [0, 1, 2, 3].map((i) => yMin + ((yMax - yMin) * i) / 3);
-  const last = points[points.length - 1];
+  // The emphasised point: the selected period if one was asked for (null if
+  // it has no data), otherwise the latest.
+  const focus = selectedKey !== undefined ? points.find((p) => p.key === selectedKey) ?? null : points[points.length - 1];
 
   const handleMove = (e) => {
     if (points.length === 0) return;
@@ -113,11 +119,13 @@ export default function TrendChart({
       <div className={styles.card}>
         <div className={styles.headerRow}>
           <p className={styles.title}>{title}</p>
-          {last && (
+          {focus ? (
             <span className={styles.latestValue}>
-              {formatValue(last.value)}
+              {formatValue(focus.value)}
               {unit}
             </span>
+          ) : (
+            selectedKey !== undefined && points.length > 0 && <span className={styles.latestValue}>—</span>
           )}
         </div>
 
@@ -159,16 +167,27 @@ export default function TrendChart({
                         {p.label}
                       </text>
                     )}
-                    {i === points.length - 1 && <circle className={styles.dot} cx={p.x} cy={p.y} r={5} />}
+                    {p === focus && <circle className={styles.dot} cx={p.x} cy={p.y} r={5} />}
                   </g>
                 );
               })}
 
-              {last && (
-                <text className={styles.endLabel} x={last.x} y={last.y - 12} textAnchor="middle">
-                  {formatValue(last.value)}
-                  {unit}
-                </text>
+              {focus && (
+                <>
+                  {/* A faint marker down to the axis, so the picked period stands out. */}
+                  {selectedKey !== undefined && (
+                    <line className={styles.selectedMarker} x1={focus.x} x2={focus.x} y1={focus.y} y2={PADDING.top + CHART_HEIGHT} />
+                  )}
+                  <text
+                    className={styles.endLabel}
+                    x={Math.min(Math.max(focus.x, PADDING.left + 24), WIDTH - PADDING.right - 24)}
+                    y={focus.y - 12}
+                    textAnchor="middle"
+                  >
+                    {formatValue(focus.value)}
+                    {unit}
+                  </text>
+                </>
               )}
 
               {hoverIndex != null && (

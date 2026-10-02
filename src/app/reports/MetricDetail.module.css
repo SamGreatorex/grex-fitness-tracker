@@ -131,6 +131,15 @@
   border-bottom: 0;
 }
 
+.tableTitlePeriod {
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.tableNote {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
 .table .num {
   text-align: right;
   font-variant-numeric: tabular-nums;

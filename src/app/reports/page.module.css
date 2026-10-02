@@ -18,10 +18,79 @@
   font-size: 0.9rem;
 }
 
+/* Weekly/Monthly/Yearly + ‹ This week ›. */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
 .granularityRow {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+}
+
+.periodNav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.periodArrow {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.periodArrow:hover:not(:disabled),
+.periodArrow:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-text);
+  outline: none;
+}
+
+.periodArrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.periodTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 9.5rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* "28 Sep – 4 Oct" under "This week". */
+.periodRange {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.periodToday {
+  border: 0;
+  background: none;
+  padding: 0 0.25rem;
+  color: var(--accent-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.periodToday:hover {
+  text-decoration: underline;
 }
 
 .granularityButton {

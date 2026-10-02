@@ -1,23 +1,26 @@
 import styles from "./BodyAreaCard.module.css";
 import Sparkline from "./Sparkline";
-import { trendDelta } from "../lib/reports";
+import { changeAt, pointAt, trendDelta } from "../lib/reports";
 
 // Stat-tile form: label + value + signed delta (up is good here — more
 // weight means more strength) + a muted sparkline of the period history.
-export default function BodyAreaCard({ area, series }) {
-  const latest = series[series.length - 1];
-  const delta = trendDelta(series);
+// With `selectedKey`, shows that period (vs the one before it with data)
+// rather than the latest — "—" if this area wasn't trained then.
+export default function BodyAreaCard({ area, series, selectedKey }) {
+  const picked = selectedKey !== undefined;
+  const point = picked ? pointAt(series, selectedKey) : series[series.length - 1];
+  const delta = picked ? changeAt(series, selectedKey)?.pct ?? null : trendDelta(series);
 
   const deltaClass =
     delta == null || Math.abs(delta) < 1 ? styles.deltaFlat : delta > 0 ? styles.deltaUp : styles.deltaDown;
-  const deltaText = delta == null ? "New" : `${delta > 0 ? "+" : ""}${delta.toFixed(0)}%`;
+  const deltaText = !point ? "None" : delta == null ? "New" : `${delta > 0 ? "+" : ""}${delta.toFixed(0)}%`;
 
   return (
     <div className="vizRoot">
       <div className={styles.card}>
         <p className={styles.label}>{area}</p>
         <div className={styles.valueRow}>
-          <span className={styles.value}>{latest.value.toFixed(1)}</span>
+          <span className={styles.value}>{point ? point.value.toFixed(1) : "—"}</span>
           <span className={styles.unit}>kg avg</span>
           <span className={`${styles.delta} ${deltaClass}`}>{deltaText}</span>
         </div>

@@ -18,8 +18,8 @@ export default function WeightReport() {
 
   if (!ready) return null;
 
-  const weightSeriesFor = (g) =>
-    bodyMetricSeries(bodyEntries ?? [], (e) => (e.weightKg != null ? kgToChartWeight(e.weightKg, weightUnit) : null), g);
+  const weightSeriesFor = (g, range) =>
+    bodyMetricSeries(bodyEntries ?? [], (e) => (e.weightKg != null ? kgToChartWeight(e.weightKg, weightUnit) : null), g, range);
   const hasWeighIns = bodyEntries?.some((e) => e.weightKg != null);
 
   return (
@@ -34,7 +34,7 @@ export default function WeightReport() {
           to see it here.
         </p>
       ) : (
-        <MetricDetail title="Body weight" seriesFor={weightSeriesFor} granularity={granularity} {...bodyWeightFormat(weightUnit)} />
+        <MetricDetail title="Body weight" seriesFor={weightSeriesFor} granularity={granularity} date={data.date} {...bodyWeightFormat(weightUnit)} />
       )}
     </ReportShell>
   );

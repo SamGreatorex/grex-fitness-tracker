@@ -27,14 +27,15 @@ export default function MeasurementsReport() {
 
   const logged = MEASUREMENTS.filter(({ key }) => bodyEntries?.some((e) => e.measurements?.[key] != null));
   const measure = logged.find((m) => m.key === measureKey) ?? logged.find((m) => m.key === "waist") ?? logged[0];
-  const measureSeriesFor = (g) =>
+  const measureSeriesFor = (g, range) =>
     bodyMetricSeries(
       bodyEntries ?? [],
       (e) => {
         const cm = e.measurements?.[measure.key];
         return cm != null ? cmToDisplayLength(cm, lengthUnit) : null;
       },
-      g
+      g,
+      range
     );
 
   return (
@@ -69,6 +70,7 @@ export default function MeasurementsReport() {
             title={measure.label}
             seriesFor={measureSeriesFor}
             granularity={granularity}
+            date={data.date}
             {...lengthFormat(lengthUnit)}
           />
         </>

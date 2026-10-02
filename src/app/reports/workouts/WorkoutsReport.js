@@ -53,8 +53,9 @@ export default function WorkoutsReport() {
           <MetricDetail
             key={metric.key}
             title={metric.label}
-            seriesFor={(g) => metric.series(sessions, g)}
+            seriesFor={(g, range) => metric.series(sessions, g, range)}
             granularity={granularity}
+            date={data.date}
             {...metric.format}
           />
         </>

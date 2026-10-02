@@ -80,6 +80,14 @@
   font-weight: 700;
 }
 
+/* Drop line under the selected period's point. */
+.selectedMarker {
+  stroke: var(--series-1);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.6;
+}
+
 .crosshair {
   stroke: var(--baseline);
   stroke-width: 1;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
 import { api } from "../../lib/apiClient";
+import { DATE_PATTERN, periodKey, todayDate } from "../../lib/reports";
 
 export const GRANULARITIES = [
   { key: "week", label: "Weekly", period: "week" },
@@ -30,6 +31,13 @@ export function useReportData() {
 
   const requested = searchParams.get("period");
   const granularity = GRANULARITIES.some((g) => g.key === requested) ? requested : "week";
+  // The period being looked at: whichever week / month / year contains
+  // ?date= (default today). Never in the future.
+  const requestedDate = searchParams.get("date");
+  const today = todayDate();
+  const date = requestedDate && DATE_PATTERN.test(requestedDate) && requestedDate <= today ? requestedDate : today;
+  const selectedKey = periodKey(date, granularity);
+  const currentKey = periodKey(today, granularity);
 
   useEffect(() => {
     if (!sessionLoading && !user) router.replace("/login");
@@ -55,14 +63,24 @@ export function useReportData() {
     })();
   }, [user]);
 
-  // Swaps the period in the URL without adding a history entry per click.
-  const setGranularity = (key) => {
+  // Updates the URL without adding a history entry per click.
+  const setParam = (name, value) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("period", key);
+    if (value == null) params.delete(name);
+    else params.set(name, value);
     router.replace(`?${params.toString()}`, { scroll: false });
   };
+  const setGranularity = (key) => setParam("period", key);
+  // Today is the default, so it's left out of the URL.
+  const setDate = (next) => setParam("date", next === today ? null : next);
 
   return {
+    date,
+    setDate,
+    selectedKey,
+    currentKey,
+    // Query string carrying the period and date into another report page.
+    query: `period=${granularity}${date === today ? "" : `&date=${date}`}`,
     ready: !sessionLoading && !!user,
     profile,
     sessions,

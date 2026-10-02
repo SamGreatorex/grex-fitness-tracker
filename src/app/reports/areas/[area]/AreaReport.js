@@ -17,14 +17,14 @@ export default function AreaReport() {
 
   if (!ready) return null;
 
-  const seriesFor = (g) => bodyAreaWeightSeries(sessions ?? [], exerciseLibrary, g)[area] ?? [];
+  const seriesFor = (g, range) => bodyAreaWeightSeries(sessions ?? [], exerciseLibrary, g, range)[area] ?? [];
 
   return (
     <ReportShell title={area} subtitle={`Average weight per set on exercises that mainly work your ${area.toLowerCase()}.`} data={data}>
       {!sessions ? (
         <p className={styles.empty}>Loading…</p>
       ) : (
-        <MetricDetail title="Average weight per set" seriesFor={seriesFor} granularity={granularity} {...liftedFormat({ decimals: 1 })} />
+        <MetricDetail title="Average weight per set" seriesFor={seriesFor} granularity={granularity} date={data.date} {...liftedFormat({ decimals: 1 })} />
       )}
     </ReportShell>
   );

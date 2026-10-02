@@ -5,7 +5,7 @@ import Link from "next/link";
 import AppHeader from "../../components/AppHeader";
 import TrendChart from "../../components/TrendChart";
 import BodyAreaCard from "../../components/BodyAreaCard";
-import { GranularityToggle } from "./ReportShell";
+import { ReportControls } from "./ReportShell";
 import { useReportData } from "./useReportData";
 import { bodyWeightFormat, lengthFormat } from "./formatters";
 import { WORKOUT_METRICS } from "./workouts/WorkoutsReport";
@@ -27,11 +27,13 @@ function ReportLink({ href, children }) {
 // The reports overview: a chart per report, each opening its detail view
 // (gained/lost since the start and week / month / year, plus a breakdown).
 export default function ReportsOverview() {
-  const { ready, profile, sessions, exerciseLibrary, bodyEntries, error, granularity, setGranularity } = useReportData();
+  const data = useReportData();
+  const { ready, profile, sessions, exerciseLibrary, bodyEntries, error, granularity, selectedKey } = data;
   const weightUnit = profile?.weightUnit;
   const lengthUnit = lengthUnitFor(profile);
   const [measurementKey, setMeasurementKey] = useState(null);
-  const q = `period=${granularity}`;
+  // Carries the period and date into the detail pages.
+  const q = data.query;
 
   const bodyAreas = useMemo(
     () => (sessions ? bodyAreaWeightSeries(sessions, exerciseLibrary, granularity) : {}),
@@ -85,7 +87,7 @@ export default function ReportsOverview() {
 
         {error && <p className={styles.errorText}>{error}</p>}
 
-        <GranularityToggle granularity={granularity} onChange={setGranularity} />
+        <ReportControls data={data} />
 
         <h2 className={styles.sectionTitle}>Body</h2>
         {!bodyEntries ? (
@@ -103,6 +105,7 @@ export default function ReportsOverview() {
               <TrendChart
                 title={`Body weight (${stones ? "st" : "kg"})`}
                 data={weightSeries}
+                selectedKey={selectedKey}
                 emptyText="No weigh-ins logged yet."
                 {...bodyWeightFormat(weightUnit).chart}
               />
@@ -128,6 +131,7 @@ export default function ReportsOverview() {
                   <TrendChart
                     title={`${selectedMeasurement.label} (${lengthUnit})`}
                     data={measurementSeries}
+                    selectedKey={selectedKey}
                     {...lengthFormat(lengthUnit).chart}
                   />
                 </ReportLink>
@@ -152,7 +156,12 @@ export default function ReportsOverview() {
           <>
             {WORKOUT_METRICS.map((metric) => (
               <ReportLink key={metric.key} href={`/reports/workouts?${q}&metric=${metric.key}`}>
-                <TrendChart title={metric.label} data={metric.series(sessions, granularity)} {...metric.format.chart} />
+                <TrendChart
+                  title={metric.label}
+                  data={metric.series(sessions, granularity)}
+                  selectedKey={selectedKey}
+                  {...metric.format.chart}
+                />
               </ReportLink>
             ))}
 
@@ -165,7 +174,7 @@ export default function ReportsOverview() {
               <div className={styles.bodyAreaGrid}>
                 {bodyAreaEntries.map(([area, series]) => (
                   <Link key={area} href={`/reports/areas/${encodeURIComponent(area)}?${q}`} className={styles.areaLink}>
-                    <BodyAreaCard area={area} series={series} />
+                    <BodyAreaCard area={area} series={series} selectedKey={selectedKey} />
                   </Link>
                 ))}
               </div>

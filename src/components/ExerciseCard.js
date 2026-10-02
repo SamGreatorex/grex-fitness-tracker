@@ -267,7 +267,7 @@ export default function ExerciseCard({
                   className={styles.input}
                   type="number"
                   inputMode="decimal"
-                  step="0.5"
+                  step="0.1"
                   min="0"
                   placeholder={last ? `${setWeightIn(last, weightUnit)}` : "0"}
                   value={set.weight}
@@ -279,6 +279,7 @@ export default function ExerciseCard({
                   className={styles.input}
                   type="number"
                   inputMode="numeric"
+                  step="1"
                   min="0"
                   placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
                   value={set.reps}

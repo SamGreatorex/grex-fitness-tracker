@@ -161,7 +161,7 @@ export default function SessionEditor({ session, userId, onSaved, onCancel }) {
                     type="number"
                     inputMode="decimal"
                     min="0"
-                    step="0.5"
+                    step="0.1"
                     required
                     value={set.weight}
                     onChange={(e) => updateSet(exIndex, setIndex, "weight", e.target.value)}

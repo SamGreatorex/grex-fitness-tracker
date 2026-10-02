@@ -406,7 +406,7 @@ export default function ProgrammeBuilder({
                             inputMode="decimal"
                             min={0}
                             max={500}
-                            step="0.5"
+                            step="0.1"
                             value={ex.targetWeight}
                             onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
                             placeholder="—"

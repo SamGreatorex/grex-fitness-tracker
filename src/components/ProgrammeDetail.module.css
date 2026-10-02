@@ -170,7 +170,35 @@
 
 .dayButtonGroup {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.6rem;
+}
+
+/* "Week 1 · completed" above the day list, with a way back to this week. */
+.weekHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.weekHeadingTitle {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.weekHint {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+
+.notLogged {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  opacity: 0.5;
 }
 
 .dayButtonGroup .dayButton {

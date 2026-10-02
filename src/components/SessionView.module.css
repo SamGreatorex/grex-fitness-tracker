@@ -71,6 +71,41 @@
   font-size: 0.9rem;
 }
 
+.editButton {
+  height: 48px;
+  width: 100%;
+  margin-top: 0.75rem;
+  border-radius: 10px;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  background: var(--accent-hover);
+}
+
+/* Editing a logged workout. */
+.editWrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 1rem;
+  width: 100%;
+}
+
+.editTitle {
+  font-size: 1.3rem;
+  margin: 0 0 0.25rem;
+}
+
+.editMeta {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
 .restartButton {
   height: 48px;
   width: 100%;

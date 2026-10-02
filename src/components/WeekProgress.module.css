@@ -30,3 +30,25 @@
   color: var(--accent-text);
   opacity: 1;
 }
+
+/* A week you can open to look back at. */
+.dotButton {
+  padding: 0;
+  background-color: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.dotButton.dotDone {
+  background: #16a34a;
+}
+
+.dotButton:hover {
+  transform: scale(1.08);
+}
+
+/* The week whose days are listed below. */
+.dotSelected {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+}

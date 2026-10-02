@@ -28,7 +28,12 @@ export default function ProgrammeDetail({ clientName }) {
   const [program, setProgram] = useState(null);
   const [run, setRun] = useState(null);
   const [lastRun, setLastRun] = useState(null);
-  const [sessionByDayId, setSessionByDayId] = useState({});
+  // The latest logged session for each day of each week of the run being
+  // shown: { [week]: { [dayId]: session } }.
+  const [sessionsByWeek, setSessionsByWeek] = useState({});
+  // The week whose days are listed — any week reached so far can be picked
+  // to look back at (and correct) what was logged. null = the current week.
+  const [pickedWeek, setPickedWeek] = useState(null);
   const [starting, setStarting] = useState(false);
   const [restarting, setRestarting] = useState(false);
   const [error, setError] = useState("");
@@ -49,18 +54,21 @@ export default function ProgrammeDetail({ clientName }) {
       setRun(activeRun);
       setLastRun(runs[0] || null);
 
-      if (activeRun) {
-        const { sessions } = await api.get("/api/sessions", { runId: activeRun.runId, ...who });
-        const thisWeek = sessions
-          .filter((s) => s.week === activeRun.currentWeek)
-          .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
-        const latestByDay = {};
-        for (const session of thisWeek) {
-          if (!latestByDay[session.dayId]) latestByDay[session.dayId] = session;
+      // The active run — or, once a programme's finished, the run just
+      // completed, so its weeks can still be looked back on and corrected.
+      const shownRun = activeRun ?? (runs[0]?.status === "completed" ? runs[0] : null);
+      if (shownRun) {
+        const { sessions } = await api.get("/api/sessions", { runId: shownRun.runId, ...who });
+        // Newest first, so the first one seen per week/day is the latest.
+        sessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+        const byWeek = {};
+        for (const session of sessions) {
+          const week = (byWeek[session.week] ??= {});
+          if (!week[session.dayId]) week[session.dayId] = session;
         }
-        setSessionByDayId(latestByDay);
+        setSessionsByWeek(byWeek);
       } else {
-        setSessionByDayId({});
+        setSessionsByWeek({});
       }
     } catch (err) {
       setError(err.message || "Could not load program.");
@@ -133,6 +141,19 @@ export default function ProgrammeDetail({ clientName }) {
   const canStart = !run && !viewOnly;
   const dayHref = (day) => `${basePath}/day/${day.dayId}?runId=${encodeURIComponent(run.runId)}&week=${run.currentWeek}`;
 
+  // Weeks that can be picked: every one reached so far in the active run, or
+  // every week of a finished one.
+  const finishedRun = !run && lastRun?.status === "completed" ? lastRun : null;
+  const currentWeek = run ? Math.min(run.currentWeek, program.durationWeeks) : null;
+  const lastReachedWeek = run ? currentWeek : finishedRun ? program.durationWeeks : 0;
+  const shownWeek = Math.min(pickedWeek ?? currentWeek ?? lastReachedWeek, lastReachedWeek);
+  // Looking back at an earlier week (or a finished programme): its logged
+  // days can be viewed and edited, but nothing new is started there.
+  const lookingBack = shownWeek > 0 && shownWeek !== currentWeek;
+  const sessionByDayId = sessionsByWeek[shownWeek] ?? {};
+  const sessionHref = (session, edit = false) =>
+    `${basePath}/sessions/${encodeURIComponent(session.sessionId)}${edit ? "?edit=1" : ""}`;
+
   return (
     <>
       <AppHeader backHref={backHref} backLabel={backLabel} />
@@ -168,8 +189,13 @@ export default function ProgrammeDetail({ clientName }) {
         {error && <p>{error}</p>}
 
         <div className={styles.progressRow}>
-          {run ? (
-            <WeekProgress durationWeeks={program.durationWeeks} currentWeek={run.currentWeek} />
+          {run || finishedRun ? (
+            <WeekProgress
+              durationWeeks={program.durationWeeks}
+              currentWeek={run ? run.currentWeek : program.durationWeeks + 1}
+              selectedWeek={shownWeek}
+              onSelectWeek={(week) => setPickedWeek(week)}
+            />
           ) : (
             <span />
           )}
@@ -201,16 +227,34 @@ export default function ProgrammeDetail({ clientName }) {
           </div>
         )}
 
+        {shownWeek > 0 && (
+          <div className={styles.weekHeading}>
+            <span className={styles.weekHeadingTitle}>
+              Week {shownWeek}
+              {shownWeek === currentWeek ? " · this week" : finishedRun ? "" : " · completed"}
+            </span>
+            {lookingBack && run && (
+              <button type="button" className={styles.restartLink} onClick={() => setPickedWeek(null)}>
+                Back to week {currentWeek}
+              </button>
+            )}
+          </div>
+        )}
+        {lookingBack && !viewOnly && (
+          <p className={styles.weekHint}>Open a day to see what you logged, or tap Edit to correct it.</p>
+        )}
+
         <div className={styles.days}>
           {program.days.map((day) => {
             const doneSession = sessionByDayId[day.dayId];
             const viewButton = doneSession && (
-              <button
-                type="button"
-                className={styles.dayButton}
-                onClick={() => router.push(`${basePath}/sessions/${encodeURIComponent(doneSession.sessionId)}`)}
-              >
+              <button type="button" className={styles.dayButton} onClick={() => router.push(sessionHref(doneSession))}>
                 View
+              </button>
+            );
+            const editButton = doneSession && (
+              <button type="button" className={styles.dayButton} onClick={() => router.push(sessionHref(doneSession, true))}>
+                Edit
               </button>
             );
             return (
@@ -241,6 +285,17 @@ export default function ProgrammeDetail({ clientName }) {
 
                 {viewOnly ? (
                   viewButton
+                ) : lookingBack ? (
+                  // An earlier week: view or correct what was logged; a day
+                  // that wasn't done can't be started back there.
+                  doneSession ? (
+                    <div className={styles.dayButtonGroup}>
+                      {viewButton}
+                      {editButton}
+                    </div>
+                  ) : (
+                    <span className={styles.notLogged}>Not logged</span>
+                  )
                 ) : !run ? (
                   <button type="button" className={styles.dayButton} disabled>
                     Start program first
@@ -248,6 +303,7 @@ export default function ProgrammeDetail({ clientName }) {
                 ) : doneSession ? (
                   <div className={styles.dayButtonGroup}>
                     {viewButton}
+                    {editButton}
                     <button type="button" className={styles.dayButton} onClick={() => router.push(dayHref(day))}>
                       Restart
                     </button>

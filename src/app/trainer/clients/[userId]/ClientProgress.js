@@ -7,7 +7,7 @@ import WeekProgress from "../../../../components/WeekProgress";
 import { clientSummary, programProgress, relativeDay } from "../../../../lib/clientProgress";
 import { averageEffortOf } from "../../../../lib/sessionStats";
 import { averageEffortSeries, bodyMetricSeries, totalWeightSeries } from "../../../../lib/reports";
-import { WEIGHT_UNITS, chartWeightToKg, formatWeight, kgToChartWeight } from "../../../../lib/units";
+import { WEIGHT_UNITS, chartWeightToKg, formatSetWeight, formatWeight, kgToChartWeight } from "../../../../lib/units";
 import { formatCardio } from "../../../../lib/exerciseTypes";
 import { isTrainerLed } from "../../../../lib/programLead";
 import styles from "./ClientProgress.module.css";
@@ -241,7 +241,7 @@ function RecentWorkouts({ sessions, programs, runs }) {
                         )}
                         {(ex.sets ?? []).map((set, j) => (
                           <span key={j} className={styles.set}>
-                            {set.reps ?? "—"} × {set.weight ?? 0} kg{set.effort != null ? ` · ${set.effort}/10` : ""}
+                            {set.reps ?? "—"} × {formatSetWeight(set)}{set.effort != null ? ` · ${set.effort}/10` : ""}
                           </span>
                         ))}
                       </span>

@@ -8,6 +8,7 @@ import { ROLES } from "../../../../lib/profile";
 import { slugify } from "../../../../lib/slugify";
 import { isCardio } from "../../../../lib/exerciseTypes";
 import { exerciseUsage, listAllPrograms } from "../../../../lib/programs";
+import { exerciseNoteKey } from "../../../../lib/exerciseNotes";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -30,10 +31,25 @@ async function switchInProgram(program, slug, replacement) {
       slugify(e.name) === slug ? { ...e, name: replacement.name, videoLink: null } : e
     ),
   }));
+
+  // Personal notes are keyed by day + exercise name, so move each one over
+  // to the replacement (unless that day already has a note for it).
+  let exerciseNotes = program.exerciseNotes;
+  if (exerciseNotes) {
+    exerciseNotes = { ...exerciseNotes };
+    for (const day of program.days) {
+      // `slug` is already slugified; slugifying it again leaves it as is.
+      const from = exerciseNoteKey(day.dayId, slug);
+      const to = exerciseNoteKey(day.dayId, replacement.name);
+      if (exerciseNotes[from] && !exerciseNotes[to]) exerciseNotes[to] = exerciseNotes[from];
+      delete exerciseNotes[from];
+    }
+  }
+
   await ddb.send(
     new PutCommand({
       TableName: TABLES.programs,
-      Item: { ...program, days, updatedAt: new Date().toISOString() },
+      Item: { ...program, days, ...(exerciseNotes && { exerciseNotes }), updatedAt: new Date().toISOString() },
       // Seeded programmes may never have been updated.
       ConditionExpression: program.updatedAt ? "#updatedAt = :prev" : "attribute_not_exists(#updatedAt)",
       ExpressionAttributeNames: { "#updatedAt": "updatedAt" },

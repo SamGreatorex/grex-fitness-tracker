@@ -56,6 +56,46 @@ export function stLbToKg(st, lb) {
   return round1(((s ?? 0) * 14 + (l ?? 0)) * KG_PER_LB);
 }
 
+// ---- Lifting weights ----
+// A strength set's weight is always stored in kg (set.weight) — totals,
+// averages and reports all use that. An exercise can be logged in lb (e.g.
+// a machine labelled in pounds): those sets also keep unit: "lb" and the
+// number actually entered (weightEntered), so they show — and prefill next
+// time — exactly as typed.
+export const LIFT_UNITS = { KG: "kg", LB: "lb" };
+
+// kg to 2 decimals, so lb → kg → lb round-trips (100 lb → 45.36 kg → 100 lb).
+export function lbToKg(lb) {
+  return Math.round(lb * KG_PER_LB * 100) / 100;
+}
+
+export function kgToLb(kg) {
+  return round1(kg / KG_PER_LB);
+}
+
+// The weight to show for a logged set in `unit` — the exact number entered
+// when it was logged in that unit, otherwise converted from kg.
+export function setWeightIn(set, unit) {
+  if (set?.weight == null) return null;
+  if (unit === LIFT_UNITS.LB) return set.unit === LIFT_UNITS.LB && set.weightEntered != null ? set.weightEntered : kgToLb(set.weight);
+  return set.weight;
+}
+
+// A logged set's weight for display: "100 lb (45.4 kg)" if logged in lb,
+// otherwise "45 kg".
+export function formatSetWeight(set) {
+  const kg = `${round1(set?.weight ?? 0)} kg`;
+  return set?.unit === LIFT_UNITS.LB ? `${setWeightIn(set, LIFT_UNITS.LB)} lb (${kg})` : kg;
+}
+
+// Converts a typed weight between kg and lb ("" stays "").
+export function convertTypedWeight(value, from, to) {
+  if (from === to || value === "" || value == null) return value;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return value;
+  return String(to === LIFT_UNITS.LB ? kgToLb(n) : round1(n * KG_PER_LB));
+}
+
 export const LENGTH_UNITS = { CM: "cm", IN: "in" };
 
 // Unit for tape measurements: the user's explicit choice, or — if they've

@@ -9,6 +9,7 @@ import WorkoutSummary from "./WorkoutSummary";
 import { averageEffortOf, averageWeightOf } from "../lib/sessionStats";
 import { effortColor } from "../lib/effort";
 import { formatCardio } from "../lib/exerciseTypes";
+import { formatSetWeight } from "../lib/units";
 import { isTrainerLed, programmeBasePath } from "../lib/programLead";
 import styles from "./SessionView.module.css";
 
@@ -117,7 +118,7 @@ export default function SessionView() {
                   <div key={i} className={styles.setChip}>
                     <span className={styles.setIndex}>{i + 1}</span>
                     <span>
-                      {set.weight}kg × {set.reps}
+                      {formatSetWeight(set)} × {set.reps}
                     </span>
                     {set.effort != null && (
                       <span

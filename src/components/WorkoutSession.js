@@ -16,6 +16,8 @@ import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../lib/
 import { useWakeLock } from "../lib/useWakeLock";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import { programmeBasePath } from "../lib/programLead";
+import { LIFT_UNITS, convertTypedWeight, lbToKg, setWeightIn } from "../lib/units";
+import { exerciseNoteKey } from "../lib/exerciseNotes";
 import styles from "./WorkoutSession.module.css";
 
 // Walks backward from `index` through this exercise's sets (in the current
@@ -88,11 +90,22 @@ function numericReps(targetReps) {
   return /^\d+$/.test(String(targetReps ?? "")) ? Number(targetReps) : null;
 }
 
-function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startReps }) {
+// The unit to enter this exercise's weights in: lb if it was last logged in
+// lb (e.g. a machine labelled in pounds), otherwise kg.
+function unitFromHistory(lastSets) {
+  return lastSets?.some((s) => s.unit === LIFT_UNITS.LB) ? LIFT_UNITS.LB : LIFT_UNITS.KG;
+}
+
+// Rows hold weights as typed, in `unit`; they're converted to kg on save.
+function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startReps, unit = LIFT_UNITS.KG }) {
   return Array.from({ length: targetSets }, (_, i) => {
     const last = lastSets?.[i] ?? lastSets?.[lastSets.length - 1];
     return {
-      weight: last ? String(last.weight) : startWeight != null ? String(startWeight) : "",
+      weight: last
+        ? String(setWeightIn(last, unit))
+        : startWeight != null
+          ? convertTypedWeight(String(startWeight), LIFT_UNITS.KG, unit)
+          : "",
       reps: last ? String(last.reps) : startReps != null ? String(startReps) : "",
       completed: false,
       effort: null,
@@ -135,6 +148,12 @@ export default function WorkoutSession() {
   const [exerciseLibraryList, setExerciseLibraryList] = useState([]);
   const [sessionsCache, setSessionsCache] = useState([]);
   const [setsByExercise, setSetsByExercise] = useState(null);
+  // Per strength exercise: the unit its weights are entered in ("kg" | "lb").
+  // Stored weights are always kg; this is only how they're typed and shown.
+  const [weightUnits, setWeightUnits] = useState({});
+  // Personal notes on this programme's exercises (program.exerciseNotes),
+  // kept here so a saved note shows straight away.
+  const [exerciseNotes, setExerciseNotes] = useState({});
   const [startedAt] = useState(() => Date.now());
   // Independent of each other: the rest countdown is a non-blocking
   // floating overlay (browsing the rest of the app stays possible while
@@ -191,6 +210,7 @@ export default function WorkoutSession() {
 
         const initial = {};
         const lastSetsByExerciseId = {};
+        const units = {};
         for (const exercise of foundDay.exercises) {
           if (isCardio(exercise)) {
             const lastCardio = findLastCardioForExercise(sessions, exercise.name);
@@ -204,6 +224,7 @@ export default function WorkoutSession() {
           }
           const lastSets = findLastSetsForExercise(sessions, exercise.name);
           lastSetsByExerciseId[exercise.exerciseId] = lastSets;
+          units[exercise.exerciseId] = unitFromHistory(lastSets);
 
           initial[exercise.exerciseId] = buildSetRows({
             targetSets: exercise.targetSets,
@@ -212,16 +233,19 @@ export default function WorkoutSession() {
             // First-time prefill comes from what the trainer set in the programme.
             startWeight: exercise.targetWeight,
             startReps: numericReps(exercise.targetReps),
+            unit: units[exercise.exerciseId],
           });
         }
 
         setProgram(program);
+        setExerciseNotes(program.exerciseNotes ?? {});
         setCanEdit(!!canChangeExercises);
         setDay(foundDay);
         setLastSetsByExerciseId(lastSetsByExerciseId);
         setExerciseLibrary(libraryBySlug);
         setExerciseLibraryList(exercises);
         setSessionsCache(sessions);
+        setWeightUnits(units);
         setSetsByExercise(initial);
       } catch (err) {
         setError(err.message || "Could not load workout.");
@@ -314,6 +338,8 @@ export default function WorkoutSession() {
     }
 
     const lastSets = findLastSetsForExercise(sessionsCache, newExercise.name);
+    // The swapped-in exercise uses its own unit (e.g. lb if its machine is).
+    const unit = unitFromHistory(lastSets);
 
     setDay((prev) => ({
       ...prev,
@@ -322,6 +348,7 @@ export default function WorkoutSession() {
       ),
     }));
     setLastSetsByExerciseId((prev) => ({ ...prev, [exerciseId]: lastSets }));
+    setWeightUnits((prev) => ({ ...prev, [exerciseId]: unit }));
     setSetsByExercise((prev) => ({
       ...prev,
       [exerciseId]: buildSetRows({
@@ -332,6 +359,7 @@ export default function WorkoutSession() {
         // original exercise, so it doesn't carry over to the swapped-in one.
         startWeight: null,
         startReps: numericReps(dayExercise.targetReps),
+        unit,
       }),
     }));
   };
@@ -363,7 +391,9 @@ export default function WorkoutSession() {
       }));
     } else {
       const lastSets = findLastSetsForExercise(sessionsCache, exercise.name);
+      const unit = unitFromHistory(lastSets);
       setLastSetsByExerciseId((prev) => ({ ...prev, [exercise.exerciseId]: lastSets }));
+      setWeightUnits((prev) => ({ ...prev, [exercise.exerciseId]: unit }));
       setSetsByExercise((prev) => ({
         ...prev,
         [exercise.exerciseId]: buildSetRows({
@@ -372,6 +402,7 @@ export default function WorkoutSession() {
           lastSets,
           startWeight: null,
           startReps: numericReps(exercise.targetReps),
+          unit,
         }),
       }));
     }
@@ -380,6 +411,32 @@ export default function WorkoutSession() {
 
   const addedCounts = {};
   for (const e of day.exercises) addedCounts[e.name] = (addedCounts[e.name] ?? 0) + 1;
+
+  // Saves the note on an exercise for this day straight away (not on
+  // Finish), so it's kept even if the workout isn't. Throws on failure, for
+  // the note editor to show.
+  const saveExerciseNote = async (exerciseName, text) => {
+    const { note } = await api.put(`/api/programs/${programId}/notes`, { dayId, exerciseName, text });
+    const key = exerciseNoteKey(dayId, exerciseName);
+    setExerciseNotes((prev) => {
+      const next = { ...prev };
+      if (note) next[key] = note;
+      else delete next[key];
+      return next;
+    });
+  };
+
+  // Switches one exercise between kg and lb, converting what's already in its
+  // weight boxes so they still describe the same load.
+  const onWeightUnitChange = (exerciseId, unit) => {
+    const from = weightUnits[exerciseId] ?? LIFT_UNITS.KG;
+    if (from === unit) return;
+    setWeightUnits((prev) => ({ ...prev, [exerciseId]: unit }));
+    setSetsByExercise((prev) => ({
+      ...prev,
+      [exerciseId]: prev[exerciseId].map((s) => ({ ...s, weight: convertTypedWeight(s.weight, from, unit) })),
+    }));
+  };
 
   const onSetField = (exerciseId, setIndex, field, value) => {
     setSetsByExercise((prev) => ({
@@ -481,6 +538,7 @@ export default function WorkoutSession() {
           // back to the last time it was rated for this exact exercise
           // (any day), rather than saving it blank.
           const historicalEffort = lastLoggedEffort(lastSetsByExerciseId[exercise.exerciseId]);
+          const inLb = weightUnits[exercise.exerciseId] === LIFT_UNITS.LB;
 
           return {
             exerciseId: exercise.exerciseId,
@@ -488,13 +546,19 @@ export default function WorkoutSession() {
             // Weight, reps and effort each still carry forward from the
             // last value entered among today's logged sets if left unset,
             // so nothing needs re-entering unless it actually changed.
-            sets: completedSets.map((s, i) => ({
-              weight: Number(carryForwardValue(completedSets, i, "weight")) || 0,
-              reps: Number(carryForwardValue(completedSets, i, "reps")) || 0,
-              effort: carryForwardValue(completedSets, i, "effort") ?? historicalEffort,
-              restSeconds: s.restSeconds ?? exercise.restSeconds,
-              completedAt: new Date().toISOString(),
-            })),
+            sets: completedSets.map((s, i) => {
+              const entered = Number(carryForwardValue(completedSets, i, "weight")) || 0;
+              return {
+                // Always kg, so totals and reports need no conversion. Sets
+                // typed in lb also keep the unit and the exact number typed.
+                weight: inLb ? lbToKg(entered) : entered,
+                ...(inLb && { unit: LIFT_UNITS.LB, weightEntered: entered }),
+                reps: Number(carryForwardValue(completedSets, i, "reps")) || 0,
+                effort: carryForwardValue(completedSets, i, "effort") ?? historicalEffort,
+                restSeconds: s.restSeconds ?? exercise.restSeconds,
+                completedAt: new Date().toISOString(),
+              };
+            }),
           };
         })
         .filter(Boolean);
@@ -577,6 +641,10 @@ export default function WorkoutSession() {
             onApplyRestToAll={(secs) => onApplyRestToAll(exercise.exerciseId, secs)}
             showRest={!untimed}
             onSwitchExercise={canEdit ? (newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise) : undefined}
+            weightUnit={weightUnits[exercise.exerciseId] ?? LIFT_UNITS.KG}
+            onWeightUnitChange={(unit) => onWeightUnitChange(exercise.exerciseId, unit)}
+            note={exerciseNotes[exerciseNoteKey(dayId, exercise.name)] ?? null}
+            onSaveNote={(text) => saveExerciseNote(exercise.name, text)}
           />
         ))}
 

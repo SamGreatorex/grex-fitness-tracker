@@ -6,8 +6,10 @@ import { slugify } from "../lib/slugify";
 import { effortColor } from "../lib/effort";
 import RestPicker from "./RestPicker";
 import SwitchExerciseDialog from "./SwitchExerciseDialog";
+import ExerciseNote from "./ExerciseNote";
 import { formatCardio, isCardio } from "../lib/exerciseTypes";
 import { stripStepNumber } from "../lib/exerciseText";
+import { LIFT_UNITS, setWeightIn } from "../lib/units";
 
 // Vimeo links can be turned into a real thumbnail image via vumbnail.com
 // (no API key needed). Other sources (e.g. jamessmithacademy course pages)
@@ -74,6 +76,15 @@ export default function ExerciseCard({
   onSwitchExercise,
   // Off for untimed (trainer-led) workouts — there's no rest countdown.
   showRest = true,
+  // The unit this exercise's weights are typed in ("kg" | "lb"), and a
+  // callback to switch it — e.g. for a machine labelled in pounds. Weights
+  // are saved in kg either way.
+  weightUnit = LIFT_UNITS.KG,
+  onWeightUnitChange,
+  // The personal note on this exercise for this programme day, and a
+  // callback to save it (empty text clears it).
+  note,
+  onSaveNote,
 }) {
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
@@ -193,13 +204,33 @@ export default function ExerciseCard({
         </div>
       </div>
 
+      <ExerciseNote note={note} onSave={onSaveNote} />
+
       {cardio ? (
         <CardioRow row={sets[0]} last={lastSets} onSetField={onSetField} onLog={() => onLogSet(0)} onEditEffort={() => onEditEffort(0)} />
       ) : (
         <>
           <div className={`${styles.setsHeader} ${showRest ? "" : styles.noRest}`}>
             <span>Set</span>
-            <span>Weight (kg)</span>
+            <span className={styles.weightHeader}>
+              <span className={styles.weightLabel}>Weight{onWeightUnitChange ? "" : ` (${weightUnit})`}</span>
+              {onWeightUnitChange && (
+                <span className={styles.unitToggle} role="group" aria-label={`Weight unit for ${exercise.name}`}>
+                  {[LIFT_UNITS.KG, LIFT_UNITS.LB].map((unit) => (
+                    <button
+                      key={unit}
+                      type="button"
+                      aria-pressed={weightUnit === unit}
+                      className={`${styles.unitOption} ${weightUnit === unit ? styles.unitOptionActive : ""}`}
+                      onClick={() => onWeightUnitChange(unit)}
+                      title={unit === LIFT_UNITS.LB ? "Enter in pounds — saved as kg" : "Enter in kilograms"}
+                    >
+                      {unit}
+                    </button>
+                  ))}
+                </span>
+              )}
+            </span>
             <span>Reps</span>
             {showRest && <span>Rest</span>}
             <span />
@@ -238,8 +269,9 @@ export default function ExerciseCard({
                   inputMode="decimal"
                   step="0.5"
                   min="0"
-                  placeholder={last ? `${last.weight}` : "0"}
+                  placeholder={last ? `${setWeightIn(last, weightUnit)}` : "0"}
                   value={set.weight}
+                  aria-label={`Set ${i + 1} weight in ${weightUnit}`}
                   onChange={(e) => onSetField(i, "weight", e.target.value)}
                   onMouseUp={selectAllOnMouseUp}
                 />

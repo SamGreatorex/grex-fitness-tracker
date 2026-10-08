@@ -90,6 +90,16 @@
   margin-bottom: 1rem;
 }
 
+/* e.g. "Incline Bench Press is now in the programme". */
+.notice {
+  font-size: 0.85rem;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 1rem;
+}
+
 @media (min-width: 640px) {
   .main {
     padding: 2rem 1.5rem 5rem;

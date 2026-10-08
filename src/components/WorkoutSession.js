@@ -176,6 +176,8 @@ export default function WorkoutSession() {
   const [weekSummary, setWeekSummary] = useState(null);
   const [programSummary, setProgramSummary] = useState(null);
   const [error, setError] = useState("");
+  // Confirms a switch was saved to the programme.
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     if (!sessionLoading && !user) router.replace("/login");
@@ -305,15 +307,20 @@ export default function WorkoutSession() {
   const lastSetsFor = (exerciseId) => lastSetsByExerciseId[exerciseId];
 
   // Switching persists straight to the programme itself — so this slot uses
-  // the new exercise every future time this day comes up, not just today.
+  // the new exercise every future time this day comes up (next week's
+  // workout for this day included), not just today.
   const handleSwitchExercise = async (exerciseId, newExercise) => {
     const dayExercise = day.exercises.find((e) => e.exerciseId === exerciseId);
     setError("");
+    setNotice("");
     try {
-      await api.patch(`/api/programs/${programId}/exercises/${exerciseId}`, {
+      const { program: saved } = await api.patch(`/api/programs/${programId}/exercises/${exerciseId}`, {
         dayId,
         name: newExercise.name,
       });
+      // Keep the page's copy of the programme in step with what was saved.
+      setProgram(saved);
+      setNotice(`${newExercise.name} is now in the programme — ${day.label} will use it from now on.`);
     } catch (err) {
       setError(err.message || "Could not save the switched exercise to the programme.");
       return;
@@ -625,6 +632,11 @@ export default function WorkoutSession() {
         </p>
 
         {error && <p className={styles.error}>{error}</p>}
+        {notice && !error && (
+          <p className={styles.notice} role="status">
+            {notice}
+          </p>
+        )}
 
         {day.exercises.map((exercise) => (
           <ExerciseCard

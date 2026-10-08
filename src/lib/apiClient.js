@@ -34,6 +34,10 @@ async function request(method, path, opts = {}) {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    // Always ask the server: API data changes under the page (e.g. an
+    // exercise switched into a programme), and a browser-cached copy would
+    // quietly show the old version.
+    cache: "no-store",
   });
 
   const text = await res.text();

@@ -18,8 +18,8 @@ function LibraryThumb({ exercise }) {
 // A "Switch exercise" trigger + dialog listing every other library exercise,
 // ranked by how closely its body-area tags match the one currently in this
 // slot — the best substitutes for training the same muscles surface first.
-// Switching only affects this session; the programme's own exercise list is
-// never changed.
+// What a switch changes is up to `onSelect` — on the live workout it's
+// saved into the programme, so this day uses it in every week from now on.
 export default function SwitchExerciseDialog({ currentName, currentLibraryEntry, library, onSelect }) {
   const dialogRef = useRef(null);
   const [ranked, setRanked] = useState([]);

@@ -6,6 +6,7 @@ import { api } from "../lib/apiClient";
 import ExercisePicker from "./ExercisePicker";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import { PROGRAM_LEADS } from "../lib/programLead";
+import { LIFT_UNITS, kgToLb } from "../lib/units";
 import styles from "./ProgrammeBuilder.module.css";
 
 const LEAD_OPTIONS = [
@@ -68,12 +69,22 @@ function toFormState(program, { fromTemplate = false } = {}) {
                   name: e.name,
                   targetSets: e.targetSets ?? DEFAULT_SETS,
                   targetReps: e.targetReps ?? "",
-                  targetWeight: e.targetWeight ?? "",
+                  ...startWeightFormFields(e),
                   restSeconds: e.restSeconds ?? DEFAULT_REST,
                 }
           ),
       })),
   };
+}
+
+// A stored start weight → the number and unit it was entered in (stored
+// weights are kg; lb ones also keep the exact number typed).
+function startWeightFormFields(exercise) {
+  if (exercise.targetWeight == null) return { targetWeight: "", targetWeightUnit: LIFT_UNITS.KG };
+  if (exercise.targetWeightUnit === LIFT_UNITS.LB) {
+    return { targetWeight: String(exercise.targetWeightEntered ?? kgToLb(exercise.targetWeight)), targetWeightUnit: LIFT_UNITS.LB };
+  }
+  return { targetWeight: String(exercise.targetWeight), targetWeightUnit: LIFT_UNITS.KG };
 }
 
 function move(list, index, delta) {
@@ -150,6 +161,7 @@ export default function ProgrammeBuilder({
           targetSets: DEFAULT_SETS,
           targetReps: DEFAULT_REPS,
           targetWeight: "",
+          targetWeightUnit: LIFT_UNITS.KG,
           restSeconds: DEFAULT_REST,
         };
     updateDay(pickerDayKey, (d) => ({ ...d, exercises: [...d.exercises, item] }));
@@ -179,6 +191,7 @@ export default function ProgrammeBuilder({
                 targetSets: Number(ex.targetSets),
                 targetReps: ex.targetReps,
                 targetWeight: ex.targetWeight,
+                targetWeightUnit: ex.targetWeightUnit,
                 restSeconds: Number(ex.restSeconds),
               }
         ),
@@ -398,25 +411,42 @@ export default function ProgrammeBuilder({
                             placeholder="8-12"
                           />
                         </label>
-                        <label className={styles.miniField}>
-                          <span>Start kg</span>
+                        <div className={styles.miniField}>
+                          <span className={styles.weightHeader}>
+                            <span className={styles.weightLabel}>Start</span>
+                            <span className={styles.unitToggle} role="group" aria-label={`Start weight unit for ${ex.name}`}>
+                              {[LIFT_UNITS.KG, LIFT_UNITS.LB].map((unit) => (
+                                <button
+                                  key={unit}
+                                  type="button"
+                                  aria-pressed={ex.targetWeightUnit === unit}
+                                  className={`${styles.unitOption} ${ex.targetWeightUnit === unit ? styles.unitOptionActive : ""}`}
+                                  onClick={() => updateExercise(day.key, ex.key, "targetWeightUnit", unit)}
+                                  title={unit === LIFT_UNITS.LB ? "Start weight in pounds" : "Start weight in kilograms"}
+                                >
+                                  {unit}
+                                </button>
+                              ))}
+                            </span>
+                          </span>
                           <input
                             className={styles.miniInput}
                             type="number"
                             inputMode="decimal"
                             min={0}
-                            max={500}
+                            max={ex.targetWeightUnit === LIFT_UNITS.LB ? 1100 : 500}
                             step="0.1"
                             value={ex.targetWeight}
                             onChange={(e) => updateExercise(day.key, ex.key, "targetWeight", e.target.value)}
                             placeholder="—"
+                            aria-label={`${ex.name} start weight in ${ex.targetWeightUnit}`}
                             title={
                               selfBuilt
                                 ? "Optional — prefills your first workout; your logged weights take over after that"
                                 : "Optional — prefills the client's first workout; their logged weights take over after that"
                             }
                           />
-                        </label>
+                        </div>
                         <NumberField
                           label="Rest (s)"
                           min={0}

@@ -5,6 +5,7 @@ import { ROLES } from "./profile";
 import { CARDIO_LIMITS, EXERCISE_TYPES, isCardio } from "./exerciseTypes";
 import { PROGRAM_LEADS, isTrainerLed } from "./programLead";
 import { slugify } from "./slugify";
+import { LIFT_UNITS, kgToLb, lbToKg } from "./units";
 
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
 // edit programmes only for their own clients (users whose ptUserId is the
@@ -260,15 +261,26 @@ export function normaliseProgramInput(body, existing = null) {
       const repsText = String(rawExercise.targetReps ?? "").trim().slice(0, 20);
       const targetReps = repsText === "" ? null : /^\d+$/.test(repsText) ? Number(repsText) : repsText;
 
-      // Optional starting weight (kg) the trainer sets — prefills the first
-      // time the client logs this exercise; after that their history wins.
+      // Optional starting weight the trainer sets — prefills the first time
+      // the client logs this exercise; after that their history wins. Stored
+      // in kg (targetWeight); if entered in lb, also keeps that unit and the
+      // number typed, so the first workout starts in lb with that number.
       let targetWeight = null;
+      let targetWeightUnit = null;
+      let targetWeightEntered = null;
       if (rawExercise.targetWeight !== undefined && rawExercise.targetWeight !== null && rawExercise.targetWeight !== "") {
-        targetWeight = Number(rawExercise.targetWeight);
-        if (!Number.isFinite(targetWeight) || targetWeight < 0 || targetWeight > LIMITS.weightKg) {
-          return { error: `${dayName} · ${exName}: start weight must be 0–${LIMITS.weightKg} kg` };
+        const entered = Number(rawExercise.targetWeight);
+        const inLb = rawExercise.targetWeightUnit === LIFT_UNITS.LB;
+        targetWeight = inLb ? lbToKg(entered) : Math.round(entered * 100) / 100;
+        if (!Number.isFinite(entered) || entered < 0 || targetWeight > LIMITS.weightKg) {
+          return {
+            error: `${dayName} · ${exName}: start weight must be 0–${inLb ? `${kgToLb(LIMITS.weightKg)} lb` : `${LIMITS.weightKg} kg`}`,
+          };
         }
-        targetWeight = Math.round(targetWeight * 100) / 100;
+        if (inLb) {
+          targetWeightUnit = LIFT_UNITS.LB;
+          targetWeightEntered = Math.round(entered * 10) / 10;
+        }
       }
 
       exercises.push({
@@ -281,6 +293,8 @@ export function normaliseProgramInput(body, existing = null) {
         targetSets,
         targetReps,
         targetWeight,
+        targetWeightUnit,
+        targetWeightEntered,
         restSeconds,
       });
     }

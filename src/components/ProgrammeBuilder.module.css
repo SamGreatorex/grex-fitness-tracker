@@ -162,6 +162,47 @@
   opacity: 0.65;
 }
 
+/* "Start" label with its kg | lb switch. */
+.miniField .weightHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 1;
+}
+
+.miniField .unitToggle {
+  display: inline-flex;
+  padding: 1px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  opacity: 1;
+}
+
+.unitOption {
+  min-width: 24px;
+  height: 18px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.unitOption:hover {
+  opacity: 1;
+}
+
+.unitOptionActive {
+  background: var(--accent);
+  color: #fff;
+  opacity: 1;
+}
+
 .miniInput {
   width: 76px;
   height: 36px;

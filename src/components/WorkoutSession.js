@@ -96,16 +96,27 @@ function unitFromHistory(lastSets) {
   return lastSets?.some((s) => s.unit === LIFT_UNITS.LB) ? LIFT_UNITS.LB : LIFT_UNITS.KG;
 }
 
+// With no history yet, the unit the trainer set the start weight in.
+function startingUnit(exercise, lastSets) {
+  if (lastSets?.length) return unitFromHistory(lastSets);
+  return exercise.targetWeight != null && exercise.targetWeightUnit === LIFT_UNITS.LB ? LIFT_UNITS.LB : LIFT_UNITS.KG;
+}
+
 // Rows hold weights as typed, in `unit`; they're converted to kg on save.
+// `startWeight` is a programme exercise's start weight ({ targetWeight,
+// targetWeightUnit, targetWeightEntered }), or null.
 function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startReps, unit = LIFT_UNITS.KG }) {
+  const start =
+    startWeight?.targetWeight != null
+      ? setWeightIn(
+          { weight: startWeight.targetWeight, unit: startWeight.targetWeightUnit, weightEntered: startWeight.targetWeightEntered },
+          unit
+        )
+      : null;
   return Array.from({ length: targetSets }, (_, i) => {
     const last = lastSets?.[i] ?? lastSets?.[lastSets.length - 1];
     return {
-      weight: last
-        ? String(setWeightIn(last, unit))
-        : startWeight != null
-          ? convertTypedWeight(String(startWeight), LIFT_UNITS.KG, unit)
-          : "",
+      weight: last ? String(setWeightIn(last, unit)) : start != null ? String(start) : "",
       reps: last ? String(last.reps) : startReps != null ? String(startReps) : "",
       completed: false,
       effort: null,
@@ -226,14 +237,14 @@ export default function WorkoutSession() {
           }
           const lastSets = findLastSetsForExercise(sessions, exercise.name);
           lastSetsByExerciseId[exercise.exerciseId] = lastSets;
-          units[exercise.exerciseId] = unitFromHistory(lastSets);
+          units[exercise.exerciseId] = startingUnit(exercise, lastSets);
 
           initial[exercise.exerciseId] = buildSetRows({
             targetSets: exercise.targetSets,
             restSeconds: exercise.restSeconds,
             lastSets,
             // First-time prefill comes from what the trainer set in the programme.
-            startWeight: exercise.targetWeight,
+            startWeight: exercise,
             startReps: numericReps(exercise.targetReps),
             unit: units[exercise.exerciseId],
           });

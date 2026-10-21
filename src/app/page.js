@@ -8,6 +8,7 @@ import { api } from "../lib/apiClient";
 import AppHeader from "../components/AppHeader";
 import ProgramCard from "../components/ProgramCard";
 import TrainerCard from "../components/TrainerCard";
+import { PROGRAMME_PACK, accessFor, formatPrice, isOwnBuild } from "../lib/billing";
 import styles from "./page.module.css";
 
 function ReportsIcon() {
@@ -32,8 +33,10 @@ function TapeMeasureIcon() {
 
 export default function Home() {
   const router = useRouter();
-  const { user, loading: sessionLoading } = useAuth();
+  const { user, loading: sessionLoading, profile } = useAuth();
   const [programs, setPrograms] = useState(null);
+  // Whether their plan includes a personal trainer (Pro, or staff).
+  const [canHaveTrainer, setCanHaveTrainer] = useState(true);
   const [runsByProgram, setRunsByProgram] = useState({});
   const [startingProgramId, setStartingProgramId] = useState(null);
   const [error, setError] = useState("");
@@ -76,8 +79,9 @@ export default function Home() {
     if (!user) return;
     (async () => {
       try {
-        const { trainer } = await api.get("/api/me/trainer");
+        const { trainer, canHaveTrainer } = await api.get("/api/me/trainer");
         setTrainer(trainer);
+        setCanHaveTrainer(canHaveTrainer !== false);
       } catch {
         setTrainer(undefined);
       }
@@ -109,6 +113,11 @@ export default function Home() {
 
   if (sessionLoading || !user) return null;
 
+  // Programmes they've built themselves, against their plan's limit.
+  const access = accessFor(profile);
+  const ownBuilt = programs ? programs.filter((p) => isOwnBuild(p, profile?.userId)).length : 0;
+  const atLimit = access.programmeLimit != null && ownBuilt >= access.programmeLimit;
+
   return (
     <>
       <AppHeader />
@@ -116,9 +125,22 @@ export default function Home() {
         <h1 className={styles.title}>Your programs</h1>
         <p className={styles.subtitle}>Pick a program to start or continue.</p>
 
+        {access.hasAccess && access.trialDaysLeft != null && (
+          <Link href="/subscribe?next=/" className={styles.trialBanner}>
+            <span>
+              <strong>Free trial</strong> · {access.trialDaysLeft} day{access.trialDaysLeft === 1 ? "" : "s"} left
+            </span>
+            <span className={styles.trialBannerAction}>Choose a plan →</span>
+          </Link>
+        )}
+
         {trainer !== undefined && (
           <div className={styles.trainer}>
-            <TrainerCard trainer={trainer} chatHref={trainer?.canMessage ? `/chat/${trainer.userId}` : null} />
+            <TrainerCard
+              trainer={trainer}
+              chatHref={trainer?.canMessage ? `/chat/${trainer.userId}` : null}
+              upgradeHref={canHaveTrainer ? null : "/subscribe?plan=pro&next=/"}
+            />
           </div>
         )}
 
@@ -159,11 +181,31 @@ export default function Home() {
           </div>
         )}
 
-        {programs && (
-          <Link href="/programs/new" className={styles.newProgramme}>
-            + Build your own programme
-          </Link>
-        )}
+        {programs &&
+          (atLimit ? (
+            <div className={styles.limitCard}>
+              <p>
+                You&apos;ve built {ownBuilt} of your {access.programmeLimit} programmes.
+              </p>
+              <Link href={access.canBuyPack ? "/billing" : "/subscribe?next=/"} className={styles.limitAction}>
+                {access.canBuyPack ? `Add ${PROGRAMME_PACK.programmes} more for ${formatPrice(PROGRAMME_PACK.pricePence)}` : "Choose a plan"}
+              </Link>
+              <Link href="/subscribe?plan=pro&next=/" className={styles.limitLink}>
+                or go Pro for unlimited
+              </Link>
+            </div>
+          ) : (
+            <>
+              <Link href="/programs/new" className={styles.newProgramme}>
+                + Build your own programme
+              </Link>
+              {access.programmeLimit != null && (
+                <p className={styles.limitNote}>
+                  {ownBuilt} of {access.programmeLimit} programmes built
+                </p>
+              )}
+            </>
+          ))}
       </main>
     </>
   );

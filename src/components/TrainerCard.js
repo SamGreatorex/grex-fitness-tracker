@@ -1,11 +1,30 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
+import { PLANS, PLAN_KEYS, formatPrice } from "../lib/billing";
 import styles from "./TrainerCard.module.css";
 
 // "Your trainer" on the home page. `trainer` is { name, avatarUrl }, or null
 // when the user hasn't been assigned a PT yet. Shows the PT's display name
 // only — never their email. `chatHref`, when given, adds a Message button.
-export default function TrainerCard({ trainer, chatHref }) {
+// `upgradeHref`, when given, means their plan doesn't include a trainer: the
+// card offers Pro instead.
+export default function TrainerCard({ trainer, chatHref, upgradeHref }) {
+  if (upgradeHref) {
+    return (
+      <div className={styles.card}>
+        <div className={styles.info}>
+          <span className={styles.label}>Personal trainer</span>
+          <span className={styles.emptyText}>
+            Get your own trainer — and chat with them — on the Pro plan ({formatPrice(PLANS[PLAN_KEYS.PRO].pricePence)}/month).
+          </span>
+        </div>
+        <Link href={upgradeHref} className={styles.messageButton}>
+          Go Pro
+        </Link>
+      </div>
+    );
+  }
+
   if (!trainer) {
     return (
       <div className={`${styles.card} ${styles.cardEmpty}`}>

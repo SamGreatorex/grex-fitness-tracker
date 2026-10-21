@@ -8,15 +8,62 @@ import { formatHeight, formatWeight } from "../../../lib/units";
 import AppHeader from "../../../components/AppHeader";
 import Avatar from "../../../components/Avatar";
 import Dropdown from "../../../components/Dropdown";
+import { BRAND_LABELS } from "../../../components/CardForm";
+import { PLANS, PLAN_KEYS, SUBSCRIPTION_STATUS, accessFor, formatPrice } from "../../../lib/billing";
 import styles from "./page.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" });
+const fmt = (iso) => (iso ? dateFormat.format(new Date(iso)) : "—");
+
+// Which plan group a user is in, for the filter and counts.
+const PLAN_GROUPS = [
+  { value: PLAN_KEYS.TRIAL, label: "Trial" },
+  { value: PLAN_KEYS.BASIC, label: "Basic" },
+  { value: PLAN_KEYS.PRO, label: "Pro" },
+  { value: "ended", label: "Ended / unpaid" },
+  { value: "none", label: "No plan" },
+  { value: "staff", label: "Staff" },
+];
+
+function planGroup(u) {
+  const a = accessFor(u);
+  if (a.staff) return "staff";
+  if (a.needsPlan) return "none";
+  // A paid month awaiting renewal still counts as on its plan.
+  if (!a.hasAccess && !(u.subscription.status === SUBSCRIPTION_STATUS.ACTIVE && !u.subscription.cancelAtPeriodEnd)) return "ended";
+  return a.plan;
+}
+
+// The plan badge and one line on where it stands, e.g. "Pro" + "Renews
+// 8 Nov 2026 · £10.99/month".
+function planSummary(u) {
+  const a = accessFor(u);
+  const sub = u.subscription;
+  if (a.staff) return { badge: "Staff", tone: "muted", detail: "No plan needed" };
+  if (!sub) return { badge: "No plan", tone: "muted", detail: "Hasn't chosen a plan yet" };
+  const plan = PLANS[sub.plan];
+  if (sub.status === SUBSCRIPTION_STATUS.PAST_DUE) return { badge: plan.name, tone: "bad", detail: `Payment failed ${fmt(sub.failedAt)}` };
+  // Renewals happen on the member's next visit, so a paid month that's run
+  // out (and wasn't cancelled) is due to renew, not over.
+  if (!a.hasAccess && sub.status === SUBSCRIPTION_STATUS.ACTIVE && !sub.cancelAtPeriodEnd) {
+    return { badge: plan.name, tone: sub.plan === PLAN_KEYS.PRO ? "pro" : "basic", detail: `Renewal due since ${fmt(sub.currentPeriodEnd)} — renews on their next visit` };
+  }
+  if (!a.hasAccess) return { badge: plan.name, tone: "bad", detail: `Ended ${fmt(sub.endedAt ?? sub.trialEndsAt ?? sub.currentPeriodEnd)}` };
+  if (sub.status === SUBSCRIPTION_STATUS.TRIALING) {
+    return { badge: plan.name, tone: "trial", detail: `${a.trialDaysLeft} day${a.trialDaysLeft === 1 ? "" : "s"} left · ends ${fmt(sub.trialEndsAt)}` };
+  }
+  const tone = sub.plan === PLAN_KEYS.PRO ? "pro" : "basic";
+  if (sub.cancelAtPeriodEnd) return { badge: plan.name, tone, detail: `Cancelled · access until ${fmt(sub.currentPeriodEnd)}` };
+  if (sub.pendingPlan) return { badge: plan.name, tone, detail: `Moves to ${PLANS[sub.pendingPlan].name} on ${fmt(sub.currentPeriodEnd)}` };
+  return { badge: plan.name, tone, detail: `Renews ${fmt(sub.currentPeriodEnd)} · ${formatPrice(plan.pricePence)}/month` };
+}
 
 export default function AdminUsersPage() {
   const { userId: myUserId, profile: me } = useAuth();
   const [users, setUsers] = useState(null);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [planFilter, setPlanFilter] = useState("");
   const [savingUserId, setSavingUserId] = useState(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -46,7 +93,8 @@ export default function AdminUsersPage() {
         // Their clients were unassigned server-side — refresh everyone.
         await load();
       } else {
-        setUsers((list) => list.map((u) => (u.userId === user.userId ? user : u)));
+        // Merged, so extras from the list (programmesBuilt) are kept.
+        setUsers((list) => list.map((u) => (u.userId === user.userId ? { ...u, ...user } : u)));
       }
     } catch (err) {
       setError(err.message || failMessage);
@@ -112,13 +160,20 @@ export default function AdminUsersPage() {
     return users.filter(
       (u) =>
         (!roleFilter || u.role === roleFilter) &&
+        (!planFilter || planGroup(u) === planFilter) &&
         (!q || (u.name || "").toLowerCase().includes(q) || (u.email || "").toLowerCase().includes(q))
     );
-  }, [users, search, roleFilter]);
+  }, [users, search, roleFilter, planFilter]);
 
   const counts = useMemo(() => {
     const c = {};
     for (const u of users ?? []) c[u.role] = (c[u.role] ?? 0) + 1;
+    return c;
+  }, [users]);
+
+  const planCounts = useMemo(() => {
+    const c = {};
+    for (const u of users ?? []) c[planGroup(u)] = (c[planGroup(u)] ?? 0) + 1;
     return c;
   }, [users]);
 
@@ -134,6 +189,23 @@ export default function AdminUsersPage() {
               .map((r) => `${counts[r] ?? 0} ${ROLE_LABELS[r]}`)
               .join(" · ")}
           </p>
+        )}
+        {users && (
+          // Plan counts — tap one to show just those users.
+          <div className={styles.planCounts}>
+            {PLAN_GROUPS.map((g) => (
+              <button
+                key={g.value}
+                type="button"
+                className={`${styles.planCount} ${planFilter === g.value ? styles.planCountActive : ""}`}
+                aria-pressed={planFilter === g.value}
+                onClick={() => setPlanFilter(planFilter === g.value ? "" : g.value)}
+              >
+                <span className={styles.planCountNumber}>{planCounts[g.value] ?? 0}</span>
+                {g.label}
+              </button>
+            ))}
+          </div>
         )}
 
         <div className={styles.toolbar}>
@@ -151,6 +223,13 @@ export default function AdminUsersPage() {
             aria-label="Filter by role"
             options={[{ value: "", label: "All roles" }, ...Object.values(ROLES).map((r) => ({ value: r, label: ROLE_LABELS[r] }))]}
           />
+          <Dropdown
+            className={styles.select}
+            value={planFilter}
+            onChange={setPlanFilter}
+            aria-label="Filter by plan"
+            options={[{ value: "", label: "All plans" }, ...PLAN_GROUPS]}
+          />
         </div>
 
         {error && <p className={styles.error}>{error}</p>}
@@ -164,6 +243,12 @@ export default function AdminUsersPage() {
           <ul className={styles.list}>
             {filtered.map((u) => {
               const isMe = u.userId === myUserId;
+              const access = accessFor(u);
+              const plan = planSummary(u);
+              const sub = u.subscription;
+              const card = sub?.paymentMethod;
+              const payments = [...(u.payments ?? [])].reverse();
+              const totalPaid = payments.filter((p) => p.status === "succeeded").reduce((sum, p) => sum + p.amountPence, 0);
               return (
                 <li key={u.userId} className={styles.row}>
                   <Avatar src={u.avatarUrl} name={u.name} email={u.email} size={44} />
@@ -173,8 +258,18 @@ export default function AdminUsersPage() {
                       {isMe && <span className={styles.you}>You</span>}
                     </span>
                     <span className={styles.email}>{u.email}</span>
+                    <span className={styles.planLine}>
+                      <span className={`${styles.planBadge} ${styles[`tone_${plan.tone}`]}`}>{plan.badge}</span>
+                      <span className={styles.planDetail}>{plan.detail}</span>
+                    </span>
+                    {!access.staff && (
+                      <span className={styles.planDetail}>
+                        Programmes built: {u.programmesBuilt ?? 0}
+                        {access.programmeLimit == null ? (access.needsPlan ? "" : " · unlimited") : ` of ${access.programmeLimit}`}
+                      </span>
+                    )}
                     <details className={styles.details}>
-                      <summary>Profile</summary>
+                      <summary>Profile & billing</summary>
                       <dl>
                         <dt>Address</dt>
                         <dd>{u.address || "—"}</dd>
@@ -184,7 +279,42 @@ export default function AdminUsersPage() {
                         <dd>{formatWeight(u.weightKg, me?.weightUnit)}</dd>
                         <dt>Joined</dt>
                         <dd>{u.createdAt ? dateFormat.format(new Date(u.createdAt)) : "—"}</dd>
+                        {!access.staff && (
+                          <>
+                            <dt>Plan</dt>
+                            <dd>
+                              {sub ? `${PLANS[sub.plan].name} · since ${fmt(sub.startedAt)}` : "None"}
+                            </dd>
+                            <dt>Free trial</dt>
+                            <dd>{u.trialUsedAt ? `Taken ${fmt(u.trialUsedAt)}` : "Not taken"}</dd>
+                            <dt>Card</dt>
+                            <dd>
+                              {card
+                                ? `${BRAND_LABELS[card.brand] ?? "Card"} •••• ${card.last4} · exp ${String(card.expMonth).padStart(2, "0")}/${String(card.expYear).slice(-2)}`
+                                : "—"}
+                            </dd>
+                            <dt>Extra programmes</dt>
+                            <dd>{u.extraProgrammeSlots ? `${u.extraProgrammeSlots} (bought in packs)` : "—"}</dd>
+                            <dt>Total paid</dt>
+                            <dd>{formatPrice(totalPaid)}</dd>
+                          </>
+                        )}
                       </dl>
+                      {!access.staff && payments.length > 0 && (
+                        <ul className={styles.payments}>
+                          {payments.slice(0, 6).map((p) => (
+                            <li key={p.id}>
+                              <span>
+                                {fmt(p.at)} · {p.description}
+                              </span>
+                              <span className={p.status === "succeeded" ? undefined : styles.paymentFailed}>
+                                {p.status === "succeeded" ? formatPrice(p.amountPence) : `Failed — ${p.failureMessage ?? "declined"}`}
+                              </span>
+                            </li>
+                          ))}
+                          {payments.length > 6 && <li className={styles.planDetail}>…and {payments.length - 6} earlier</li>}
+                        </ul>
+                      )}
                       {!isMe && (
                         <button
                           type="button"

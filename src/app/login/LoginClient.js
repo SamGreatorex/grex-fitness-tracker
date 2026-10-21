@@ -14,7 +14,22 @@ import {
 import { useAuth } from "../../components/AuthProvider";
 import PasswordRequirements from "../../components/PasswordRequirements";
 import { meetsPasswordRules, passwordErrorMessage } from "../../lib/password";
+import PlanPicker from "../../components/PlanPicker";
+import { PLANS, PLAN_KEYS, TRIAL_DAYS, formatPrice } from "../../lib/billing";
 import styles from "./login.module.css";
+
+const SIGNUP_PLAN_KEY = "f4tf.signupPlan";
+
+// Where to go once signed in: a plan picked at sign-up goes to its checkout
+// first; otherwise wherever they were heading.
+function afterSignIn(redirectTo) {
+  const plan = sessionStorage.getItem(SIGNUP_PLAN_KEY);
+  if (plan) {
+    sessionStorage.removeItem(SIGNUP_PLAN_KEY);
+    return `/subscribe?plan=${encodeURIComponent(plan)}`;
+  }
+  return redirectTo;
+}
 
 export default function LoginClient() {
   const router = useRouter();
@@ -29,6 +44,10 @@ export default function LoginClient() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  // The plan picked on the sign-up form; checkout happens on /subscribe once
+  // they're signed in (paying needs an account). Kept in sessionStorage too,
+  // so it survives confirming the email and signing in separately.
+  const [signupPlan, setSignupPlan] = useState(PLAN_KEYS.TRIAL);
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const [confirmCode, setConfirmCode] = useState("");
 
@@ -44,7 +63,7 @@ export default function LoginClient() {
 
   useEffect(() => {
     if (!sessionLoading && user) {
-      router.replace(redirectTo);
+      router.replace(afterSignIn(redirectTo));
     }
   }, [user, sessionLoading, router, redirectTo]);
 
@@ -64,7 +83,7 @@ export default function LoginClient() {
       const result = await signIn({ username: email, password });
       if (result.isSignedIn) {
         await refresh();
-        router.push(redirectTo);
+        router.push(afterSignIn(redirectTo));
         router.refresh();
       } else if (result.nextStep?.signInStep === "CONFIRM_SIGN_UP") {
         setNeedsConfirm(true);
@@ -88,7 +107,7 @@ export default function LoginClient() {
       const result = await confirmSignIn({ challengeResponse: newPassword });
       if (result.isSignedIn) {
         await refresh();
-        router.replace(redirectTo);
+        router.replace(afterSignIn(redirectTo));
       } else {
         setError(`Additional step required: ${result.nextStep?.signInStep ?? "unknown"}`);
       }
@@ -103,6 +122,7 @@ export default function LoginClient() {
     e.preventDefault();
     setBusy(true);
     setError("");
+    sessionStorage.setItem(SIGNUP_PLAN_KEY, signupPlan);
     try {
       const result = await signUp({
         username: email,
@@ -135,7 +155,7 @@ export default function LoginClient() {
       const result = await signIn({ username: email, password });
       if (result.isSignedIn) {
         await refresh();
-        router.replace(redirectTo);
+        router.replace(afterSignIn(redirectTo));
       } else {
         setNeedsConfirm(false);
         setTab("signin");
@@ -215,7 +235,7 @@ export default function LoginClient() {
       const result = await signIn({ username: email, password: resetNewPassword });
       if (result.isSignedIn) {
         await refresh();
-        router.replace(redirectTo);
+        router.replace(afterSignIn(redirectTo));
       } else {
         backToSignIn();
         setPassword("");
@@ -256,7 +276,7 @@ export default function LoginClient() {
     : needsConfirm
     ? "Enter the 6-digit code we emailed you."
     : tab === "signup"
-    ? "Track your gym programs and progress."
+    ? `Start with a ${TRIAL_DAYS}-day free trial, or pick a monthly plan.`
     : "Sign in to your fitness tracker.";
 
   return (
@@ -426,6 +446,15 @@ export default function LoginClient() {
                 </form>
               ) : (
                 <form onSubmit={handleSignUp} className={styles.form}>
+                  <div className={styles.field}>
+                    <span className={styles.label}>Choose your plan</span>
+                    <PlanPicker compact name="signup-plan" selected={signupPlan} onSelect={setSignupPlan} />
+                    <span className={styles.planHint}>
+                      {signupPlan === PLAN_KEYS.TRIAL
+                        ? "No card needed. You'll pick a monthly plan when the trial ends."
+                        : "You'll add your card after confirming your email."}
+                    </span>
+                  </div>
                   <label className={styles.field}>
                     <span className={styles.label}>Name</span>
                     <input className={styles.input} type="text" autoComplete="name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
@@ -440,7 +469,11 @@ export default function LoginClient() {
                   </label>
                   {error && <div className={styles.error}>{error}</div>}
                   <button type="submit" disabled={busy} className={styles.button}>
-                    {busy ? "Creating account…" : "Sign up"}
+                    {busy
+                      ? "Creating account…"
+                      : signupPlan === PLAN_KEYS.TRIAL
+                        ? "Sign up & start free trial"
+                        : `Sign up for ${PLANS[signupPlan].name} — ${formatPrice(PLANS[signupPlan].pricePence)}/month`}
                   </button>
                 </form>
               )}

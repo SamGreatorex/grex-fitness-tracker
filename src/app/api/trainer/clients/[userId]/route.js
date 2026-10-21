@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { accessFor } from "../../../../../lib/billing";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { requireRole } from "../../../../../lib/users";
 import { PROGRAM_MANAGER_ROLES } from "../../../../../lib/programs";
@@ -23,6 +24,12 @@ export const POST = withLogging("POST /api/trainer/clients/[userId]", async (req
   // Admins may train themselves; PTs can't be their own client.
   if (userId === trainer.userId && trainer.role !== ROLES.ADMIN) {
     return NextResponse.json({ error: "Only admins can be their own trainer." }, { status: 400 });
+  }
+
+  // A personal trainer comes with the Pro plan.
+  const { Item: client } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId } }));
+  if (client && !accessFor(client).canUseTrainer) {
+    return NextResponse.json({ error: "This user isn't on the Pro plan, so they can't have a trainer." }, { status: 400 });
   }
 
   try {

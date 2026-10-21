@@ -5,6 +5,7 @@ import { getRequestUser } from "../../../lib/users";
 import { canRunProgram, getProgram, resolveSubjectUserId } from "../../../lib/programs";
 import { isTrainerLed } from "../../../lib/programLead";
 import { withLogging } from "../../../lib/apiHandler";
+import { requireAccess } from "../../../lib/subscriptions";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -43,6 +44,9 @@ export const GET = withLogging("GET /api/sessions", async (request) => {
 export const POST = withLogging("POST /api/sessions", async (request) => {
   const user = await getRequestUser(request);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Logging a workout needs an active plan (trainers and admins are exempt).
+  const denied = requireAccess(user);
+  if (denied) return denied;
 
   const body = await request.json();
   const {

@@ -19,12 +19,13 @@
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
   margin: 1.25rem 0;
 }
 
 .search {
-  flex: 1;
+  flex: 1 1 220px;
   min-width: 0;
   height: 44px;
   padding: 0 14px;
@@ -46,6 +47,109 @@
 
 .toolbar .select {
   width: 150px;
+}
+
+/* "3 Trial · 5 Basic · 2 Pro …" — each a filter toggle. */
+.planCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.planCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 30px;
+  padding: 0 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.planCount:hover {
+  border-color: var(--foreground);
+}
+
+.planCountActive {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.planCountNumber {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Plan badge + "Renews 8 Nov · £10.99/month" under each user. */
+.planLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 4px;
+}
+
+.planBadge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.tone_pro {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.tone_basic {
+  border-color: var(--foreground);
+}
+
+.tone_trial {
+  border-color: rgba(250, 204, 21, 0.7);
+  color: #facc15;
+}
+
+.tone_bad {
+  border-color: rgba(248, 113, 113, 0.7);
+  color: #f87171;
+}
+
+.tone_muted {
+  opacity: 0.6;
+}
+
+.planDetail {
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.payments {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.payments li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.paymentFailed {
+  color: #f87171;
 }
 
 .error {

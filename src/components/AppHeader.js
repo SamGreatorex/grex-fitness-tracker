@@ -8,6 +8,7 @@ import { ROLES, ROLE_LABELS, MODE_HOME, MODE_LABELS, modeForPath, modesForRole }
 import Avatar from "./Avatar";
 import Dropdown from "./Dropdown";
 import ChatButton from "./ChatButton";
+import { isStaff } from "../lib/billing";
 import styles from "./AppHeader.module.css";
 
 export default function AppHeader({ backHref, backLabel }) {
@@ -88,6 +89,11 @@ export default function AppHeader({ backHref, backLabel }) {
             <Link href="/settings" className={styles.menuItem} role="menuitem" onClick={() => setMenuOpen(false)}>
               Profile settings
             </Link>
+            {!isStaff(profile) && (
+              <Link href="/billing" className={styles.menuItem} role="menuitem" onClick={() => setMenuOpen(false)}>
+                Plan & billing
+              </Link>
+            )}
             <button type="button" className={styles.menuItem} role="menuitem" onClick={signOut}>
               Sign out
             </button>

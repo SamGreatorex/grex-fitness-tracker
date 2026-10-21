@@ -6,7 +6,9 @@ import { useAuth } from "../../components/AuthProvider";
 import AppHeader from "../../components/AppHeader";
 import ProfileForm from "../../components/ProfileForm";
 import ChangePasswordForm from "../../components/ChangePasswordForm";
+import Link from "next/link";
 import { ROLE_LABELS } from "../../lib/profile";
+import { PLANS, accessFor } from "../../lib/billing";
 import styles from "./page.module.css";
 
 export default function SettingsPage() {
@@ -18,6 +20,7 @@ export default function SettingsPage() {
   }, [sessionLoading, user, router]);
 
   if (sessionLoading || !user) return null;
+  const access = accessFor(profile);
 
   return (
     <>
@@ -38,6 +41,18 @@ export default function SettingsPage() {
                 <dt>Account type</dt>
                 <dd>{ROLE_LABELS[profile.role] ?? profile.role}</dd>
               </div>
+              {!access.staff && (
+                <div>
+                  <dt>Plan</dt>
+                  <dd>
+                    {access.plan ? PLANS[access.plan].name : "None"}
+                    {!access.hasAccess && access.plan ? " (ended)" : ""} ·{" "}
+                    <Link href="/billing" className={styles.link}>
+                      Plan & billing
+                    </Link>
+                  </dd>
+                </div>
+              )}
             </dl>
 
             <h2 className={styles.sectionTitle}>Profile</h2>

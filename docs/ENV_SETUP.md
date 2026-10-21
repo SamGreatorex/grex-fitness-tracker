@@ -33,6 +33,10 @@ DYNAMODB_TABLE_MEASUREMENTS=grex-fitness-tracker-dev-body-measurements
 DYNAMODB_TABLE_CHAT=grex-fitness-tracker-dev-chat-messages
 S3_EXERCISE_MEDIA_BUCKET=
 
+# Optional — free trial length in days (default 12). NEXT_PUBLIC_ so
+# amplify.yml passes it through to the build.
+NEXT_PUBLIC_TRIAL_DAYS=12
+
 AWS_PROFILE=sam-personal
 ```
 
@@ -140,6 +144,29 @@ node --env-file=.env.production.local scripts/assign-programs-to-user.js you@exa
 That only sets `ownerUserId` — same programme IDs, so existing runs and
 logged workouts stay attached. It warns if any other user has runs on
 those programmes (they'd need their own programmes built by a PT).
+
+## Plans & billing (payments simulated)
+
+Members (not PTs/admins) need a plan, chosen at sign-up or on `/subscribe`:
+
+| Plan | Price | Programmes they build | Trainer & chat |
+|---|---|---|---|
+| Free trial | £0 for `NEXT_PUBLIC_TRIAL_DAYS` (12) days, once | 5 | — |
+| Basic | £2.99/month | 5, + packs of 5 for £20 one-off | — |
+| Pro | £10.99/month | unlimited | ✓ |
+
+The subscription lives on the user's row (`subscription`, `trialUsedAt`,
+`extraProgrammeSlots`, `payments`). There's no scheduler: it's rolled
+forward whenever the user next makes a request — trials end, paid months
+renew (charging the saved card) or end if cancelled, a failed renewal
+blocks access until the card is updated, and leaving Pro removes their
+trainer. Plans and prices: `src/lib/billing.js`.
+
+**Payments are simulated** — `src/lib/payments.js` is the one place money
+is taken; replace it with Stripe (and add webhooks for renewals). The card
+form never sends the card number to the server, only brand / last 4 /
+expiry. Test cards: `4242 4242 4242 4242` succeeds, `4000 0000 0000 0002`
+is declined.
 
 ## Body measurements
 

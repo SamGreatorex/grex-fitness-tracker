@@ -3,6 +3,7 @@ import { GetCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { getRequestUser } from "../../../../lib/users";
 import { withLogging } from "../../../../lib/apiHandler";
+import { accessFor } from "../../../../lib/billing";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -14,16 +15,20 @@ export const dynamic = "force-dynamic";
 // plus their userId and whether they can be messaged (for the chat link).
 // Read fresh here rather than from the client's cached profile, so a PT
 // assigned since sign-in shows up straight away.
+// `canHaveTrainer`: whether their plan includes a trainer (Pro) — if not,
+// the home page offers the upgrade instead.
 export const GET = withLogging("GET /api/me/trainer", async (request) => {
   const user = await getRequestUser(request);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!user.ptUserId) return NextResponse.json({ trainer: null });
+  const canHaveTrainer = accessFor(user).canUseTrainer;
+  if (!user.ptUserId || !canHaveTrainer) return NextResponse.json({ trainer: null, canHaveTrainer });
 
   const { Item: pt } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: user.ptUserId } }));
-  if (!pt) return NextResponse.json({ trainer: null });
+  if (!pt) return NextResponse.json({ trainer: null, canHaveTrainer });
 
   const isSelf = pt.userId === user.userId;
   return NextResponse.json({
+    canHaveTrainer,
     trainer: {
       userId: pt.userId,
       name: pt.name?.trim() || null,

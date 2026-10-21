@@ -5,6 +5,7 @@ import { requireRole } from "../../../../lib/users";
 import { PROGRAM_MANAGER_ROLES } from "../../../../lib/programs";
 import { ROLES } from "../../../../lib/profile";
 import { withLogging } from "../../../../lib/apiHandler";
+import { accessFor } from "../../../../lib/billing";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -12,7 +13,9 @@ import { withLogging } from "../../../../lib/apiHandler";
 export const dynamic = "force-dynamic";
 
 // Only what a trainer needs — personal details like address stay admin-only.
+// (role and subscription are read to check the Pro plan, not returned.)
 const CLIENT_FIELDS = ["userId", "email", "name", "avatarUrl", "heightCm", "weightKg", "ptUserId"];
+const CHECK_FIELDS = ["role", "subscription"];
 
 // For the signed-in PT (or admin acting as one):
 //   clients   — users assigned to them (ptUserId = their userId)
@@ -23,7 +26,8 @@ export const GET = withLogging("GET /api/trainer/clients", async (request) => {
   const { user: trainer, denied } = await requireRole(request, PROGRAM_MANAGER_ROLES);
   if (denied) return denied;
 
-  const names = Object.fromEntries(CLIENT_FIELDS.map((f) => [`#${f}`, f]));
+  const names = Object.fromEntries([...CLIENT_FIELDS, ...CHECK_FIELDS].map((f) => [`#${f}`, f]));
+  const pick = (u) => Object.fromEntries(CLIENT_FIELDS.filter((f) => u[f] !== undefined).map((f) => [f, u[f]]));
   const clients = [];
   const available = [];
   let ExclusiveStartKey;
@@ -38,8 +42,9 @@ export const GET = withLogging("GET /api/trainer/clients", async (request) => {
     );
     for (const u of page.Items ?? []) {
       if (u.userId === trainer.userId && trainer.role !== ROLES.ADMIN) continue;
-      if (u.ptUserId === trainer.userId) clients.push(u);
-      else if (!u.ptUserId) available.push(u);
+      if (u.ptUserId === trainer.userId) clients.push(pick(u));
+      // A personal trainer comes with the Pro plan — only Pro users can be taken on.
+      else if (!u.ptUserId && accessFor(u).canUseTrainer) available.push(pick(u));
     }
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);

@@ -1,0 +1,122 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.testBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px dashed rgba(250, 204, 21, 0.6);
+  border-radius: 10px;
+  background: rgba(250, 204, 21, 0.08);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.testCards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.testCard {
+  height: 28px;
+  padding: 0 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: inherit;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.testCard:hover {
+  border-color: var(--accent);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.numberWrap {
+  position: relative;
+  display: block;
+}
+
+.brand {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.submit {
+  height: 50px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.footnote {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  text-align: center;
+}

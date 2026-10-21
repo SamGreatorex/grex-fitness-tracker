@@ -3,14 +3,17 @@ import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "./dynamo";
 import { getUserClaims } from "./verifyToken";
 import { ROLES } from "./profile";
+import { refreshSubscription } from "./subscriptions";
 
 // Returns the caller's row from the users table, creating it (as a basic
 // user, seeded with the name/email they signed up with) on first call.
+// Their subscription is rolled forward to now first (a finished trial
+// ends, a paid month renews or ends), so every route sees it as it stands.
 // Returns null if the request isn't authenticated.
 export async function getRequestUser(request) {
   const claims = await getUserClaims(request);
   if (!claims) return null;
-  return getOrCreateUser(claims);
+  return refreshSubscription(await getOrCreateUser(claims));
 }
 
 // For routes that should only be reachable by certain roles, e.g.

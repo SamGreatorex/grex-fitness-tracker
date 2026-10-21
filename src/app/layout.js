@@ -1,6 +1,7 @@
 import { Anton, Spinnaker } from "next/font/google";
 import { AuthProvider } from "../components/AuthProvider";
 import ProfileSetupDialog from "../components/ProfileSetupDialog";
+import SubscriptionGate from "../components/SubscriptionGate";
 import "./globals.css";
 
 // Fit4 The Future brand fonts (as on f4tf.co.uk): Anton for headings,
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {children}
           <ProfileSetupDialog />
+          <SubscriptionGate />
         </AuthProvider>
       </body>
     </html>

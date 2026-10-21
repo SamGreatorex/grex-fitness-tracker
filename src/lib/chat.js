@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { BatchGetCommand, GetCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "./dynamo";
 import { isProgramManager } from "./programs";
+import { accessFor } from "./billing";
 
 // Trainer <-> client chat. A user can chat with their own PT (users.ptUserId),
 // and a PT (or an admin) with each of their clients — nobody else. If a
@@ -43,19 +44,23 @@ export async function resolveConversation(user, otherUserId) {
   if (!user || !otherUserId || otherUserId === user.userId) return null;
   const other = await getUser(otherUserId);
   if (!other) return null;
+  // Chat comes with the Pro plan: the client in the pair must have it.
   if (user.ptUserId === other.userId) {
+    if (!accessFor(user).canUseTrainer) return null;
     return { conversationId: conversationIdFor(user.userId, other.userId), partner: partnerView(other, true) };
   }
   if (other.ptUserId === user.userId && isProgramManager(user)) {
+    if (!accessFor(other).canUseTrainer) return null;
     return { conversationId: conversationIdFor(other.userId, user.userId), partner: partnerView(other, false) };
   }
   return null;
 }
 
-// Everyone `user` can chat with: their PT, and (for PTs/admins) their clients.
+// Everyone `user` can chat with: their PT, and (for PTs/admins) their
+// clients — in both cases only while the client is on Pro.
 async function partnersOf(user) {
   const partners = [];
-  if (user.ptUserId && user.ptUserId !== user.userId) {
+  if (user.ptUserId && user.ptUserId !== user.userId && accessFor(user).canUseTrainer) {
     const pt = await getUser(user.ptUserId);
     if (pt) partners.push({ conversationId: conversationIdFor(user.userId, pt.userId), partner: partnerView(pt, true) });
   }
@@ -67,13 +72,14 @@ async function partnersOf(user) {
           TableName: TABLES.users,
           FilterExpression: "ptUserId = :me",
           ExpressionAttributeValues: { ":me": user.userId },
-          ProjectionExpression: "userId, #name, email, avatarUrl",
-          ExpressionAttributeNames: { "#name": "name" },
+          ProjectionExpression: "userId, #name, email, avatarUrl, #role, subscription",
+          ExpressionAttributeNames: { "#name": "name", "#role": "role" },
           ExclusiveStartKey,
         })
       );
       for (const client of page.Items ?? []) {
         if (client.userId === user.userId) continue; // an admin who is their own trainer
+        if (!accessFor(client).canUseTrainer) continue; // not on Pro (any more)
         partners.push({ conversationId: conversationIdFor(client.userId, user.userId), partner: partnerView(client, false) });
       }
       ExclusiveStartKey = page.LastEvaluatedKey;

@@ -16,8 +16,14 @@ export default function ProfileSetupDialog() {
   const { user, profile, setProfile, signOut } = useAuth();
   const pathname = usePathname();
 
+  // Not over the plan picker either: new sign-ups choose a plan first.
   const open =
-    !!user && !!profile && !isProfileComplete(profile) && pathname !== "/settings" && pathname !== "/login";
+    !!user &&
+    !!profile &&
+    !isProfileComplete(profile) &&
+    pathname !== "/settings" &&
+    pathname !== "/login" &&
+    pathname !== "/subscribe";
 
   if (!open) return null;
   return <SetupDialog profile={profile} onSaved={setProfile} onSignOut={signOut} />;

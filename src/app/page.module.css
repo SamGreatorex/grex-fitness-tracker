@@ -112,3 +112,63 @@
   border-color: var(--accent);
   color: var(--accent-text);
 }
+
+.limitNote {
+  margin-top: 0.4rem;
+  text-align: center;
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+/* Shown in place of "Build your own" once they've used their allowance. */
+.limitCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.limitAction {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.limitLink {
+  font-size: 0.8rem;
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.trialBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  border-radius: 12px;
+  background: rgba(250, 204, 21, 0.08);
+  color: inherit;
+  font-size: 0.88rem;
+}
+
+.trialBannerAction {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--accent-text);
+}

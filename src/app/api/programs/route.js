@@ -6,6 +6,7 @@ import { getRequestUser } from "../../../lib/users";
 import { ROLES } from "../../../lib/profile";
 import { canManageUser, isProgramManager, listAllPrograms, listProgramsForOwner, listTemplates, normaliseProgramInput } from "../../../lib/programs";
 import { PROGRAM_LEADS } from "../../../lib/programLead";
+import { programmeAllowance, requireAccess } from "../../../lib/subscriptions";
 import { withLogging } from "../../../lib/apiHandler";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
@@ -66,6 +67,23 @@ export const POST = withLogging("POST /api/programs", async (request) => {
     // other PTs' clients.
     if (!owner || !managesOwner) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+  }
+
+  // Building for yourself needs an active plan, within its programme limit
+  // (5 on the trial and Basic, plus any packs bought; Pro is unlimited).
+  if (forSelf) {
+    const denied = requireAccess(user);
+    if (denied) return denied;
+    const { limit, used } = programmeAllowance(user, await listProgramsForOwner(user.userId));
+    if (limit != null && used >= limit) {
+      return NextResponse.json(
+        {
+          error: `You've built ${used} of your ${limit} programmes. Add 5 more for £20 or move to Pro for unlimited.`,
+          code: "programme_limit",
+        },
+        { status: 402 }
+      );
     }
   }
 

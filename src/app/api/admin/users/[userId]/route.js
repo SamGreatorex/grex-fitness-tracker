@@ -6,6 +6,7 @@ import { ROLES } from "../../../../../lib/profile";
 import { PROGRAM_MANAGER_ROLES } from "../../../../../lib/programs";
 import { deleteUserCompletely, releaseClientsOf } from "../../../../../lib/deleteUser";
 import { withLogging } from "../../../../../lib/apiHandler";
+import { accessFor } from "../../../../../lib/billing";
 
 // Every response here is per-user data pulled fresh from DynamoDB/S3 — it
 // must never be cached by CloudFront (Amplify Hosting sits behind it), or
@@ -49,6 +50,10 @@ export const PATCH = withLogging("PATCH /api/admin/users/[userId]", async (reque
       const { Item: pt } = await ddb.send(new GetCommand({ TableName: TABLES.users, Key: { userId: body.ptUserId } }));
       if (!pt || !PROGRAM_MANAGER_ROLES.includes(pt.role)) {
         return NextResponse.json({ error: "Assigned PT must be a PT or admin." }, { status: 400 });
+      }
+      // A personal trainer comes with the Pro plan (staff are exempt).
+      if (!accessFor({ ...target, role: set.role ?? target.role }).canUseTrainer) {
+        return NextResponse.json({ error: "This user isn't on the Pro plan, so they can't have a PT." }, { status: 400 });
       }
       if (body.ptUserId !== target.ptUserId) {
         set.ptUserId = body.ptUserId;

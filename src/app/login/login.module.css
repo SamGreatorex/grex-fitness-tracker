@@ -127,6 +127,12 @@
   padding: 8px 10px;
 }
 
+/* Under the plan picker on the sign-up form. */
+.planHint {
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
 .info {
   font-size: 0.85rem;
   color: var(--foreground);

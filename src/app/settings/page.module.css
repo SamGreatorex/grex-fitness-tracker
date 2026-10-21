@@ -64,3 +64,9 @@
     padding: 1.25rem 1rem;
   }
 }
+
+.link {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

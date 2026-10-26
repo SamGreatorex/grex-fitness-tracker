@@ -187,7 +187,7 @@ export function sortPrograms(programs) {
   );
 }
 
-export const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500 };
+export const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500, noteLength: 500 };
 
 function intInRange(value, min, max) {
   const n = Number(value);
@@ -230,6 +230,13 @@ export function normaliseProgramInput(body, existing = null) {
       const exName = String(rawExercise?.name ?? "").trim();
       if (!exName) return { error: `${dayName}: every exercise needs a name` };
 
+      // Optional note from whoever built the programme (e.g. "keep elbows
+      // tucked"), shown on the exercise during the workout.
+      const note = String(rawExercise.note ?? "").trim();
+      if (note.length > LIMITS.noteLength) {
+        return { error: `${dayName} · ${exName}: note must be at most ${LIMITS.noteLength} characters` };
+      }
+
       // Cardio: one setting (free text, optional) + one total time. No sets,
       // reps, rest or weight.
       if (isCardio(rawExercise)) {
@@ -247,6 +254,7 @@ export function normaliseProgramInput(body, existing = null) {
           order: exerciseIndex,
           settings: settings || null,
           targetSeconds,
+          note: note || null,
         });
         continue;
       }
@@ -296,6 +304,7 @@ export function normaliseProgramInput(body, existing = null) {
         targetWeightUnit,
         targetWeightEntered,
         restSeconds,
+        note: note || null,
       });
     }
 

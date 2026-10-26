@@ -63,6 +63,7 @@ function toFormState(program, { fromTemplate = false } = {}) {
                   type: EXERCISE_TYPES.CARDIO,
                   settings: e.settings ?? "",
                   minutes: secondsToMinutes(e.targetSeconds),
+                  note: e.note ?? "",
                 }
               : {
                   key: newKey(),
@@ -71,6 +72,7 @@ function toFormState(program, { fromTemplate = false } = {}) {
                   targetReps: e.targetReps ?? "",
                   ...startWeightFormFields(e),
                   restSeconds: e.restSeconds ?? DEFAULT_REST,
+                  note: e.note ?? "",
                 }
           ),
       })),
@@ -154,7 +156,7 @@ export default function ProgrammeBuilder({
 
   const addExercise = (libraryExercise) => {
     const item = isCardio(libraryExercise)
-      ? { key: newKey(), name: libraryExercise.name, type: EXERCISE_TYPES.CARDIO, settings: "", minutes: DEFAULT_CARDIO_MINUTES }
+      ? { key: newKey(), name: libraryExercise.name, type: EXERCISE_TYPES.CARDIO, settings: "", minutes: DEFAULT_CARDIO_MINUTES, note: "" }
       : {
           key: newKey(),
           name: libraryExercise.name,
@@ -163,6 +165,7 @@ export default function ProgrammeBuilder({
           targetWeight: "",
           targetWeightUnit: LIFT_UNITS.KG,
           restSeconds: DEFAULT_REST,
+          note: "",
         };
     updateDay(pickerDayKey, (d) => ({ ...d, exercises: [...d.exercises, item] }));
   };
@@ -185,7 +188,7 @@ export default function ProgrammeBuilder({
         subtitle: d.subtitle,
         exercises: d.exercises.map((ex) =>
           isCardio(ex)
-            ? { name: ex.name, type: EXERCISE_TYPES.CARDIO, settings: ex.settings, targetSeconds: minutesToSeconds(ex.minutes) }
+            ? { name: ex.name, type: EXERCISE_TYPES.CARDIO, settings: ex.settings, targetSeconds: minutesToSeconds(ex.minutes), note: ex.note }
             : {
                 name: ex.name,
                 targetSets: Number(ex.targetSets),
@@ -193,6 +196,7 @@ export default function ProgrammeBuilder({
                 targetWeight: ex.targetWeight,
                 targetWeightUnit: ex.targetWeightUnit,
                 restSeconds: Number(ex.restSeconds),
+                note: ex.note,
               }
         ),
       })),
@@ -480,6 +484,18 @@ export default function ProgrammeBuilder({
                       </IconButton>
                     </div>
                   </div>
+                  <label className={styles.noteField}>
+                    <span>{selfBuilt ? "Note (optional)" : "Note for client (optional)"}</span>
+                    <textarea
+                      className={styles.noteInput}
+                      rows={2}
+                      maxLength={500}
+                      value={ex.note}
+                      onChange={(e) => updateExercise(day.key, ex.key, "note", e.target.value)}
+                      placeholder="e.g. Keep elbows tucked, slow on the way down"
+                      aria-label={`Note for ${ex.name}`}
+                    />
+                  </label>
                 </li>
               ))}
             </ol>

@@ -668,6 +668,7 @@ export default function WorkoutSession() {
             onWeightUnitChange={(unit) => onWeightUnitChange(exercise.exerciseId, unit)}
             note={exerciseNotes[exerciseNoteKey(dayId, exercise.name)] ?? null}
             onSaveNote={(text) => saveExerciseNote(exercise.name, text)}
+            programNoteLabel={program?.createdBy && program.createdBy === program.ownerUserId ? "Programme note" : "Trainer's note"}
           />
         ))}
 

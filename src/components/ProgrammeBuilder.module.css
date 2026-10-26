@@ -214,6 +214,37 @@
   outline: none;
 }
 
+/* Optional note shown to the client on this exercise mid-workout. */
+.noteField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.72rem;
+}
+
+.noteField span {
+  opacity: 0.6;
+}
+
+.noteInput {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  resize: vertical;
+  outline: none;
+}
+
+.noteInput:focus {
+  border-color: var(--foreground);
+}
+
 .addButton,
 .addDayButton {
   height: 44px;

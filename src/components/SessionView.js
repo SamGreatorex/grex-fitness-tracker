@@ -9,7 +9,7 @@ import AppHeader from "./AppHeader";
 import WorkoutSummary from "./WorkoutSummary";
 import SessionEditor from "./SessionEditor";
 import { averageEffortOf, averageWeightOf } from "../lib/sessionStats";
-import { effortColor } from "../lib/effort";
+import { effortColor, effortLabel } from "../lib/effort";
 import { formatCardio } from "../lib/exerciseTypes";
 import { formatSetWeight } from "../lib/units";
 import { isTrainerLed, programmeBasePath } from "../lib/programLead";
@@ -138,7 +138,7 @@ export default function SessionView() {
                     <span
                       className={styles.effortDot}
                       style={{ "--effort-color": effortColor(exercise.cardio.effort) }}
-                      title={`Effort: ${exercise.cardio.effort}/10`}
+                      title={`Effort: ${exercise.cardio.effort}/10 · ${effortLabel(exercise.cardio.effort)}`}
                     >
                       {exercise.cardio.effort}
                     </span>
@@ -157,7 +157,7 @@ export default function SessionView() {
                       <span
                         className={styles.effortDot}
                         style={{ "--effort-color": effortColor(set.effort) }}
-                        title={`Effort: ${set.effort}/10`}
+                        title={`Effort: ${set.effort}/10 · ${effortLabel(set.effort)}`}
                       >
                         {set.effort}
                       </span>

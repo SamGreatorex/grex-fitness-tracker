@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import styles from "./ExerciseCard.module.css";
 import { slugify } from "../lib/slugify";
-import { effortColor } from "../lib/effort";
+import { effortColor, effortLabel } from "../lib/effort";
 import RestPicker from "./RestPicker";
 import SwitchExerciseDialog from "./SwitchExerciseDialog";
 import ExerciseNote from "./ExerciseNote";
@@ -249,7 +249,7 @@ export default function ExerciseCard({
                     type="button"
                     className={badgeClassName}
                     style={badgeStyle}
-                    title={`${effort != null ? `Effort: ${effort}/10` : `Set ${i + 1}`} — tap to change`}
+                    title={`${effort != null ? `Effort: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`} — tap to change`}
                     onClick={() => onEditEffort(i)}
                   >
                     {effort != null ? effort : i + 1}
@@ -258,7 +258,7 @@ export default function ExerciseCard({
                   <span
                     className={badgeClassName}
                     style={badgeStyle}
-                    title={effort != null ? `Last time: ${effort}/10` : `Set ${i + 1}`}
+                    title={effort != null ? `Last time: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`}
                   >
                     {effort != null ? effort : i + 1}
                   </span>
@@ -359,11 +359,11 @@ function CardioRow({ row, last, onSetField, onLog, onEditEffort }) {
       </div>
       <div className={`${styles.setRow} ${styles.cardioGrid}`}>
         {row.completed ? (
-          <button type="button" className={badgeClassName} style={badgeStyle} title="Effort — tap to change" onClick={onEditEffort}>
+          <button type="button" className={badgeClassName} style={badgeStyle} title={`${effort != null ? `Effort: ${effort}/10 · ${effortLabel(effort)}` : "Effort"} — tap to change`} onClick={onEditEffort}>
             {effort != null ? effort : "✓"}
           </button>
         ) : (
-          <span className={badgeClassName} style={badgeStyle} title={effort != null ? `Last time: ${effort}/10` : "Cardio"}>
+          <span className={badgeClassName} style={badgeStyle} title={effort != null ? `Last time: ${effort}/10 · ${effortLabel(effort)}` : "Cardio"}>
             {effort != null ? effort : "•"}
           </span>
         )}

@@ -74,10 +74,12 @@
   color: #fff;
 }
 
-.effortHint {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  opacity: 0.55;
-  margin-top: 0.4rem;
+/* The picked (or hovered) level's label, e.g. "7 · Harder". */
+.effortLabel {
+  min-height: 1.4em;
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
 }

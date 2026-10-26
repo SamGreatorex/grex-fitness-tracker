@@ -22,6 +22,7 @@ npx playwright install chromium
 - `subscriptions.test.js`: trial, subscribe, declined card, upgrade, downgrade, cancel/resume, programme packs, renewals, catch-up renewals, failed renewals, card updates, trainer removal when Pro ends
 - `payments.test.js`: card validation, expired and declined cards
 - `programs.test.js`: programme builder validation, kg/lb start weights, workout summary stats
+- `restart.test.js`: restarting a programme deletes its run but keeps logged workouts, and a workout finished on a stale page doesn't bring the run back; restarting a week clears only that week
 - `units.test.js`: height, body weight, lifting weight and tape measurement conversions
 - `accounts.test.js`: password rules, profile completeness, modes per role
 - `loginRedirect.test.js`: signed-out users sent to sign in and back, and redirects to other sites ignored

@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../lib/loginRedirect";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,7 @@ export default function ChatListPage() {
   const isTrainer = profile?.role === ROLES.PT || profile?.role === ROLES.ADMIN;
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   useEffect(() => {

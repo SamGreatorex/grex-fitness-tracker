@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../lib/loginRedirect";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -49,7 +50,7 @@ export default function BillingPage() {
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   if (sessionLoading || !user) return null;

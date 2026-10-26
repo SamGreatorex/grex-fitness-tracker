@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../lib/loginRedirect";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -39,7 +40,7 @@ export default function ProgrammeDetail({ clientName }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   const load = useCallback(async () => {

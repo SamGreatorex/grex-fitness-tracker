@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../../lib/loginRedirect";
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../components/AuthProvider";
@@ -65,7 +66,7 @@ export default function AdminExercisesPage() {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   const load = useCallback(async () => {

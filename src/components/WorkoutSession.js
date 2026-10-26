@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../lib/loginRedirect";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
@@ -191,7 +192,7 @@ export default function WorkoutSession() {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   useEffect(() => {

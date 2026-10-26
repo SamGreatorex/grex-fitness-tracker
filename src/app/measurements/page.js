@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../lib/loginRedirect";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -72,7 +73,7 @@ export default function MeasurementsPage() {
   const [savedMessage, setSavedMessage] = useState("");
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   const entriesByDate = useMemo(() => Object.fromEntries((entries ?? []).map((e) => [e.date, e])), [entries]);

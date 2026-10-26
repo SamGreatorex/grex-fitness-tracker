@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../lib/loginRedirect";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
@@ -14,7 +15,7 @@ export default function RoleGate({ roles, children }) {
   const allowed = !!profile && roles.includes(profile.role);
 
   useEffect(() => {
-    if (!loading && !user) router.replace("/login");
+    if (!loading && !user) router.replace(loginHref());
     else if (profile && !roles.includes(profile.role)) router.replace("/");
   }, [loading, user, profile, roles, router]);
 

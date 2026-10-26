@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../../../lib/loginRedirect";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../../components/AuthProvider";
@@ -19,7 +20,7 @@ export default function EditOwnProgrammePage() {
   const programHref = `/programs/${programId}`;
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   useEffect(() => {

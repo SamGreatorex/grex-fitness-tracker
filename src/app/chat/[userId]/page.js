@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../../lib/loginRedirect";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "../../../components/AuthProvider";
@@ -53,7 +54,7 @@ export default function ChatThreadPage() {
   const scrollIntent = useRef({ type: "bottom" });
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   // Initial load.

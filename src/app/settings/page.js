@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../lib/loginRedirect";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
@@ -16,7 +17,7 @@ export default function SettingsPage() {
   const { user, loading: sessionLoading, profile, setProfile } = useAuth();
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   if (sessionLoading || !user) return null;

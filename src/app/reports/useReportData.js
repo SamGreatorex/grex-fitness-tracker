@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../../lib/loginRedirect";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
@@ -40,7 +41,7 @@ export function useReportData() {
   const currentKey = periodKey(today, granularity);
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   useEffect(() => {

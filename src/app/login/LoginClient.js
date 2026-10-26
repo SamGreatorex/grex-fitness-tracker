@@ -15,6 +15,7 @@ import { useAuth } from "../../components/AuthProvider";
 import PasswordRequirements from "../../components/PasswordRequirements";
 import { meetsPasswordRules, passwordErrorMessage } from "../../lib/password";
 import PlanPicker from "../../components/PlanPicker";
+import { safeRedirect } from "../../lib/loginRedirect";
 import { PLANS, PLAN_KEYS, TRIAL_DAYS, formatPrice } from "../../lib/billing";
 import styles from "./login.module.css";
 
@@ -34,7 +35,8 @@ function afterSignIn(redirectTo) {
 export default function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/";
+  // Where to go after signing in — only ever a page on this site.
+  const redirectTo = safeRedirect(searchParams.get("redirect"));
   const { user, loading: sessionLoading, refresh } = useAuth();
 
   const [tab, setTab] = useState("signin");

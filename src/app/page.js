@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../lib/loginRedirect";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -45,7 +46,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!sessionLoading && !user) {
-      router.replace("/login");
+      router.replace(loginHref());
     }
   }, [sessionLoading, user, router]);
 

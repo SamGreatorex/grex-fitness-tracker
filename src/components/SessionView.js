@@ -1,5 +1,6 @@
 "use client";
 
+import { loginHref } from "../lib/loginRedirect";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "./AuthProvider";
@@ -39,7 +40,7 @@ export default function SessionView() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!sessionLoading && !user) router.replace("/login");
+    if (!sessionLoading && !user) router.replace(loginHref());
   }, [sessionLoading, user, router]);
 
   const load = useCallback(async () => {

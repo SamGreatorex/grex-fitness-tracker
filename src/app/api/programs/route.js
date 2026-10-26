@@ -87,7 +87,7 @@ export const POST = withLogging("POST /api/programs", async (request) => {
     }
   }
 
-  const { program: fields, error } = normaliseProgramInput(body);
+  const { program: fields, error } = normaliseProgramInput(body, null, { userId: user.userId });
   if (error) return NextResponse.json({ error }, { status: 400 });
   if (forSelf && !managesOwner) fields.ledBy = PROGRAM_LEADS.USER;
 

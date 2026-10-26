@@ -666,9 +666,10 @@ export default function WorkoutSession() {
             onSwitchExercise={canEdit ? (newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise) : undefined}
             weightUnit={weightUnits[exercise.exerciseId] ?? LIFT_UNITS.KG}
             onWeightUnitChange={(unit) => onWeightUnitChange(exercise.exerciseId, unit)}
-            note={exerciseNotes[exerciseNoteKey(dayId, exercise.name)] ?? null}
+            // exercise.note: where builder notes used to be kept, until the
+            // programme is next saved.
+            note={exerciseNotes[exerciseNoteKey(dayId, exercise.name)] ?? (exercise.note ? { text: exercise.note } : null)}
             onSaveNote={(text) => saveExerciseNote(exercise.name, text)}
-            programNoteLabel={program?.createdBy && program.createdBy === program.ownerUserId ? "Programme note" : "Trainer's note"}
           />
         ))}
 

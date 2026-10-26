@@ -85,9 +85,6 @@ export default function ExerciseCard({
   // callback to save it (empty text clears it).
   note,
   onSaveNote,
-  // Heading for the note set on this exercise in the programme builder
-  // (exercise.note) — "Trainer's note" when their PT built it.
-  programNoteLabel = "Trainer's note",
 }) {
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
@@ -206,13 +203,6 @@ export default function ExerciseCard({
           )}
         </div>
       </div>
-
-      {exercise.note && (
-        <div className={styles.programNote}>
-          <p className={styles.programNoteLabel}>{programNoteLabel}</p>
-          <p className={styles.programNoteText}>{exercise.note}</p>
-        </div>
-      )}
 
       <ExerciseNote note={note} onSave={onSaveNote} />
 

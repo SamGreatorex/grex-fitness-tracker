@@ -7,6 +7,7 @@ import ExercisePicker from "./ExercisePicker";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import { PROGRAM_LEADS } from "../lib/programLead";
 import { LIFT_UNITS, kgToLb } from "../lib/units";
+import { EXERCISE_NOTE_MAX_LENGTH, exerciseNoteKey } from "../lib/exerciseNotes";
 import styles from "./ProgrammeBuilder.module.css";
 
 const LEAD_OPTIONS = [
@@ -63,7 +64,7 @@ function toFormState(program, { fromTemplate = false } = {}) {
                   type: EXERCISE_TYPES.CARDIO,
                   settings: e.settings ?? "",
                   minutes: secondsToMinutes(e.targetSeconds),
-                  note: e.note ?? "",
+                  note: savedNote(program, d, e),
                 }
               : {
                   key: newKey(),
@@ -72,11 +73,18 @@ function toFormState(program, { fromTemplate = false } = {}) {
                   targetReps: e.targetReps ?? "",
                   ...startWeightFormFields(e),
                   restSeconds: e.restSeconds ?? DEFAULT_REST,
-                  note: e.note ?? "",
+                  note: savedNote(program, d, e),
                 }
           ),
       })),
   };
+}
+
+// The exercise's note for this day — the same one the owner can edit
+// mid-workout (exerciseNotes). `e.note` is where builder notes used to be
+// kept; saving moves it over.
+function savedNote(program, day, exercise) {
+  return program.exerciseNotes?.[exerciseNoteKey(day.dayId, exercise.name)]?.text ?? exercise.note ?? "";
 }
 
 // A stored start weight → the number and unit it was entered in (stored
@@ -489,7 +497,7 @@ export default function ProgrammeBuilder({
                     <textarea
                       className={styles.noteInput}
                       rows={2}
-                      maxLength={500}
+                      maxLength={EXERCISE_NOTE_MAX_LENGTH}
                       value={ex.note}
                       onChange={(e) => updateExercise(day.key, ex.key, "note", e.target.value)}
                       placeholder="e.g. Keep elbows tucked, slow on the way down"

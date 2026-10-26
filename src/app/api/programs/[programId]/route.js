@@ -76,7 +76,7 @@ export const PUT = withLogging("PUT /api/programs/[programId]", async (request, 
   if (denied) return denied;
   if (!(await canEditProgram(user, program))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const { program: fields, error } = normaliseProgramInput(await request.json(), program);
+  const { program: fields, error } = normaliseProgramInput(await request.json(), program, { userId: user.userId });
   if (error) return NextResponse.json({ error }, { status: 400 });
   // An owner editing their own programme can't hand it to a trainer to run.
   if (!program.isTemplate && !(await canManageUser(user, program.ownerUserId))) fields.ledBy = PROGRAM_LEADS.USER;

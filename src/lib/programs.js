@@ -5,6 +5,7 @@ import { ROLES } from "./profile";
 import { CARDIO_LIMITS, EXERCISE_TYPES, isCardio } from "./exerciseTypes";
 import { PROGRAM_LEADS, isTrainerLed } from "./programLead";
 import { slugify } from "./slugify";
+import { EXERCISE_NOTE_MAX_LENGTH, exerciseNoteKey } from "./exerciseNotes";
 import { LIFT_UNITS, kgToLb, lbToKg } from "./units";
 
 // Programmes belong to exactly one user (ownerUserId). A PT can create and
@@ -187,7 +188,7 @@ export function sortPrograms(programs) {
   );
 }
 
-export const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500, noteLength: 500 };
+export const LIMITS = { days: 7, exercisesPerDay: 30, sets: 20, restSeconds: 600, weeks: 52, weightKg: 500 };
 
 function intInRange(value, min, max) {
   const n = Number(value);
@@ -197,8 +198,10 @@ function intInRange(value, min, max) {
 // Validates a programme from the builder and normalises it into the stored
 // shape the workout pages already understand. `existing` (when editing)
 // lets days keep their dayIds, so logged sessions stay attached to them.
+// Each exercise's `note` is saved into exerciseNotes — the same note the
+// owner sees and can edit mid-workout — with `userId` as who changed it.
 // Returns { program } or { error }.
-export function normaliseProgramInput(body, existing = null) {
+export function normaliseProgramInput(body, existing = null, { userId = null } = {}) {
   const name = String(body?.name ?? "").trim();
   if (!name) return { error: "Programme name is required" };
   if (name.length > 100) return { error: "Programme name must be at most 100 characters" };
@@ -216,6 +219,8 @@ export function normaliseProgramInput(body, existing = null) {
 
   const existingDayIds = new Set((existing?.days ?? []).map((d) => d.dayId));
   const days = [];
+  // Note text from the builder, by exerciseNoteKey (empty = clear it).
+  const builderNotes = {};
 
   for (const [dayIndex, rawDay] of rawDays.entries()) {
     const dayName = `Day ${dayIndex + 1}`;
@@ -226,16 +231,18 @@ export function normaliseProgramInput(body, existing = null) {
     }
 
     const exercises = [];
+    const dayNotes = [];
     for (const [exerciseIndex, rawExercise] of rawExercises.entries()) {
       const exName = String(rawExercise?.name ?? "").trim();
       if (!exName) return { error: `${dayName}: every exercise needs a name` };
 
-      // Optional note from whoever built the programme (e.g. "keep elbows
-      // tucked"), shown on the exercise during the workout.
+      // Optional note (e.g. "keep elbows tucked") — stored in exerciseNotes
+      // once the day's id is known, below.
       const note = String(rawExercise.note ?? "").trim();
-      if (note.length > LIMITS.noteLength) {
-        return { error: `${dayName} · ${exName}: note must be at most ${LIMITS.noteLength} characters` };
+      if (note.length > EXERCISE_NOTE_MAX_LENGTH) {
+        return { error: `${dayName} · ${exName}: note must be at most ${EXERCISE_NOTE_MAX_LENGTH} characters` };
       }
+      dayNotes.push({ name: exName, note });
 
       // Cardio: one setting (free text, optional) + one total time. No sets,
       // reps, rest or weight.
@@ -254,7 +261,6 @@ export function normaliseProgramInput(body, existing = null) {
           order: exerciseIndex,
           settings: settings || null,
           targetSeconds,
-          note: note || null,
         });
         continue;
       }
@@ -304,13 +310,18 @@ export function normaliseProgramInput(body, existing = null) {
         targetWeightUnit,
         targetWeightEntered,
         restSeconds,
-        note: note || null,
       });
     }
 
     const keepId = rawDay.dayId && existingDayIds.has(String(rawDay.dayId));
+    const dayId = keepId ? String(rawDay.dayId) : randomUUID().slice(0, 8);
+    for (const { name: exName, note } of dayNotes) {
+      // The same exercise twice in a day shares one note: any text wins.
+      const key = exerciseNoteKey(dayId, exName);
+      builderNotes[key] = builderNotes[key] || note;
+    }
     days.push({
-      dayId: keepId ? String(rawDay.dayId) : randomUUID().slice(0, 8),
+      dayId,
       label: String(rawDay.label ?? "").trim().slice(0, 40) || dayName,
       subtitle: String(rawDay.subtitle ?? "").trim().slice(0, 100) || null,
       order: dayIndex,
@@ -318,5 +329,14 @@ export function normaliseProgramInput(body, existing = null) {
     });
   }
 
-  return { program: { name, goal, ledBy, durationWeeks, days } };
+  // Unchanged notes keep their updatedAt/updatedBy; notes on exercises no
+  // longer in the programme are left alone (as when one is removed).
+  const exerciseNotes = { ...(existing?.exerciseNotes ?? {}) };
+  const now = new Date().toISOString();
+  for (const [key, text] of Object.entries(builderNotes)) {
+    if (!text) delete exerciseNotes[key];
+    else if (exerciseNotes[key]?.text !== text) exerciseNotes[key] = { text, updatedAt: now, updatedBy: userId };
+  }
+
+  return { program: { name, goal, ledBy, durationWeeks, days, exerciseNotes } };
 }

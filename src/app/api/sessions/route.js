@@ -104,19 +104,27 @@ export const POST = withLogging("POST /api/sessions", async (request) => {
     const nextWeek = week + 1;
     const finished = nextWeek > durationWeeks;
 
-    await ddb.send(
-      new UpdateCommand({
-        TableName: TABLES.runs,
-        Key: { userId, runId },
-        UpdateExpression: finished
-          ? "SET currentWeek = :nextWeek, #status = :completed, completedAt = :completedAt"
-          : "SET currentWeek = :nextWeek",
-        ExpressionAttributeNames: finished ? { "#status": "status" } : undefined,
-        ExpressionAttributeValues: finished
-          ? { ":nextWeek": nextWeek, ":completed": "completed", ":completedAt": completedAt }
-          : { ":nextWeek": nextWeek },
-      })
-    );
+    // Only if the run still exists — a workout finished on a page left open
+    // after the programme was restarted (which deletes the run) mustn't
+    // re-create a partial run.
+    try {
+      await ddb.send(
+        new UpdateCommand({
+          TableName: TABLES.runs,
+          Key: { userId, runId },
+          ConditionExpression: "attribute_exists(runId)",
+          UpdateExpression: finished
+            ? "SET currentWeek = :nextWeek, #status = :completed, completedAt = :completedAt"
+            : "SET currentWeek = :nextWeek",
+          ExpressionAttributeNames: finished ? { "#status": "status" } : undefined,
+          ExpressionAttributeValues: finished
+            ? { ":nextWeek": nextWeek, ":completed": "completed", ":completedAt": completedAt }
+            : { ":nextWeek": nextWeek },
+        })
+      );
+    } catch (err) {
+      if (err.name !== "ConditionalCheckFailedException") throw err;
+    }
   }
 
   return NextResponse.json({ session }, { status: 201 });

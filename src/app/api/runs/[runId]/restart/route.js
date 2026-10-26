@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { QueryCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
 import { getRequestUser } from "../../../../../lib/users";
 import { getRunnableRun } from "../../../../../lib/programs";
@@ -17,10 +17,10 @@ export const dynamic = "force-dynamic";
 // scope "week" clears that week's logged sessions so its days go back to
 // "Start" — the run stays active, on the same week.
 //
-// scope "program" ends the current run entirely (status -> "abandoned", so
-// it's no longer picked up as the active run) without touching its logged
-// sessions — the program page falls back to the pre-start screen ("Start
-// program"/"Start again"), and a future run starts clean from week 1.
+// scope "program" deletes the current run from the database, without
+// touching its logged sessions (reports still use them) — the program page
+// falls back to the pre-start screen, and a future run starts clean from
+// week 1.
 export const POST = withLogging("POST /api/runs/[runId]/restart", async (request, { params }) => {
   const user = await getRequestUser(request);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,15 +38,7 @@ export const POST = withLogging("POST /api/runs/[runId]/restart", async (request
   const { userId, run } = found;
 
   if (scope === "program") {
-    await ddb.send(
-      new UpdateCommand({
-        TableName: TABLES.runs,
-        Key: { userId, runId },
-        UpdateExpression: "SET #status = :abandoned",
-        ExpressionAttributeNames: { "#status": "status" },
-        ExpressionAttributeValues: { ":abandoned": "abandoned" },
-      })
-    );
+    await ddb.send(new DeleteCommand({ TableName: TABLES.runs, Key: { userId, runId } }));
     return NextResponse.json({ ok: true });
   }
 

@@ -103,7 +103,7 @@ export default function ProgrammeDetail({ clientName }) {
   const restart = async (scope) => {
     const confirmMessage =
       scope === "program"
-        ? "Restart this program? This ends the current run and takes you back to the start screen. Logged history is kept, and it begins again from week 1 when started."
+        ? "Restart this program? This removes the current run and takes you back to the start screen. Logged workouts are kept, and it begins again from week 1 when started."
         : `Restart week ${run.currentWeek}? This clears everything logged for this week so far.`;
     if (!window.confirm(confirmMessage)) return;
 

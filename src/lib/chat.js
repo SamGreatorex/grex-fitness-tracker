@@ -68,9 +68,10 @@ async function partnersOf(user) {
     let ExclusiveStartKey;
     do {
       const page = await ddb.send(
-        new ScanCommand({
+        new QueryCommand({
           TableName: TABLES.users,
-          FilterExpression: "ptUserId = :me",
+          IndexName: "PtIndex",
+          KeyConditionExpression: "ptUserId = :me",
           ExpressionAttributeValues: { ":me": user.userId },
           ProjectionExpression: "userId, #name, email, avatarUrl, #role, subscription",
           ExpressionAttributeNames: { "#name": "name", "#role": "role" },

@@ -1,4 +1,4 @@
-import { BatchWriteCommand, DeleteCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { BatchWriteCommand, DeleteCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { AdminDeleteUserCommand, CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import { ddb, TABLES } from "./dynamo";
 import { deleteMediaObject } from "./s3";
@@ -14,9 +14,10 @@ export async function releaseClientsOf(ptUserId) {
   let ExclusiveStartKey;
   do {
     const page = await ddb.send(
-      new ScanCommand({
+      new QueryCommand({
         TableName: TABLES.users,
-        FilterExpression: "ptUserId = :pt",
+        IndexName: "PtIndex",
+        KeyConditionExpression: "ptUserId = :pt",
         ExpressionAttributeValues: { ":pt": ptUserId },
         ProjectionExpression: "userId",
         ExclusiveStartKey,

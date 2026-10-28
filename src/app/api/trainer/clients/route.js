@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
 import { requireRole } from "../../../../lib/users";
 import { PROGRAM_MANAGER_ROLES } from "../../../../lib/programs";
@@ -28,23 +28,42 @@ export const GET = withLogging("GET /api/trainer/clients", async (request) => {
 
   const names = Object.fromEntries([...CLIENT_FIELDS, ...CHECK_FIELDS].map((f) => [`#${f}`, f]));
   const pick = (u) => Object.fromEntries(CLIENT_FIELDS.filter((f) => u[f] !== undefined).map((f) => [f, u[f]]));
+  const skip = (u) => u.userId === trainer.userId && trainer.role !== ROLES.ADMIN;
+
+  // Their clients, straight from PtIndex.
   const clients = [];
-  const available = [];
   let ExclusiveStartKey;
+  do {
+    const page = await ddb.send(
+      new QueryCommand({
+        TableName: TABLES.users,
+        IndexName: "PtIndex",
+        KeyConditionExpression: "#ptUserId = :me",
+        ExpressionAttributeValues: { ":me": trainer.userId },
+        ProjectionExpression: Object.keys(names).join(", "),
+        ExpressionAttributeNames: names,
+        ExclusiveStartKey,
+      })
+    );
+    for (const u of page.Items ?? []) if (!skip(u)) clients.push(pick(u));
+    ExclusiveStartKey = page.LastEvaluatedKey;
+  } while (ExclusiveStartKey);
+
+  // Unassigned users aren't in PtIndex (it's sparse), so these still need a scan.
+  const available = [];
   do {
     const page = await ddb.send(
       new ScanCommand({
         TableName: TABLES.users,
+        FilterExpression: "attribute_not_exists(#ptUserId)",
         ProjectionExpression: Object.keys(names).join(", "),
         ExpressionAttributeNames: names,
         ExclusiveStartKey,
       })
     );
     for (const u of page.Items ?? []) {
-      if (u.userId === trainer.userId && trainer.role !== ROLES.ADMIN) continue;
-      if (u.ptUserId === trainer.userId) clients.push(pick(u));
       // A personal trainer comes with the Pro plan — only Pro users can be taken on.
-      else if (!u.ptUserId && accessFor(u).canUseTrainer) available.push(pick(u));
+      if (!skip(u) && accessFor(u).canUseTrainer) available.push(pick(u));
     }
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);

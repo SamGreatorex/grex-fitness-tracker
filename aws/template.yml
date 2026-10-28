@@ -145,6 +145,8 @@ Resources:
   # with role "basic"; change the role (basic | pt | admin) directly in
   # this table. Profile fields (name, address, heightCm, weightKg,
   # avatarKey/avatarUrl) are schemaless, so new ones need no change here.
+  # PtIndex lists a PT's clients (users whose ptUserId is theirs) without
+  # scanning everyone; it's sparse, so unassigned users aren't in it.
   UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -153,9 +155,18 @@ Resources:
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: ptUserId
+          AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: PtIndex
+          KeySchema:
+            - AttributeName: ptUserId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
   # Body weight + tape measurements, one entry per user per day
   # (date = YYYY-MM-DD). Values are stored metric (kg / cm).

@@ -25,7 +25,8 @@ async function load(request, params) {
 
 // Messages, oldest first: the latest page by default; ?after=<id> for just
 // newer ones (polling); ?before=<id> for the page before (load earlier).
-// Viewing marks the conversation read.
+// Seeing new messages from the other person marks the conversation read
+// (an empty poll doesn't, so idle polling costs no writes).
 export const GET = withLogging("GET /api/chat/[userId]", async (request, { params }) => {
   const { user, conversation, denied } = await load(request, params);
   if (denied) return denied;
@@ -35,7 +36,9 @@ export const GET = withLogging("GET /api/chat/[userId]", async (request, { param
     after: searchParams.get("after") || undefined,
     before: searchParams.get("before") || undefined,
   });
-  if (!searchParams.get("before")) await markRead(conversation.conversationId, user.userId);
+  if (!searchParams.get("before") && messages.some((m) => m.senderUserId !== user.userId)) {
+    await markRead(conversation.conversationId, user.userId);
+  }
 
   return NextResponse.json({ partner: conversation.partner, messages, hasMore });
 });

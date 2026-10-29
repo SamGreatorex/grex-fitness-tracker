@@ -10,7 +10,7 @@ import Avatar from "../../../components/Avatar";
 import { formatDayHeading, formatMessageTime } from "../chatTime";
 import styles from "../chat.module.css";
 
-const POLL_MS = 4_000;
+const POLL_MS = 12_000;
 const MAX_LENGTH = 2000;
 
 // Merges newly fetched messages into the list, skipping any already there
@@ -27,8 +27,9 @@ function isNearBottom(el) {
 }
 
 // One conversation, between the signed-in user and `userId` (their trainer,
-// or one of their clients). New messages are picked up by polling every few
-// seconds while the tab is visible; viewing marks them read.
+// or one of their clients). New messages are picked up by polling every 12s
+// while the tab is visible (and straight away when it becomes visible);
+// receiving them marks them read.
 export default function ChatThreadPage() {
   const { userId: partnerId } = useParams();
   const router = useRouter();

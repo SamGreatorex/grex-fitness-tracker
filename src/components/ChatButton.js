@@ -4,23 +4,32 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { api } from "../lib/apiClient";
+import { accessFor } from "../lib/billing";
 import { useAuth } from "./AuthProvider";
 import styles from "./ChatButton.module.css";
 
 const POLL_MS = 30_000;
 
+// Doing a workout (yours, or running one for a client) — no polling there.
+const isWorkoutPath = (pathname) => /\/day\/[^/]+$/.test(pathname);
+
 // Header chat icon with an unread badge. Only shown to people who have
-// someone to chat with (a PT, or clients). Re-checks every 30s while the
-// tab is visible, and whenever the page changes (e.g. after reading a chat).
+// someone to chat with (a PT, or clients). Only people who can chat (Pro
+// members and staff) are checked at all; for them it re-checks every 30s
+// while the tab is visible and whenever the page changes (e.g. after
+// reading a chat), except during a workout, where the badge keeps its
+// last state until they leave.
 export default function ChatButton() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const pathname = usePathname();
+  const canChat = !!profile && accessFor(profile).canUseTrainer;
+  const paused = isWorkoutPath(pathname);
   // `onlyPartnerId`: set when there's exactly one conversation, so the icon
   // opens it directly rather than a one-item list.
   const [state, setState] = useState({ available: false, unread: 0, onlyPartnerId: null });
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !canChat || paused) return;
     let cancelled = false;
     const check = async () => {
       if (document.visibilityState !== "visible") return;
@@ -40,9 +49,9 @@ export default function ChatButton() {
       clearInterval(timer);
       document.removeEventListener("visibilitychange", check);
     };
-  }, [user, pathname]);
+  }, [user, canChat, paused, pathname]);
 
-  if (!state.available) return null;
+  if (!canChat || !state.available) return null;
 
   const label = state.unread ? `Messages, ${state.unread} unread` : "Messages";
   return (

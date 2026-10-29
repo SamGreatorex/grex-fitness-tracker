@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { GetCommand, DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../lib/dynamo";
+import { invalidateExerciseLibrary } from "../../../../lib/exerciseLibrary";
 import { deleteMediaObject } from "../../../../lib/s3";
 import { withLogging } from "../../../../lib/apiHandler";
 import { requireRole } from "../../../../lib/users";
@@ -119,6 +120,7 @@ export const DELETE = withLogging("DELETE /api/exercises/[exerciseId]", async (r
   }
 
   await ddb.send(new DeleteCommand({ TableName: TABLES.exercises, Key: { exerciseId } }));
+  invalidateExerciseLibrary();
 
   return NextResponse.json({ ok: true, switchedProgrammes: new Set(usage.map((u) => u.programId)).size });
 });

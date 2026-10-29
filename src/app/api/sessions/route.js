@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
+import { recentSessions, SESSION_PAGE, sessionsForRun } from "../../../lib/sessions";
 import { getRequestUser } from "../../../lib/users";
 import { canRunProgram, getProgram, resolveSubjectUserId } from "../../../lib/programs";
 import { isTrainerLed } from "../../../lib/programLead";
@@ -13,7 +14,10 @@ import { requireAccess } from "../../../lib/subscriptions";
 export const dynamic = "force-dynamic";
 
 // The caller's own logged sessions, or (?userId=X) a client's — for their
-// PT or an admin.
+// PT or an admin. Newest first, either:
+//   ?runId=X              — every session in that run
+//   ?limit=N&cursor=C     — one page across all runs (default 50, max 100);
+//                           pass back `nextCursor` for the next page
 export const GET = withLogging("GET /api/sessions", async (request) => {
   const user = await getRequestUser(request);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,19 +27,22 @@ export const GET = withLogging("GET /api/sessions", async (request) => {
   const userId = await resolveSubjectUserId(user, searchParams.get("userId"));
   if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const result = await ddb.send(
-    new QueryCommand({
-      TableName: TABLES.sessions,
-      KeyConditionExpression: "userId = :userId",
-      ExpressionAttributeValues: { ":userId": userId },
-    })
-  );
+  if (runId) {
+    const sessions = await sessionsForRun(userId, runId);
+    sessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    return NextResponse.json({ sessions });
+  }
 
-  let sessions = result.Items || [];
-  if (runId) sessions = sessions.filter((s) => s.runId === runId);
-  sessions.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
-
-  return NextResponse.json({ sessions });
+  const requested = Number(searchParams.get("limit") || SESSION_PAGE.defaultLimit);
+  if (!Number.isInteger(requested) || requested < 1) {
+    return NextResponse.json({ error: "limit must be a whole number above 0" }, { status: 400 });
+  }
+  const page = await recentSessions(userId, {
+    limit: Math.min(requested, SESSION_PAGE.maxLimit),
+    cursor: searchParams.get("cursor") || undefined,
+  });
+  if (!page) return NextResponse.json({ error: "Invalid cursor" }, { status: 400 });
+  return NextResponse.json(page);
 });
 
 // Logs a finished workout. Always stored under the programme's owner — for

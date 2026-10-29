@@ -72,7 +72,8 @@ export default function AdminExercisesPage() {
   const load = useCallback(async () => {
     try {
       const [{ exercises }, { programs }, { users }] = await Promise.all([
-        api.get("/api/exercises"),
+        // Fresh, not the server's cached copy, so edits show straight away.
+        api.get("/api/exercises", { fresh: 1 }),
         api.get("/api/programs", { scope: "all" }),
         // Only for showing whose programme each use is in — never block the page on it.
         api.get("/api/admin/users").catch(() => ({ users: [] })),

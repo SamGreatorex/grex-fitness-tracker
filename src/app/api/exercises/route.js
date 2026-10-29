@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { ScanCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
+import { getExerciseLibrary, invalidateExerciseLibrary } from "../../../lib/exerciseLibrary";
 import { slugify } from "../../../lib/slugify";
 import { getUserId } from "../../../lib/verifyToken";
 import { deleteMediaObject, publicMediaUrl } from "../../../lib/s3";
@@ -15,12 +16,16 @@ import { ROLES } from "../../../lib/profile";
 // one user's stale response can get served to everyone after that.
 export const dynamic = "force-dynamic";
 
+// The whole library, from a short-lived server cache (see
+// src/lib/exerciseLibrary.js). ?fresh=1 skips the cache — admins only, so
+// the admin page always shows its own edits.
 export const GET = withLogging("GET /api/exercises", async (request) => {
   const userId = await getUserId(request);
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const result = await ddb.send(new ScanCommand({ TableName: TABLES.exercises }));
-  const exercises = (result.Items || []).sort((a, b) => a.name.localeCompare(b.name));
+  const wantsFresh = new URL(request.url).searchParams.get("fresh") === "1";
+  const fresh = wantsFresh && !(await requireRole(request, [ROLES.ADMIN])).denied;
+  const exercises = await getExerciseLibrary({ fresh });
 
   return NextResponse.json({ exercises });
 });
@@ -120,6 +125,7 @@ export const POST = withLogging("POST /api/exercises", async (request) => {
   };
 
   await ddb.send(new PutCommand({ TableName: TABLES.exercises, Item: exercise }));
+  invalidateExerciseLibrary();
 
   return NextResponse.json({ exercise }, { status: 201 });
 });

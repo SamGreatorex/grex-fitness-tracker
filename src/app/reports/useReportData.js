@@ -13,6 +13,19 @@ export const GRANULARITIES = [
   { key: "year", label: "Yearly", period: "year" },
 ];
 
+// Reports chart any past period, so they need the whole history — fetched
+// a page at a time (GET /api/sessions returns one page per call).
+async function allSessions() {
+  const sessions = [];
+  let cursor;
+  do {
+    const page = await api.get("/api/sessions", { limit: 100, cursor });
+    sessions.push(...page.sessions);
+    cursor = page.nextCursor;
+  } while (cursor);
+  return sessions;
+}
+
 // Everything the reports overview and its detail pages chart: the user's
 // workout sessions, the exercise library (keyed by slug, for body areas)
 // and their body measurement entries. Each is null until loaded. Also
@@ -48,8 +61,8 @@ export function useReportData() {
     if (!user) return;
     (async () => {
       try {
-        const [{ sessions }, { exercises }, { entries }] = await Promise.all([
-          api.get("/api/sessions"),
+        const [sessions, { exercises }, { entries }] = await Promise.all([
+          allSessions(),
           api.get("/api/exercises"),
           api.get("/api/measurements"),
         ]);

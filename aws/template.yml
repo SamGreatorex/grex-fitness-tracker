@@ -128,6 +128,16 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        # A user's sessions newest-first across every run, for paging
+        # GET /api/sessions without reading their whole history.
+        - IndexName: UserCompletedIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: completedAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
 
   ExercisesTable:
     Type: AWS::DynamoDB::Table

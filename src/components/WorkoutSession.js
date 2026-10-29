@@ -207,8 +207,9 @@ export default function WorkoutSession() {
       try {
         const [{ program, canChangeExercises }, { sessions }, { exercises }] = await Promise.all([
           api.get(`/api/programs/${programId}`),
-          // History (for last-time prefill) is the client's, not the trainer's.
-          api.get("/api/sessions", clientUserId ? { userId: clientUserId } : undefined),
+          // History (for last-time prefill) is the client's, not the trainer's
+          // — their latest 50 workouts.
+          api.get("/api/sessions", { limit: 50, userId: clientUserId }),
           api.get("/api/exercises"),
         ]);
         const foundDay = program.days.find((d) => d.dayId === dayId);

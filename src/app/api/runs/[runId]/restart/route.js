@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../../../lib/dynamo";
+import { sessionsForRun } from "../../../../../lib/sessions";
 import { getRequestUser } from "../../../../../lib/users";
 import { getRunnableRun } from "../../../../../lib/programs";
 import { withLogging } from "../../../../../lib/apiHandler";
@@ -44,15 +45,7 @@ export const POST = withLogging("POST /api/runs/[runId]/restart", async (request
 
   const targetWeek = week ?? run.currentWeek;
 
-  const sessionsResult = await ddb.send(
-    new QueryCommand({
-      TableName: TABLES.sessions,
-      KeyConditionExpression: "userId = :userId",
-      ExpressionAttributeValues: { ":userId": userId },
-    })
-  );
-
-  const toDelete = (sessionsResult.Items || []).filter(
+  const toDelete = (await sessionsForRun(userId, runId)).filter(
     (s) => s.runId === runId && s.week === targetWeek
   );
 

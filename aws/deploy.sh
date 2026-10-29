@@ -36,6 +36,14 @@ APP_NAME="${APP_NAME:-$DEFAULT_NAME}"
 
 cd "$(dirname "$0")"
 
+# Sign-up/reset emails through SES (see docs/ENV_SETUP.md). Only passed
+# when set — otherwise the stack keeps whatever it was last deployed with.
+#   SES_FROM_ADDRESS=no-reply@example.com SES_IDENTITY=example.com ./aws/deploy.sh dev
+#   SES_FROM_ADDRESS= ./aws/deploy.sh dev    # back to Cognito's own sender
+PARAMS=("AppName=${APP_NAME}")
+[[ -n "${SES_FROM_ADDRESS+x}" ]] && PARAMS+=("SesFromAddress=${SES_FROM_ADDRESS}")
+[[ -n "${SES_IDENTITY+x}" ]] && PARAMS+=("SesIdentity=${SES_IDENTITY}")
+
 echo "Environment: $ENVIRONMENT"
 echo "Profile:  $PROFILE"
 echo "Region:   $REGION"
@@ -45,7 +53,7 @@ echo "==> Deploying CloudFormation stack '$STACK'..."
 aws cloudformation deploy \
   --stack-name "$STACK" \
   --template-file template.yml \
-  --parameter-overrides "AppName=${APP_NAME}" \
+  --parameter-overrides "${PARAMS[@]}" \
   --capabilities CAPABILITY_NAMED_IAM \
   --region "$REGION" \
   --profile "$PROFILE"

@@ -14,12 +14,46 @@ Parameters:
     Type: String
     Default: 'http://localhost:3000'
     Description: Used only as a tag/reference; this app uses Amplify's username/password auth, not Cognito Hosted UI redirects.
+  SesFromAddress:
+    Type: String
+    Default: ''
+    Description: >
+      FROM address for sign-up codes and password resets, sent through this
+      account's Amazon SES. Leave empty to use Cognito's built-in sender
+      (no-reply@verificationemail.com, ~50 emails/day). Must be a verified
+      SES address, or an address in SesIdentity's verified domain, and SES
+      must be out of the sandbox or only verified recipients get email.
+  SesIdentity:
+    Type: String
+    Default: ''
+    Description: The verified SES identity SesFromAddress belongs to — a domain (e.g. example.com). Leave empty when SesFromAddress is itself the verified identity.
+  EmailSenderName:
+    Type: String
+    Default: Fit4 The Future
+    Description: Display name on emails sent through SES.
+
+Conditions:
+  UseSes: !Not [!Equals [!Ref SesFromAddress, '']]
+  HasSesIdentity: !Not [!Equals [!Ref SesIdentity, '']]
 
 Resources:
+  # Lite tier: the app only signs in with email + password (SRP), so none
+  # of Essentials' features (managed login, passwordless, email MFA) are used.
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub '${AppName}-users'
+      UserPoolTier: LITE
+      # Cognito creates a service-linked role to send through SES itself;
+      # the identity needs no sending policy (same region as the pool).
+      EmailConfiguration: !If
+        - UseSes
+        - EmailSendingAccount: DEVELOPER
+          From: !Sub '${EmailSenderName} <${SesFromAddress}>'
+          SourceArn: !Sub
+            - 'arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${Identity}'
+            - Identity: !If [HasSesIdentity, !Ref SesIdentity, !Ref SesFromAddress]
+        - EmailSendingAccount: COGNITO_DEFAULT
       UsernameAttributes:
         - email
       AutoVerifiedAttributes:

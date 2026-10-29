@@ -87,6 +87,30 @@ Repeat with `./aws/deploy.sh prod` and `.env.production.local` for the
 production stack — or skip it if prod is already deployed and you're only
 setting up dev.
 
+## Sign-up and password-reset emails (Amazon SES)
+
+Both user pools are on Cognito's **Lite** tier — the app only uses email +
+password sign-in, so nothing from Essentials is needed. Sign-up codes and
+password-reset codes are emailed by Cognito; by default from its built-in
+sender (`no-reply@verificationemail.com`, capped at about 50 emails a day
+per pool). To send them through this account's SES instead:
+
+1. **Verify a sender in SES (eu-west-2).** Preferably a domain (SES →
+   Identities → Create identity → Domain, then add the DKIM CNAMEs to its
+   DNS) so you can send from e.g. `no-reply@yourdomain`. A single verified
+   address works too.
+2. **Get SES out of the sandbox** (SES → Account dashboard → Request
+   production access). Until then SES only delivers to verified addresses,
+   so real users would get no sign-up or reset codes — fine for trying it
+   on dev with verified test addresses, not for prod.
+3. **Deploy with the sender:**
+   ```
+   SES_FROM_ADDRESS=no-reply@yourdomain SES_IDENTITY=yourdomain ./aws/deploy.sh dev
+   SES_FROM_ADDRESS=you@example.com ./aws/deploy.sh dev   # a verified address: no SES_IDENTITY
+   ```
+   The stack remembers it, so later deploys don't need the variables.
+   `SES_FROM_ADDRESS= ./aws/deploy.sh dev` switches back to Cognito's sender.
+
 ## Deployed (Amplify Hosting)
 
 Amplify Hosting doesn't read any local `.env*` file — its own env vars

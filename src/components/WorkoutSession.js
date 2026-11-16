@@ -14,7 +14,13 @@ import WorkoutSummary from "./WorkoutSummary";
 import ExercisePicker from "./ExercisePicker";
 import { slugify } from "../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../lib/sessionStats";
-import { exerciseChange, findLastCardioForExercise, findLastSetsForExercise, weeklyExerciseProgress } from "../lib/exerciseProgress";
+import {
+  exerciseChange,
+  findLastCardioForExercise,
+  findLastSetsForExercise,
+  findRecentSetsForExercise,
+  weeklyExerciseProgress,
+} from "../lib/exerciseProgress";
 import { useWakeLock } from "../lib/useWakeLock";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import { programmeBasePath } from "../lib/programLead";
@@ -704,6 +710,7 @@ export default function WorkoutSession() {
             exercise={exercise}
             sets={setsByExercise[exercise.exerciseId]}
             lastSets={lastSetsFor(exercise.exerciseId)}
+            previousSets={isCardio(exercise) ? null : findRecentSetsForExercise(sessionsCache, exercise.name, 2)[1]}
             libraryEntry={exerciseLibrary[slugify(exercise.name)]}
             // Only offer swaps of the same kind (cardio ↔ cardio, strength ↔ strength).
             libraryEntries={exerciseLibraryList.filter((e) => isCardio(e) === isCardio(exercise))}

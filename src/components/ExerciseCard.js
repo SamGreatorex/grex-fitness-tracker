@@ -80,6 +80,9 @@ export default function ExerciseCard({
   exercise,
   sets,
   lastSets,
+  // The sets logged the time before last (usually last week) — only for
+  // recommendations, e.g. "it's getting easier".
+  previousSets,
   libraryEntry,
   libraryEntries,
   onSetField,
@@ -107,7 +110,7 @@ export default function ExerciseCard({
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
   // Tips from last time's sets (e.g. "Increase the weight"), behind an icon.
-  const recommendations = recommendationsFor(exercise, lastSets);
+  const recommendations = recommendationsFor(exercise, lastSets, previousSets);
   const [tipsOpen, setTipsOpen] = useState(false);
 
   const cardio = isCardio(exercise);
@@ -245,7 +248,11 @@ export default function ExerciseCard({
           {recommendations.map((r) => (
             <li key={r.id} className={styles.tip}>
               <span className={styles.tipTitle}>{r.title}</span>
-              <span className={styles.tipReason}>{r.reason}</span>
+              {r.reasons.map((reason) => (
+                <span key={reason} className={styles.tipReason}>
+                  {reason}
+                </span>
+              ))}
             </li>
           ))}
         </ul>

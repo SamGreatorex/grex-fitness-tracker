@@ -87,6 +87,28 @@ Repeat with `./aws/deploy.sh prod` and `.env.production.local` for the
 production stack — or skip it if prod is already deployed and you're only
 setting up dev.
 
+## Copying one user's prod data into dev
+
+`scripts/copy-prod-user-to-dev.js` replaces a user's dev data with a copy
+of their prod data — profile, programmes (and notes), runs, workouts,
+measurements, chats and avatar — rewriting every ID to their dev one
+(matched by email; the same person has a different userId in each pool).
+It only ever *reads* prod: every write is checked to target a `-dev-` table
+or bucket, or it stops.
+
+Sign in to dev once with the same email first (so their dev row exists),
+then:
+
+```
+node scripts/copy-prod-user-to-dev.js you@example.com            # dry run: shows what it would delete and copy
+node scripts/copy-prod-user-to-dev.js you@example.com --apply    # does it
+```
+
+Their dev programmes, runs, workouts, measurements and chats are deleted
+first. Links to other people (their PT, chat partners) carry over only if
+those people also exist in dev; the dry run lists any that don't.
+Templates and other users' data aren't touched.
+
 ## Sign-up and password-reset emails (Amazon SES)
 
 Both user pools are on Cognito's **Lite** tier — the app only uses email +

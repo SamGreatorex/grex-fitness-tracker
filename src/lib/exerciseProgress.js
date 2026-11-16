@@ -7,16 +7,24 @@ import { slugify } from "./slugify";
 // and drop's weight and effort — and, for the week summary, each exercise
 // week by week through the programme.
 
-// The most recently logged sets for this exact exercise, wherever it was
-// last done — any program, any day. `sessions` must already be sorted most
-// recent first (the sessions API returns them that way).
-export function findLastSetsForExercise(sessions, exerciseName) {
+// The sets logged the last `count` times this exact exercise was done,
+// most recent first — any program, any day. `sessions` must already be
+// sorted most recent first (the sessions API returns them that way).
+export function findRecentSetsForExercise(sessions, exerciseName, count) {
   const targetSlug = slugify(exerciseName);
+  const found = [];
   for (const session of sessions) {
     const match = session.exercises.find((e) => slugify(e.name) === targetSlug && e.sets?.length > 0);
-    if (match) return match.sets;
+    if (match) found.push(match.sets);
+    if (found.length === count) break;
   }
-  return null;
+  return found;
+}
+
+// The most recently logged sets for this exact exercise, wherever it was
+// last done, or null.
+export function findLastSetsForExercise(sessions, exerciseName) {
+  return findRecentSetsForExercise(sessions, exerciseName, 1)[0] ?? null;
 }
 
 // Cardio equivalent: the last { settings, durationSeconds, effort } logged
@@ -35,8 +43,9 @@ const minutesOf = (seconds) => (seconds == null ? null : secondsToMinutes(second
 
 const FIRST_TIME = "First time — nothing to compare yet";
 
-// Weekly effort averages closer than this count as the same.
-const EFFORT_SAME = 0.25;
+// Effort averages closer than this count as the same (here, and for the
+// workout recommendations).
+export const EFFORT_SAME = 0.25;
 
 // { value, change }: a value, and how far it moved from the one before
 // (null if either side is missing, so there's nothing to compare).

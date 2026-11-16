@@ -124,6 +124,64 @@
   margin: 0 0 0.15rem;
 }
 
+.nameRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+/* Recommendation icon beside the name; tap to show the tips below. Green
+   like logged sets — these are nudges to progress. */
+.tipButton {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin: -4px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #16a34a;
+  border-radius: 999px;
+  background: transparent;
+  color: #16a34a;
+  cursor: pointer;
+}
+
+.tipButtonOpen,
+.tipButton:hover {
+  background: #16a34a;
+  color: #fff;
+}
+
+.tips {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(22, 163, 74, 0.45);
+  border-radius: 8px;
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.tipTitle {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.tipReason {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
 .meta {
   font-size: 0.8rem;
   opacity: 0.6;

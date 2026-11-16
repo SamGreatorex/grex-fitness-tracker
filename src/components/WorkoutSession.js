@@ -14,6 +14,7 @@ import WorkoutSummary from "./WorkoutSummary";
 import ExercisePicker from "./ExercisePicker";
 import { slugify } from "../lib/slugify";
 import { averageEffortOf, averageWeightOf, aggregateSessionStats } from "../lib/sessionStats";
+import { exerciseChange, findLastCardioForExercise, findLastSetsForExercise, weeklyExerciseProgress } from "../lib/exerciseProgress";
 import { useWakeLock } from "../lib/useWakeLock";
 import { EXERCISE_TYPES, isCardio, minutesToSeconds, secondsToMinutes } from "../lib/exerciseTypes";
 import { programmeBasePath } from "../lib/programLead";
@@ -39,31 +40,6 @@ function lastLoggedEffort(lastSets) {
   if (!lastSets) return null;
   for (let i = lastSets.length - 1; i >= 0; i--) {
     if (lastSets[i].effort != null) return lastSets[i].effort;
-  }
-  return null;
-}
-
-// The most recently logged sets for this exact exercise, wherever it was
-// last done — any program, any day. `sessions` must already be sorted most
-// recent first (the sessions API returns them that way).
-function findLastSetsForExercise(sessions, exerciseName) {
-  const targetSlug = slugify(exerciseName);
-  for (const session of sessions) {
-    const match = session.exercises.find(
-      (e) => slugify(e.name) === targetSlug && e.sets?.length > 0
-    );
-    if (match) return match.sets;
-  }
-  return null;
-}
-
-// Cardio equivalent: the last { settings, durationSeconds, effort } logged
-// for this exercise, wherever it was last done.
-function findLastCardioForExercise(sessions, exerciseName) {
-  const targetSlug = slugify(exerciseName);
-  for (const session of sessions) {
-    const match = session.exercises.find((e) => slugify(e.name) === targetSlug && e.cardio);
-    if (match) return match.cardio;
   }
   return null;
 }
@@ -292,6 +268,7 @@ export default function WorkoutSession() {
         totalWeightLifted={daySummary.totalWeightLifted}
         averageWeight={daySummary.averageWeight}
         averageEffort={daySummary.averageEffort}
+        exerciseChanges={daySummary.exerciseChanges}
         continueLabel={nextStage ? "See week summary →" : "Back to program"}
         onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(basePath))}
       />
@@ -308,6 +285,8 @@ export default function WorkoutSession() {
         totalWeightLifted={weekSummary.totalWeightLifted}
         averageWeight={weekSummary.averageWeight}
         averageEffort={weekSummary.averageEffort}
+        exerciseChanges={weekSummary.exerciseChanges}
+        changesTitle="Week by week"
         continueLabel={nextStage ? "See programme summary →" : "Back to program"}
         onContinue={() => (nextStage ? setSummaryStage(nextStage) : router.push(basePath))}
       />
@@ -664,6 +643,9 @@ export default function WorkoutSession() {
         averageWeight: averageWeightOf(exercises),
         averageEffort: averageEffortOf(exercises),
         durationSeconds,
+        // Against what was logged for each exercise last time (loaded with
+        // the workout, before today's was saved).
+        exerciseChanges: exercises.map((ex) => exerciseChange(ex, lastSetsByExerciseId[ex.exerciseId])),
       });
 
       // This was the last day of the week → also show a week summary; if
@@ -675,7 +657,11 @@ export default function WorkoutSession() {
         const { sessions: runSessions } = await api.get("/api/sessions", { runId, ...(clientUserId && { userId: clientUserId }) });
         const withThisOne = [...runSessions.filter((s) => s.sessionId !== session.sessionId), session];
 
-        setWeekSummary(aggregateSessionStats(withThisOne.filter((s) => s.week === week)));
+        setWeekSummary({
+          ...aggregateSessionStats(withThisOne.filter((s) => s.week === week)),
+          // Each exercise week by week through the run, up to this week.
+          exerciseChanges: weeklyExerciseProgress(withThisOne, week),
+        });
         if (programCompleted) {
           setProgramSummary(aggregateSessionStats(withThisOne));
         }

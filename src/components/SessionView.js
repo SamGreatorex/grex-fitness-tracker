@@ -9,6 +9,24 @@ import AppHeader from "./AppHeader";
 import WorkoutSummary from "./WorkoutSummary";
 import SessionEditor from "./SessionEditor";
 import { averageEffortOf, averageWeightOf } from "../lib/sessionStats";
+import { sessionExerciseChanges } from "../lib/exerciseProgress";
+
+// The 50 workouts logged before `completedAt` (newest first), the same
+// window the live workout compares against. Pages back through the
+// history, but no more than 10 pages for a very old workout. `userId`: a
+// trainer viewing a client's workout.
+const HISTORY_SIZE = 50;
+async function historyBefore(completedAt, userId) {
+  const earlier = [];
+  let cursor;
+  for (let page = 0; page < 10; page++) {
+    const { sessions, nextCursor } = await api.get("/api/sessions", { limit: 100, cursor, userId });
+    earlier.push(...sessions.filter((s) => s.completedAt < completedAt));
+    if (!nextCursor || earlier.length >= HISTORY_SIZE) break;
+    cursor = nextCursor;
+  }
+  return earlier.slice(0, HISTORY_SIZE);
+}
 import { effortColor, effortLabel } from "../lib/effort";
 import { formatCardio } from "../lib/exerciseTypes";
 import { formatSetWeight } from "../lib/units";
@@ -37,6 +55,9 @@ export default function SessionView() {
 
   const [program, setProgram] = useState(null);
   const [session, setSession] = useState(null);
+  // Workouts logged before this one, newest first — for "Since last time".
+  // Null until loaded (the section just doesn't show if they can't be).
+  const [history, setHistory] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -51,6 +72,9 @@ export default function SessionView() {
       ]);
       setSession(session);
       setProgram(program);
+      historyBefore(session.completedAt, clientUserId)
+        .then(setHistory)
+        .catch(() => setHistory(null));
     } catch (err) {
       setError(err.message || "Could not load this session.");
     }
@@ -119,6 +143,7 @@ export default function SessionView() {
         totalWeightLifted={session.totalWeightLifted}
         averageWeight={averageWeightOf(session.exercises)}
         averageEffort={averageEffortOf(session.exercises)}
+        exerciseChanges={history ? sessionExerciseChanges(session, history) : undefined}
         weekCompleted={false}
         continueLabel="Back to program"
         onContinue={() => router.push(basePath)}

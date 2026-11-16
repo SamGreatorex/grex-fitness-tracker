@@ -10,6 +10,7 @@ import ExerciseNote from "./ExerciseNote";
 import { formatCardio, isCardio } from "../lib/exerciseTypes";
 import { stripStepNumber } from "../lib/exerciseText";
 import { LIFT_UNITS, setWeightIn } from "../lib/units";
+import { recommendationsFor } from "../lib/recommendations";
 
 // Vimeo links can be turned into a real thumbnail image via vumbnail.com
 // (no API key needed). Other sources (e.g. jamessmithacademy course pages)
@@ -43,6 +44,16 @@ function buildImageCandidates(exercise, libraryEntry) {
 // sidesteps the callout without that race.
 function selectAllOnMouseUp(e) {
   e.currentTarget.select();
+}
+
+// An upward arrow in a circle: "go up" — the recommendation icon.
+function TipIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 16V8M8.5 11.5 12 8l3.5 3.5" />
+    </svg>
+  );
 }
 
 function ThumbIcon() {
@@ -95,6 +106,9 @@ export default function ExerciseCard({
 }) {
   const lightboxRef = useRef(null);
   const [candidateIndex, setCandidateIndex] = useState(0);
+  // Tips from last time's sets (e.g. "Increase the weight"), behind an icon.
+  const recommendations = recommendationsFor(exercise, lastSets);
+  const [tipsOpen, setTipsOpen] = useState(false);
 
   const cardio = isCardio(exercise);
   const allDone = sets.every((s) => s.completed);
@@ -181,7 +195,22 @@ export default function ExerciseCard({
       <div className={styles.headerRow}>
         {thumb}
         <div className={styles.headerText}>
-          <p className={styles.name}>{exercise.name}</p>
+          <div className={styles.nameRow}>
+            <p className={styles.name}>{exercise.name}</p>
+            {recommendations.length > 0 && (
+              <button
+                type="button"
+                className={`${styles.tipButton} ${tipsOpen ? styles.tipButtonOpen : ""}`}
+                aria-expanded={tipsOpen}
+                aria-controls={`tips-${exercise.exerciseId}`}
+                aria-label={`${recommendations.length === 1 ? "Recommendation" : `${recommendations.length} recommendations`} for ${exercise.name}`}
+                title={recommendations.map((r) => r.title).join(" · ")}
+                onClick={() => setTipsOpen((open) => !open)}
+              >
+                <TipIcon />
+              </button>
+            )}
+          </div>
           <p className={styles.meta}>
             {cardio
               ? formatCardio({ settings: exercise.settings, seconds: exercise.targetSeconds })
@@ -210,6 +239,17 @@ export default function ExerciseCard({
           )}
         </div>
       </div>
+
+      {tipsOpen && recommendations.length > 0 && (
+        <ul id={`tips-${exercise.exerciseId}`} className={styles.tips}>
+          {recommendations.map((r) => (
+            <li key={r.id} className={styles.tip}>
+              <span className={styles.tipTitle}>{r.title}</span>
+              <span className={styles.tipReason}>{r.reason}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <ExerciseNote note={note} onSave={onSaveNote} />
 

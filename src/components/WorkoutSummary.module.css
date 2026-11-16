@@ -75,6 +75,106 @@
   opacity: 0.6;
 }
 
+/* Per-exercise comparison with last time. */
+.changes {
+  text-align: left;
+  margin: -1rem 0 2.5rem;
+}
+
+.changesTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin: 0 0 0.6rem;
+}
+
+.changeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.changeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.8rem 1rem;
+}
+
+.changeRow + .changeRow {
+  border-top: 1px solid var(--border);
+}
+
+.changeName {
+  font-weight: 700;
+}
+
+.changeNote {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* Set · weight (+ change) · effort (+ change). */
+.changeTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.changeLine {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr 1fr;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.changeHeader {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+}
+
+.setLabel {
+  font-size: 0.78rem;
+  opacity: 0.6;
+  text-align: center;
+}
+
+/* A drop set's row sits a touch smaller under its set. */
+.dropLine {
+  font-size: 0.82rem;
+}
+
+.cell {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.cellValue {
+  min-width: 2.2rem;
+}
+
+.delta {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+/* The app's "done" green (the checkmark above, logged sets). */
+.deltaBetter {
+  color: #16a34a;
+  font-weight: 700;
+  opacity: 1;
+}
+
 .continueButton {
   height: 50px;
   width: 100%;

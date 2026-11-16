@@ -87,27 +87,27 @@ Repeat with `./aws/deploy.sh prod` and `.env.production.local` for the
 production stack — or skip it if prod is already deployed and you're only
 setting up dev.
 
-## Copying one user's prod data into dev
+## Copying prod programmes and workouts into dev
 
-`scripts/copy-prod-user-to-dev.js` replaces a user's dev data with a copy
-of their prod data — profile, programmes (and notes), runs, workouts,
-measurements, chats and avatar — rewriting every ID to their dev one
-(matched by email; the same person has a different userId in each pool).
-It only ever *reads* prod: every write is checked to target a `-dev-` table
-or bucket, or it stops.
-
-Sign in to dev once with the same email first (so their dev row exists),
-then:
+`scripts/copy-prod-workouts-to-dev.js` copies the `programs`,
+`program-runs` and `workout-sessions` tables from prod into their `-dev-`
+tables. The same person has a different userId in each user pool, so users
+are matched by email between the prod and dev `users` tables and the dev
+userId is written instead. Anything whose user isn't in dev isn't copied
+(programmes go by owner, templates by who made them); the dry run lists
+what's skipped. It only ever *reads* prod: every write is checked to target
+a `-dev-` table, or it stops.
 
 ```
-node scripts/copy-prod-user-to-dev.js you@example.com            # dry run: shows what it would delete and copy
-node scripts/copy-prod-user-to-dev.js you@example.com --apply    # does it
+AWS_PROFILE=sam-personal node scripts/copy-prod-workouts-to-dev.js                    # dry run
+AWS_PROFILE=sam-personal node scripts/copy-prod-workouts-to-dev.js --clear --apply    # empty the 3 dev tables, then copy
+AWS_PROFILE=sam-personal node scripts/copy-prod-workouts-to-dev.js --apply            # copy over what's there
 ```
 
-Their dev programmes, runs, workouts, measurements and chats are deleted
-first. Links to other people (their PT, chat partners) carry over only if
-those people also exist in dev; the dry run lists any that don't.
-Templates and other users' data aren't touched.
+`--clear` empties all three dev tables first — everyone's data, including
+dev-only users'. Without it, copied items overwrite any dev item with the
+same key and everything else is left alone. Users sign in to dev once
+first so their dev `users` row exists to match against.
 
 ## Sign-up and password-reset emails (Amazon SES)
 

@@ -100,6 +100,28 @@
   border-color: var(--accent);
 }
 
+/* A drop set's row, marked with ↳ in the set-number column. */
+.dropMark {
+  width: 1.5rem;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.addDrop {
+  margin: 0 0 0.3rem 2rem;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.addDrop:hover {
+  opacity: 1;
+}
+
 .removeSet {
   width: 1.9rem;
   height: 1.9rem;

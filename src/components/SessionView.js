@@ -134,34 +134,31 @@ export default function SessionView() {
               {exercise.cardio ? (
                 <div className={styles.setChip}>
                   <span>{formatCardio({ settings: exercise.cardio.settings, seconds: exercise.cardio.durationSeconds })}</span>
-                  {exercise.cardio.effort != null && (
-                    <span
-                      className={styles.effortDot}
-                      style={{ "--effort-color": effortColor(exercise.cardio.effort) }}
-                      title={`Effort: ${exercise.cardio.effort}/10 · ${effortLabel(exercise.cardio.effort)}`}
-                    >
-                      {exercise.cardio.effort}
-                    </span>
-                  )}
+                  <EffortDot effort={exercise.cardio.effort} />
                 </div>
               ) : exercise.sets.length === 0 ? (
                 <p className={styles.empty}>No sets logged.</p>
               ) : (
                 exercise.sets.map((set, i) => (
-                  <div key={i} className={styles.setChip}>
-                    <span className={styles.setIndex}>{i + 1}</span>
-                    <span>
-                      {formatSetWeight(set)} × {set.reps}
-                    </span>
-                    {set.effort != null && (
-                      <span
-                        className={styles.effortDot}
-                        style={{ "--effort-color": effortColor(set.effort) }}
-                        title={`Effort: ${set.effort}/10 · ${effortLabel(set.effort)}`}
-                      >
-                        {set.effort}
+                  <div key={i} className={styles.setGroup}>
+                    <div className={styles.setChip}>
+                      <span className={styles.setIndex}>{i + 1}</span>
+                      <span>
+                        {formatSetWeight(set)} × {set.reps}
                       </span>
-                    )}
+                      <EffortDot effort={set.effort} />
+                    </div>
+                    {(set.drops ?? []).map((drop, j) => (
+                      <div key={j} className={`${styles.setChip} ${styles.dropChip}`}>
+                        <span className={styles.dropMark} title="Drop set" aria-label="Drop set">
+                          ↳
+                        </span>
+                        <span>
+                          {formatSetWeight(drop)} × {drop.reps}
+                        </span>
+                        <EffortDot effort={drop.effort} label="Drop set effort" />
+                      </div>
+                    ))}
                   </div>
                 ))
               )}
@@ -186,5 +183,15 @@ export default function SessionView() {
         )}
       </div>
     </>
+  );
+}
+
+// A set's, drop's or cardio's effort rating, in its colour; nothing if unrated.
+function EffortDot({ effort, label = "Effort" }) {
+  if (effort == null) return null;
+  return (
+    <span className={styles.effortDot} style={{ "--effort-color": effortColor(effort) }} title={`${label}: ${effort}/10 · ${effortLabel(effort)}`}>
+      {effort}
+    </span>
   );
 }

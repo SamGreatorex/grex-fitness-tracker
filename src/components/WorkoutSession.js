@@ -122,9 +122,21 @@ function buildSetRows({ targetSets, restSeconds, lastSets, startWeight, startRep
       completed: false,
       effort: null,
       restSeconds,
+      // Drop sets added after this set: [{ weight, reps, completed, effort }].
+      drops: [],
     };
   });
 }
+
+// The set or drop the effort dialog is rating (null if it was removed).
+function effortTarget(setsByExercise, { exerciseId, setIndex, dropIndex }) {
+  const set = setsByExercise[exerciseId]?.[setIndex];
+  return dropIndex != null ? set?.drops?.[dropIndex] : set;
+}
+
+// A new drop set row. Left blank, its weight and reps fall back to the
+// part before it (the set, or the previous drop) when it's logged.
+const newDrop = () => ({ weight: "", reps: "", completed: false, effort: null });
 
 // The live workout for one day. Shared by the client's own
 // /programs/[programId]/day/[dayId] page and trainer mode's
@@ -454,15 +466,63 @@ export default function WorkoutSession() {
     setWeightUnits((prev) => ({ ...prev, [exerciseId]: unit }));
     setSetsByExercise((prev) => ({
       ...prev,
-      [exerciseId]: prev[exerciseId].map((s) => ({ ...s, weight: convertTypedWeight(s.weight, from, unit) })),
+      [exerciseId]: prev[exerciseId].map((s) => ({
+        ...s,
+        weight: convertTypedWeight(s.weight, from, unit),
+        drops: (s.drops ?? []).map((d) => ({ ...d, weight: convertTypedWeight(d.weight, from, unit) })),
+      })),
     }));
   };
 
-  const onSetField = (exerciseId, setIndex, field, value) => {
+  const updateSet = (exerciseId, setIndex, updater) => {
     setSetsByExercise((prev) => ({
       ...prev,
-      [exerciseId]: prev[exerciseId].map((s, i) => (i === setIndex ? { ...s, [field]: value } : s)),
+      [exerciseId]: prev[exerciseId].map((s, i) => (i === setIndex ? updater(s) : s)),
     }));
+  };
+
+  const updateDrop = (exerciseId, setIndex, dropIndex, updater) =>
+    updateSet(exerciseId, setIndex, (s) => ({ ...s, drops: s.drops.map((d, j) => (j === dropIndex ? updater(d) : d)) }));
+
+  const onSetField = (exerciseId, setIndex, field, value) => updateSet(exerciseId, setIndex, (s) => ({ ...s, [field]: value }));
+
+  // Rest follows the whole set — so logging a drop restarts the countdown
+  // logging the set itself began. None after the very last set of the day.
+  const startRest = (exerciseId, setIndex) => {
+    if (untimed) return;
+    const exerciseIndex = day.exercises.findIndex((e) => e.exerciseId === exerciseId);
+    const exercise = day.exercises[exerciseIndex];
+    const isLastSetOverall = exerciseIndex === day.exercises.length - 1 && setIndex === exercise.targetSets - 1;
+    if (isLastSetOverall) return;
+    restOverlayKeyRef.current += 1;
+    setRestOverlay({
+      key: restOverlayKeyRef.current,
+      seconds: setsByExercise[exerciseId][setIndex].restSeconds ?? exercise.restSeconds,
+    });
+  };
+
+  const onAddDrop = (exerciseId, setIndex) => updateSet(exerciseId, setIndex, (s) => ({ ...s, drops: [...(s.drops ?? []), newDrop()] }));
+
+  const onRemoveDrop = (exerciseId, setIndex, dropIndex) =>
+    updateSet(exerciseId, setIndex, (s) => ({ ...s, drops: s.drops.filter((_, j) => j !== dropIndex) }));
+
+  const onDropField = (exerciseId, setIndex, dropIndex, field, value) =>
+    updateDrop(exerciseId, setIndex, dropIndex, (d) => ({ ...d, [field]: value }));
+
+  // Logs a drop: blanks take the part before it's value (the set's, or the
+  // previous drop's), then it's rated like a set.
+  const onLogDrop = (exerciseId, setIndex, dropIndex) => {
+    const set = setsByExercise[exerciseId][setIndex];
+    const before = [set, ...set.drops][dropIndex];
+    const drop = set.drops[dropIndex];
+    updateDrop(exerciseId, setIndex, dropIndex, (d) => ({
+      ...d,
+      weight: drop.weight !== "" ? drop.weight : before.weight,
+      reps: drop.reps !== "" ? drop.reps : before.reps,
+      completed: true,
+    }));
+    setEffortContext({ exerciseId, setIndex, dropIndex });
+    startRest(exerciseId, setIndex);
   };
 
   const onLogSet = (exerciseId, setIndex) => {
@@ -479,10 +539,7 @@ export default function WorkoutSession() {
       return;
     }
 
-    const isLastSetOverall =
-      exerciseIndex === day.exercises.length - 1 && setIndex === exercise.targetSets - 1;
     const currentSets = setsByExercise[exerciseId];
-    const restSeconds = currentSets[setIndex].restSeconds ?? exercise.restSeconds;
 
     // Left blank? Fall back to the most recent value typed for this exercise
     // earlier in the same session, rather than logging it as 0.
@@ -494,27 +551,22 @@ export default function WorkoutSession() {
       [exerciseId]: prev[exerciseId].map((s, i) => (i === setIndex ? { ...s, weight, reps, completed: true } : s)),
     }));
 
-    // Always ask about effort. Only start a rest countdown if there's
-    // actually more to rest for — not after the very last set of the day.
+    // Always ask about effort, and start the rest countdown.
     setEffortContext({ exerciseId, setIndex });
-    if (!isLastSetOverall && !untimed) {
-      restOverlayKeyRef.current += 1;
-      setRestOverlay({ key: restOverlayKeyRef.current, seconds: restSeconds });
-    }
+    startRest(exerciseId, setIndex);
   };
 
-  const setEffort = (exerciseId, setIndex, effort) => {
-    setSetsByExercise((prev) => ({
-      ...prev,
-      [exerciseId]: prev[exerciseId].map((s, i) => (i === setIndex ? { ...s, effort } : s)),
-    }));
+  // `dropIndex` set: the rating is for that drop set, not the set itself.
+  const setEffort = ({ exerciseId, setIndex, dropIndex }, effort) => {
+    if (dropIndex != null) updateDrop(exerciseId, setIndex, dropIndex, (d) => ({ ...d, effort }));
+    else updateSet(exerciseId, setIndex, (s) => ({ ...s, effort }));
   };
 
-  // Re-opens the effort dialog for an already-logged set — unlike
-  // onLogSet, this never starts a new rest countdown, since the set was
-  // logged (and any rest already served) a while ago.
-  const onEditEffort = (exerciseId, setIndex) => {
-    setEffortContext({ exerciseId, setIndex });
+  // Re-opens the effort dialog for an already-logged set or drop — unlike
+  // logging, this never starts a new rest countdown, since it was logged
+  // (and any rest already served) a while ago.
+  const onEditEffort = (exerciseId, setIndex, dropIndex) => {
+    setEffortContext({ exerciseId, setIndex, dropIndex });
   };
 
   const onApplyRestToAll = (exerciseId, restSeconds) => {
@@ -559,6 +611,13 @@ export default function WorkoutSession() {
           // (any day), rather than saving it blank.
           const historicalEffort = lastLoggedEffort(lastSetsByExerciseId[exercise.exerciseId]);
           const inLb = weightUnits[exercise.exerciseId] === LIFT_UNITS.LB;
+          // Always kg, so totals and reports need no conversion. Weights
+          // typed in lb also keep the unit and the exact number typed.
+          const weightFields = (entered) => ({
+            weight: inLb ? lbToKg(entered) : entered,
+            ...(inLb && { unit: LIFT_UNITS.LB, weightEntered: entered }),
+          });
+          const completedAt = new Date().toISOString();
 
           return {
             exerciseId: exercise.exerciseId,
@@ -567,16 +626,18 @@ export default function WorkoutSession() {
             // last value entered among today's logged sets if left unset,
             // so nothing needs re-entering unless it actually changed.
             sets: completedSets.map((s, i) => {
-              const entered = Number(carryForwardValue(completedSets, i, "weight")) || 0;
+              // Only drops tapped "Log" count, like sets. A drop's effort is
+              // its own rating — never carried over from anything else.
+              const drops = (s.drops ?? [])
+                .filter((d) => d.completed)
+                .map((d) => ({ ...weightFields(Number(d.weight) || 0), reps: Number(d.reps) || 0, effort: d.effort, completedAt }));
               return {
-                // Always kg, so totals and reports need no conversion. Sets
-                // typed in lb also keep the unit and the exact number typed.
-                weight: inLb ? lbToKg(entered) : entered,
-                ...(inLb && { unit: LIFT_UNITS.LB, weightEntered: entered }),
+                ...weightFields(Number(carryForwardValue(completedSets, i, "weight")) || 0),
                 reps: Number(carryForwardValue(completedSets, i, "reps")) || 0,
                 effort: carryForwardValue(completedSets, i, "effort") ?? historicalEffort,
                 restSeconds: s.restSeconds ?? exercise.restSeconds,
-                completedAt: new Date().toISOString(),
+                completedAt,
+                ...(drops.length > 0 && { drops }),
               };
             }),
           };
@@ -662,7 +723,11 @@ export default function WorkoutSession() {
             libraryEntries={exerciseLibraryList.filter((e) => isCardio(e) === isCardio(exercise))}
             onSetField={(setIndex, field, value) => onSetField(exercise.exerciseId, setIndex, field, value)}
             onLogSet={(setIndex) => onLogSet(exercise.exerciseId, setIndex)}
-            onEditEffort={(setIndex) => onEditEffort(exercise.exerciseId, setIndex)}
+            onEditEffort={(setIndex, dropIndex) => onEditEffort(exercise.exerciseId, setIndex, dropIndex)}
+            onAddDrop={(setIndex) => onAddDrop(exercise.exerciseId, setIndex)}
+            onDropField={(setIndex, dropIndex, field, value) => onDropField(exercise.exerciseId, setIndex, dropIndex, field, value)}
+            onLogDrop={(setIndex, dropIndex) => onLogDrop(exercise.exerciseId, setIndex, dropIndex)}
+            onRemoveDrop={(setIndex, dropIndex) => onRemoveDrop(exercise.exerciseId, setIndex, dropIndex)}
             onApplyRestToAll={(secs) => onApplyRestToAll(exercise.exerciseId, secs)}
             showRest={!untimed}
             onSwitchExercise={canEdit ? (newExercise) => handleSwitchExercise(exercise.exerciseId, newExercise) : undefined}
@@ -703,8 +768,9 @@ export default function WorkoutSession() {
 
       {effortContext && (
         <EffortDialog
-          effort={setsByExercise[effortContext.exerciseId][effortContext.setIndex].effort}
-          onSelectEffort={(value) => setEffort(effortContext.exerciseId, effortContext.setIndex, value)}
+          effort={effortTarget(setsByExercise, effortContext)?.effort ?? null}
+          question={effortContext.dropIndex != null ? "How did that drop set feel?" : undefined}
+          onSelectEffort={(value) => setEffort(effortContext, value)}
           onClose={() => setEffortContext(null)}
         />
       )}

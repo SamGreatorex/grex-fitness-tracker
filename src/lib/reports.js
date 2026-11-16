@@ -1,4 +1,5 @@
 import { slugify } from "./slugify";
+import { exerciseParts } from "./sessionStats";
 
 // Weeks run Monday → Sunday (and can span two months, e.g. Mon 28 Sep →
 // Sun 4 Oct); months and years are calendar ones. Everything is grouped by
@@ -232,10 +233,11 @@ export function totalWeightSeries(sessions, granularity, range) {
 }
 
 // Average weight per logged set per period (progressive-overload signal).
+// Drop sets count as parts of their own, as everywhere else.
 export function averageWeightSeries(sessions, granularity, range) {
   const buckets = bucketSessions(sessions, granularity, (session, arr) => {
     for (const exercise of session.exercises) {
-      for (const set of exercise.sets) {
+      for (const set of exerciseParts(exercise)) {
         if (set.weight != null) arr.push(set.weight);
       }
     }
@@ -249,7 +251,7 @@ export function averageWeightSeries(sessions, granularity, range) {
 export function averageEffortSeries(sessions, granularity, range) {
   const buckets = bucketSessions(sessions, granularity, (session, arr) => {
     for (const exercise of session.exercises) {
-      for (const set of exercise.sets) {
+      for (const set of exerciseParts(exercise)) {
         if (set.effort != null) arr.push(set.effort);
       }
     }
@@ -274,7 +276,7 @@ export function bodyAreaWeightSeries(sessions, exerciseLibraryBySlug, granularit
       const areas = libraryEntry?.primaryTags || [];
       if (areas.length === 0) continue;
 
-      for (const set of exercise.sets) {
+      for (const set of exerciseParts(exercise)) {
         if (set.weight == null) continue;
         for (const area of areas) {
           if (!areaBuckets.has(area)) areaBuckets.set(area, new Map());

@@ -20,13 +20,23 @@ function toForm(session) {
       };
     }
     const unit = ex.sets.some((s) => s.unit === LIFT_UNITS.LB) ? LIFT_UNITS.LB : LIFT_UNITS.KG;
+    const toFields = (part) => ({ weight: str(setWeightIn(part, unit)), reps: str(part.reps), effort: str(part.effort) });
     return {
       exerciseId: ex.exerciseId,
       name: ex.name,
       unit,
-      sets: ex.sets.map((s) => ({ weight: str(setWeightIn(s, unit)), reps: str(s.reps), effort: str(s.effort) })),
+      sets: ex.sets.map((s) => ({ ...toFields(s), drops: (s.drops ?? []).map(toFields) })),
     };
   });
+}
+
+// A set or drop as the API takes it: the weight as typed, in the exercise's unit.
+function partPayload(part, unit) {
+  return {
+    ...(unit === LIFT_UNITS.LB ? { unit: LIFT_UNITS.LB, weightEntered: part.weight } : { weight: part.weight }),
+    reps: part.reps,
+    effort: part.effort || null,
+  };
 }
 
 // Form → what PUT /api/sessions/[sessionId] takes.
@@ -39,18 +49,14 @@ function toPayload(form) {
         }
       : {
           exerciseId: ex.exerciseId,
-          sets: ex.sets.map((s) => ({
-            ...(ex.unit === LIFT_UNITS.LB ? { unit: LIFT_UNITS.LB, weightEntered: s.weight } : { weight: s.weight }),
-            reps: s.reps,
-            effort: s.effort || null,
-          })),
+          sets: ex.sets.map((s) => ({ ...partPayload(s, ex.unit), drops: s.drops.map((d) => partPayload(d, ex.unit)) })),
         }
   );
 }
 
-// Edit an already-logged workout: each set's weight (kg or lb), reps and
-// effort, adding or removing sets; or a cardio exercise's settings, time and
-// effort. `userId` is set when a trainer edits a client's workout.
+// Edit an already-logged workout: each set's and drop set's weight (kg or
+// lb), reps and effort, adding or removing sets and drops; or a cardio
+// exercise's settings, time and effort. `userId` is set when a trainer edits a client's workout.
 // onSaved(updatedSession) / onCancel().
 export default function SessionEditor({ session, userId, onSaved, onCancel }) {
   const [form, setForm] = useState(() => toForm(session));
@@ -61,16 +67,34 @@ export default function SessionEditor({ session, userId, onSaved, onCancel }) {
   const updateSet = (exIndex, setIndex, field, value) =>
     updateExercise(exIndex, (ex) => ({ ...ex, sets: ex.sets.map((s, i) => (i === setIndex ? { ...s, [field]: value } : s)) }));
 
-  const switchUnit = (exIndex, unit) =>
-    updateExercise(exIndex, (ex) =>
-      ex.unit === unit ? ex : { ...ex, unit, sets: ex.sets.map((s) => ({ ...s, weight: convertTypedWeight(s.weight, ex.unit, unit) })) }
-    );
+  const updateDrops = (exIndex, setIndex, updater) =>
+    updateExercise(exIndex, (ex) => ({ ...ex, sets: ex.sets.map((s, i) => (i === setIndex ? { ...s, drops: updater(s.drops, s) } : s)) }));
+  const updateDrop = (exIndex, setIndex, dropIndex, field, value) =>
+    updateDrops(exIndex, setIndex, (drops) => drops.map((d, j) => (j === dropIndex ? { ...d, [field]: value } : d)));
 
-  // A new set starts as a copy of the last one — usually the same again.
+  const switchUnit = (exIndex, unit) => {
+    const convert = (part, from) => ({ ...part, weight: convertTypedWeight(part.weight, from, unit) });
+    updateExercise(exIndex, (ex) =>
+      ex.unit === unit ? ex : { ...ex, unit, sets: ex.sets.map((s) => ({ ...convert(s, ex.unit), drops: s.drops.map((d) => convert(d, ex.unit)) })) }
+    );
+  };
+
+  // A new set starts as a copy of the last one — usually the same again —
+  // but without its drop sets.
   const addSet = (exIndex) =>
-    updateExercise(exIndex, (ex) => ({ ...ex, sets: [...ex.sets, { ...(ex.sets[ex.sets.length - 1] ?? { weight: "", reps: "", effort: "" }) }] }));
+    updateExercise(exIndex, (ex) => {
+      const last = ex.sets[ex.sets.length - 1];
+      return { ...ex, sets: [...ex.sets, last ? { ...last, drops: [] } : { weight: "", reps: "", effort: "", drops: [] }] };
+    });
 
   const removeSet = (exIndex, setIndex) => updateExercise(exIndex, (ex) => ({ ...ex, sets: ex.sets.filter((_, i) => i !== setIndex) }));
+
+  // A new drop starts at the reps of the part before it, with the weight and
+  // effort left to fill in.
+  const addDrop = (exIndex, setIndex) =>
+    updateDrops(exIndex, setIndex, (drops, set) => [...drops, { weight: "", reps: (drops[drops.length - 1] ?? set).reps, effort: "" }]);
+
+  const removeDrop = (exIndex, setIndex, dropIndex) => updateDrops(exIndex, setIndex, (drops) => drops.filter((_, j) => j !== dropIndex));
 
   const save = async (e) => {
     e.preventDefault();
@@ -154,39 +178,32 @@ export default function SessionEditor({ session, userId, onSaved, onCancel }) {
                 <span />
               </div>
               {ex.sets.map((set, setIndex) => (
-                <div key={setIndex} className={styles.setRow}>
-                  <span className={styles.setIndex}>{setIndex + 1}</span>
-                  <input
-                    className={styles.input}
-                    type="number"
-                    inputMode="decimal"
-                    min="0"
-                    step="0.1"
-                    required
-                    value={set.weight}
-                    onChange={(e) => updateSet(exIndex, setIndex, "weight", e.target.value)}
-                    aria-label={`Set ${setIndex + 1} weight in ${ex.unit}`}
+                <div key={setIndex}>
+                  <PartRow
+                    marker={<span className={styles.setIndex}>{setIndex + 1}</span>}
+                    part={set}
+                    unit={ex.unit}
+                    label={`Set ${setIndex + 1}`}
+                    onChange={(field, value) => updateSet(exIndex, setIndex, field, value)}
+                    onRemove={() => removeSet(exIndex, setIndex)}
                   />
-                  <input
-                    className={styles.input}
-                    type="number"
-                    inputMode="numeric"
-                    min="0"
-                    step="1"
-                    required
-                    value={set.reps}
-                    onChange={(e) => updateSet(exIndex, setIndex, "reps", e.target.value)}
-                    aria-label={`Set ${setIndex + 1} reps`}
-                  />
-                  <EffortInput value={set.effort} onChange={(v) => updateSet(exIndex, setIndex, "effort", v)} label={`Set ${setIndex + 1} effort`} />
-                  <button
-                    type="button"
-                    className={styles.removeSet}
-                    onClick={() => removeSet(exIndex, setIndex)}
-                    aria-label={`Remove set ${setIndex + 1}`}
-                    title="Remove set"
-                  >
-                    ×
+                  {set.drops.map((drop, dropIndex) => (
+                    <PartRow
+                      key={dropIndex}
+                      marker={
+                        <span className={styles.dropMark} title="Drop set">
+                          ↳
+                        </span>
+                      }
+                      part={drop}
+                      unit={ex.unit}
+                      label={`Set ${setIndex + 1} drop ${dropIndex + 1}`}
+                      onChange={(field, value) => updateDrop(exIndex, setIndex, dropIndex, field, value)}
+                      onRemove={() => removeDrop(exIndex, setIndex, dropIndex)}
+                    />
+                  ))}
+                  <button type="button" className={styles.addDrop} onClick={() => addDrop(exIndex, setIndex)}>
+                    + Drop set
                   </button>
                 </div>
               ))}
@@ -210,6 +227,41 @@ export default function SessionEditor({ session, userId, onSaved, onCancel }) {
         </button>
       </div>
     </form>
+  );
+}
+
+// One set or drop set: marker · weight · reps · effort · remove.
+function PartRow({ marker, part, unit, label, onChange, onRemove }) {
+  return (
+    <div className={styles.setRow}>
+      {marker}
+      <input
+        className={styles.input}
+        type="number"
+        inputMode="decimal"
+        min="0"
+        step="0.1"
+        required
+        value={part.weight}
+        onChange={(e) => onChange("weight", e.target.value)}
+        aria-label={`${label} weight in ${unit}`}
+      />
+      <input
+        className={styles.input}
+        type="number"
+        inputMode="numeric"
+        min="0"
+        step="1"
+        required
+        value={part.reps}
+        onChange={(e) => onChange("reps", e.target.value)}
+        aria-label={`${label} reps`}
+      />
+      <EffortInput value={part.effort} onChange={(v) => onChange("effort", v)} label={`${label} effort`} />
+      <button type="button" className={styles.removeSet} onClick={onRemove} aria-label={`Remove ${label.toLowerCase()}`} title="Remove">
+        ×
+      </button>
+    </div>
   );
 }
 

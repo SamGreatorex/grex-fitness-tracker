@@ -13,7 +13,7 @@ const CLOSE_DELAY_MS = 700;
 // The rest countdown lives independently in RestOverlay, not here, so
 // rating effort and waiting out rest are two unrelated things now instead
 // of being stuck together in one blocking dialog.
-export default function EffortDialog({ effort, onSelectEffort, onClose }) {
+export default function EffortDialog({ effort, question = "How did that set feel?", onSelectEffort, onClose }) {
   const dialogRef = useRef(null);
   const closeTimer = useRef(null);
   const [picked, setPicked] = useState(effort ?? null);
@@ -43,7 +43,7 @@ export default function EffortDialog({ effort, onSelectEffort, onClose }) {
     <dialog ref={dialogRef} className={styles.dialog} onClose={onClose} onClick={handleBackdropClick}>
       <div className={styles.inner}>
         <div className={styles.header}>
-          <p className={styles.label}>How did that set feel?</p>
+          <p className={styles.label}>{question}</p>
           <button
             type="button"
             className={styles.closeButton}

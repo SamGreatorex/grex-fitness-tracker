@@ -30,6 +30,24 @@
   gap: 0.4rem;
 }
 
+.setGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* A drop set, indented under its set. */
+.dropChip {
+  padding-left: 0.6rem;
+}
+
+.dropMark {
+  width: 1.5rem;
+  flex-shrink: 0;
+  text-align: center;
+  opacity: 0.6;
+}
+
 .setChip {
   display: flex;
   align-items: center;

@@ -56,7 +56,9 @@ function ThumbIcon() {
 }
 
 // `sets` is the local editable state for this exercise:
-// [{ weight, reps, completed }]. `lastSets` (optional) are the sets logged
+// [{ weight, reps, completed, drops }], where drops are the drop sets added
+// after that set, [{ weight, reps, completed, effort }] — each logged and
+// rated on its own. `lastSets` (optional) are the sets logged
 // last time this exercise was done, used only to show a "last time" hint.
 // For a cardio exercise, `sets` is a single [{ settings, minutes, completed,
 // effort }] and `lastSets` is the last logged { settings, durationSeconds,
@@ -72,6 +74,11 @@ export default function ExerciseCard({
   onSetField,
   onLogSet,
   onEditEffort,
+  // Drop sets: (setIndex) / (setIndex, dropIndex[, field, value]).
+  onAddDrop,
+  onDropField,
+  onLogDrop,
+  onRemoveDrop,
   onApplyRestToAll,
   onSwitchExercise,
   // Off for untimed (trainer-led) workouts — there's no rest countdown.
@@ -242,64 +249,87 @@ export default function ExerciseCard({
             const effortIsCurrent = set.effort != null;
             const badgeClassName = `${styles.setNumber} ${effort != null ? styles.setNumberTinted : ""} ${effortIsCurrent ? styles.setNumberCurrent : ""} ${set.completed ? styles.setNumberButton : ""}`;
             const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
+            const parts = [set, ...(set.drops ?? [])];
             return (
-              <div key={i} className={`${styles.setRow} ${showRest ? "" : styles.noRest}`}>
-                {set.completed ? (
+              <div key={i}>
+                <div className={`${styles.setRow} ${showRest ? "" : styles.noRest}`}>
+                  {set.completed ? (
+                    <button
+                      type="button"
+                      className={badgeClassName}
+                      style={badgeStyle}
+                      title={`${effort != null ? `Effort: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`} — tap to change`}
+                      onClick={() => onEditEffort(i)}
+                    >
+                      {effort != null ? effort : i + 1}
+                    </button>
+                  ) : (
+                    <span
+                      className={badgeClassName}
+                      style={badgeStyle}
+                      title={effort != null ? `Last time: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`}
+                    >
+                      {effort != null ? effort : i + 1}
+                    </span>
+                  )}
+                  <input
+                    className={styles.input}
+                    type="number"
+                    inputMode="decimal"
+                    step="0.1"
+                    min="0"
+                    placeholder={last ? `${setWeightIn(last, weightUnit)}` : "0"}
+                    value={set.weight}
+                    aria-label={`Set ${i + 1} weight in ${weightUnit}`}
+                    onChange={(e) => onSetField(i, "weight", e.target.value)}
+                    onMouseUp={selectAllOnMouseUp}
+                  />
+                  <input
+                    className={styles.input}
+                    type="number"
+                    inputMode="numeric"
+                    step="1"
+                    min="0"
+                    placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
+                    value={set.reps}
+                    onChange={(e) => onSetField(i, "reps", e.target.value)}
+                    onMouseUp={selectAllOnMouseUp}
+                  />
+                  {showRest && (
+                    <RestPicker
+                      seconds={set.restSeconds ?? exercise.restSeconds}
+                      onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
+                      onApplyToAll={(secs) => onApplyRestToAll(secs)}
+                    />
+                  )}
                   <button
                     type="button"
-                    className={badgeClassName}
-                    style={badgeStyle}
-                    title={`${effort != null ? `Effort: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`} — tap to change`}
-                    onClick={() => onEditEffort(i)}
+                    className={`${styles.logButton} ${set.completed ? styles.logButtonDone : ""}`}
+                    onClick={() => onLogSet(i)}
                   >
-                    {effort != null ? effort : i + 1}
+                    {set.completed ? "Logged" : "Log"}
                   </button>
-                ) : (
-                  <span
-                    className={badgeClassName}
-                    style={badgeStyle}
-                    title={effort != null ? `Last time: ${effort}/10 · ${effortLabel(effort)}` : `Set ${i + 1}`}
-                  >
-                    {effort != null ? effort : i + 1}
-                  </span>
-                )}
-                <input
-                  className={styles.input}
-                  type="number"
-                  inputMode="decimal"
-                  step="0.1"
-                  min="0"
-                  placeholder={last ? `${setWeightIn(last, weightUnit)}` : "0"}
-                  value={set.weight}
-                  aria-label={`Set ${i + 1} weight in ${weightUnit}`}
-                  onChange={(e) => onSetField(i, "weight", e.target.value)}
-                  onMouseUp={selectAllOnMouseUp}
-                />
-                <input
-                  className={styles.input}
-                  type="number"
-                  inputMode="numeric"
-                  step="1"
-                  min="0"
-                  placeholder={last ? `${last.reps}` : exercise.targetReps || ""}
-                  value={set.reps}
-                  onChange={(e) => onSetField(i, "reps", e.target.value)}
-                  onMouseUp={selectAllOnMouseUp}
-                />
-                {showRest && (
-                  <RestPicker
-                    seconds={set.restSeconds ?? exercise.restSeconds}
-                    onApplyToSet={(secs) => onSetField(i, "restSeconds", secs)}
-                    onApplyToAll={(secs) => onApplyRestToAll(secs)}
+                </div>
+                {(set.drops ?? []).map((drop, j) => (
+                  <DropRow
+                    key={j}
+                    drop={drop}
+                    before={parts[j]}
+                    label={`Set ${i + 1} drop ${j + 1}`}
+                    weightUnit={weightUnit}
+                    showRest={showRest}
+                    onField={(field, value) => onDropField(i, j, field, value)}
+                    onLog={() => onLogDrop(i, j)}
+                    onEditEffort={() => onEditEffort(i, j)}
+                    onRemove={() => onRemoveDrop(i, j)}
                   />
+                ))}
+                {/* A drop set follows a set, so it's offered once the set's logged. */}
+                {set.completed && onAddDrop && (
+                  <button type="button" className={styles.addDrop} onClick={() => onAddDrop(i)}>
+                    + Drop set
+                  </button>
                 )}
-                <button
-                  type="button"
-                  className={`${styles.logButton} ${set.completed ? styles.logButtonDone : ""}`}
-                  onClick={() => onLogSet(i)}
-                >
-                  {set.completed ? "Logged" : "Log"}
-                </button>
               </div>
             );
           })}
@@ -338,6 +368,67 @@ export default function ExerciseCard({
           </div>
         </dialog>
       )}
+    </div>
+  );
+}
+
+// One drop set under its set: weight · reps · remove · log. Its badge shows
+// its own effort once rated (tap to change), "↓" until then. Blank boxes
+// show `before` — the set, or the drop before it — which logging falls
+// back to.
+function DropRow({ drop, before, label, weightUnit, showRest, onField, onLog, onEditEffort, onRemove }) {
+  const effort = drop.effort;
+  const badgeStyle = effort != null ? { "--effort-color": effortColor(effort) } : undefined;
+  const badgeClassName = `${styles.setNumber} ${styles.dropBadge} ${effort != null ? `${styles.setNumberTinted} ${styles.setNumberCurrent}` : ""} ${drop.completed ? styles.setNumberButton : ""}`;
+  const badge = effort != null ? effort : "↓";
+
+  return (
+    <div className={`${styles.setRow} ${styles.dropRow} ${showRest ? "" : styles.dropRowNoRest}`}>
+      {drop.completed ? (
+        <button
+          type="button"
+          className={badgeClassName}
+          style={badgeStyle}
+          title={`${effort != null ? `Drop set effort: ${effort}/10 · ${effortLabel(effort)}` : "Drop set"} — tap to change`}
+          onClick={onEditEffort}
+        >
+          {badge}
+        </button>
+      ) : (
+        <span className={badgeClassName} style={badgeStyle} title="Drop set">
+          {badge}
+        </span>
+      )}
+      <input
+        className={styles.input}
+        type="number"
+        inputMode="decimal"
+        step="0.1"
+        min="0"
+        placeholder={before.weight !== "" ? `${before.weight}` : "0"}
+        value={drop.weight}
+        aria-label={`${label} weight in ${weightUnit}`}
+        onChange={(e) => onField("weight", e.target.value)}
+        onMouseUp={selectAllOnMouseUp}
+      />
+      <input
+        className={styles.input}
+        type="number"
+        inputMode="numeric"
+        step="1"
+        min="0"
+        placeholder={before.reps !== "" ? `${before.reps}` : ""}
+        value={drop.reps}
+        aria-label={`${label} reps`}
+        onChange={(e) => onField("reps", e.target.value)}
+        onMouseUp={selectAllOnMouseUp}
+      />
+      <button type="button" className={styles.removeDrop} onClick={onRemove} aria-label={`Remove ${label}`} title="Remove drop set">
+        ×
+      </button>
+      <button type="button" className={`${styles.logButton} ${drop.completed ? styles.logButtonDone : ""}`} onClick={onLog}>
+        {drop.completed ? "Logged" : "Log"}
+      </button>
     </div>
   );
 }

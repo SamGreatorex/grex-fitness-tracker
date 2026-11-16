@@ -310,6 +310,52 @@
   grid-template-columns: 1.75rem 1fr 1fr 3.75rem;
 }
 
+/* Drop set: badge · weight · reps · remove · log, under its set. Same
+   columns as a set row, so the boxes line up; untimed rows have no rest
+   column, so a narrow one is added for remove. */
+.dropRow {
+  padding-top: 0;
+}
+
+.dropRowNoRest {
+  grid-template-columns: 1.75rem 1fr 1fr 2rem 3.75rem;
+}
+
+.dropBadge {
+  border-style: dashed;
+}
+
+.removeDrop {
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.5;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.removeDrop:hover {
+  opacity: 0.9;
+}
+
+.addDrop {
+  margin: 0 0 0.35rem calc(1.75rem + 0.35rem);
+  padding: 0.3rem 0.65rem;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.78rem;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.addDrop:hover {
+  opacity: 1;
+  border-color: var(--foreground);
+}
+
 /* Cardio: badge · settings (wide) · time · log — no weight/reps/rest. */
 .cardioGrid {
   grid-template-columns: 1.75rem 2fr 1fr 3.75rem;

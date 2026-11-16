@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb, TABLES } from "../../../lib/dynamo";
 import { recentSessions, SESSION_PAGE, sessionsForRun } from "../../../lib/sessions";
+import { totalWeightLiftedOf } from "../../../lib/sessionStats";
 import { getRequestUser } from "../../../lib/users";
 import { canRunProgram, getProgram, resolveSubjectUserId } from "../../../lib/programs";
 import { isTrainerLed } from "../../../lib/programLead";
@@ -82,9 +83,8 @@ export const POST = withLogging("POST /api/sessions", async (request) => {
   const trainerLed = isTrainerLed(program);
 
   const completedAt = new Date().toISOString();
-  const totalWeightLifted = exercises.reduce((sum, ex) => {
-    return sum + ex.sets.reduce((s, set) => s + (Number(set.weight) || 0) * (Number(set.reps) || 0), 0);
-  }, 0);
+  // Drop sets count too (see src/lib/sessionStats.js).
+  const totalWeightLifted = totalWeightLiftedOf(exercises);
 
   const session = {
     userId,

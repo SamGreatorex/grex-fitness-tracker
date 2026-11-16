@@ -242,6 +242,13 @@ function RecentWorkouts({ sessions, programs, runs }) {
                         {(ex.sets ?? []).map((set, j) => (
                           <span key={j} className={styles.set}>
                             {set.reps ?? "—"} × {formatSetWeight(set)}{set.effort != null ? ` · ${set.effort}/10` : ""}
+                            {/* Drop sets, each with its own effort. */}
+                            {(set.drops ?? []).map((drop, k) => (
+                              <span key={k}>
+                                {" ↳ "}
+                                {drop.reps ?? "—"} × {formatSetWeight(drop)}{drop.effort != null ? ` · ${drop.effort}/10` : ""}
+                              </span>
+                            ))}
                           </span>
                         ))}
                       </span>
